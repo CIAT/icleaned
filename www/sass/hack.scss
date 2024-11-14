@@ -1,0 +1,30 @@
+.bootstrap-select {
+    .dropdown-menu {
+        max-width: 850px;
+        max-height: 320px !important;
+        &.active {
+            display: block !important;
+        }  
+    }
+    .dropdown-toggle {
+        color: #23004C;
+        border-color: #BBBAC6;
+    }
+    .bs-actionsbox {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background: #fff;
+        z-index: 8;
+        .actions-btn  {
+            white-space: nowrap;
+        }
+        + .inner.open {
+            max-height: 300px !important;
+        }
+    }
+    .dropdown-menu.inner {
+        display: block !important;
+    }
+}

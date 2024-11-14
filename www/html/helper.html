@@ -1,0 +1,36 @@
+<div class="text-container">
+    <button class="btn btn-default action-button btn-close" data-bs-dismiss="modal" id="close" type="button"></button>
+    <p>CLEANED stands for Comprehensive Livestock Environmental Assessment for improved Nutrition, a secured Environment and sustainable Development along livestock value chains. It is a desktop application tool that quantifies the environmental footprints of livestock systems and value chains in straightforward ways. The tool allows users to assess how livestock production activities impact land needs, productivity, economics, soil health (e.g., erosion, N balance), water use, and greenhouse gas emissions (GHGe) and how these would change through the introduction of new technology or an altered livestock production model.</p>
+    <p class="mt-3">It is designed to provide rapid results in a data-scarce environment and is most useful when designing and planning phases of projects, initiatives, or programs that investigate farm-level interventions because it allows users to understand impacts and trade-offs, and to better design sustainable livestock systems.</p>
+    
+    <p class="mt-5 text-center">
+        <a class="text-primary" href="https://alliancebioversityciat.org/tools-innovations/cleaned" target="_blank" style = "color: #009ADB !important;">Learn More !</a>
+    </p>
+
+    <p class="mt-5 text-center">
+        <a class="btn btn-primary" href="#" id="suggestions-button">Suggestions or issues?</a>
+    </p>
+    
+    <br>
+    
+    <!-- Google Form Embed (Initially hidden) -->
+    <iframe id="suggestions-iframe" src="https://docs.google.com/forms/d/e/1FAIpQLSc_DILu3ivByB1DamYqJJZniFk08kZlZ0pyO8ZK8cJNe-6uvA/viewform?embedded=true" width="720" height="400" style="display: none; margin-left: -50px;" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+    
+</div>
+
+<script>
+
+  if (typeof suggestionsButton === 'undefined') {
+    // Get the button and iframe elements
+    const suggestionsButton = document.getElementById('suggestions-button');
+    const suggestionsIframe = document.getElementById('suggestions-iframe');
+
+    // Add click event listener to the button
+    suggestionsButton.addEventListener('click', function(event) {
+      event.preventDefault(); // Prevent default link behavior
+      suggestionsIframe.style.display = 'block'; // Show the iframe when the button is clicked
+    });
+  }
+  
+</script>
+

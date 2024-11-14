@@ -1,0 +1,15 @@
+"landcover_code","landcover_desc","c_factor"
+"1","Dense forest",0.001
+"2","Other forest",0.05
+"3","Badlands hard",0.05
+"4","Badlands soft",0.4
+"5","Sorghum",0.1
+"6","Maize",0.1
+"7","Cereals",0.15
+"8","Pulses",0.15
+"9","Dense grass",0.01
+"10","Degraded grass",0.05
+"11","Fallow hard",0.05
+"12","Fallow plouged",0.6
+"13","Ethiopian teff",0.25
+"14","Continuous fallow",1

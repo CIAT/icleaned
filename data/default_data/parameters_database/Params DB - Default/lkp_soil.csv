@@ -1,0 +1,9 @@
+"soil_code","soil_desc","k_value"
+"andosol","Andosol",0.15
+"cambisol","Cambisol",0.2
+"lixisol","Lixisol",0.25
+"fluvisol","Fluvisol",0.3
+"vertisol","Vertisol",0.15
+"phaeozem","Phaeozem",0.2
+"nitosol","Nitosol",0.25
+"xerosol","Xerosol",0.3

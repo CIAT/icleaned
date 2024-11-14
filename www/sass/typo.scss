@@ -1,0 +1,116 @@
+@font-face {
+    font-family: 'Merriweather Sans';
+    src: url('./fonts/merriweathersans-bold-webfont.woff2') format('woff2'),
+         url('./fonts/merriweathersans-bold-webfont.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+}
+
+
+@font-face {
+    font-family: 'Merriweather Sans';
+    src: url('./fonts/merriweathersans-light-webfont.woff2') format('woff2'),
+         url('./fonts/merriweathersans-light-webfont.woff') format('woff');
+    font-weight: 300;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Merriweather';
+    src: url('./fonts/merriweather-bold-webfont.woff2') format('woff2'),
+         url('./fonts/merriweather-bold-webfont.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+}
+
+body {
+    font-family: 'Merriweather Sans';
+    font-weight: 300;
+}
+
+h1, h2, h3, h4 {
+    margin: 0;
+    font-family: 'Merriweather';
+    font-weight: bold;
+}
+
+h2 {
+    font-size: 1.25rem;
+    color: $primary;
+}
+
+p {
+  margin-bottom: 0;  
+}
+
+strong, b {
+    font-weight: bold;
+}
+
+.text-small {
+    font-size: 0.75rem;
+}
+
+.number {
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+.btn {
+    transition: color 0.2s, background 0.2s, border-color 0.2s;
+    padding: 12px 80px;
+    background: #fff;
+    font-weight: bold;
+
+    &-danger {
+        color: $danger;
+        &:hover,
+        &:focus,
+        &:active {
+            color: $success !important;
+            border-color: $success !important;
+            background: #fff !important;
+        }
+    }
+    &-primary {
+        color: $primary;
+        &:hover,
+        &:focus,
+        &:active {
+            color: #fff !important;
+            border-color: $primary !important;
+            background: $primary !important;
+        }
+    }
+    &-blue {
+        color: #009ADB;
+        border-color: #009ADB;
+        &:hover,
+        &:focus,
+        &:active {
+            color: $success !important;
+            border-color: $success !important;
+            background: #fff !important;
+        }
+    }
+}
+
+ol {
+    list-style: none;
+    counter-reset: ol-counter;
+    > li {
+        counter-increment: ol-counter;
+        position: relative;
+        margin-top: 32px;
+        &:before {
+            content: counter(ol-counter);
+            position: absolute;
+            top: -5px;
+            left: -31px;
+            font-family: 'Merriweather';
+            color: $primary;
+            font-weight: bold;
+            font-size: 2.06rem;
+        }
+    }
+}

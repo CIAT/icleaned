@@ -1,0 +1,133 @@
+"feed_type_code","feed_item_code","feed_item_name","dm_content","me_content","cp_content","de"
+1,1,"Andropogon gayanus (forage)",27.8,7.1,6.25479452054795,0.4686
+34,2,"Banana (fruit)",22,12.3,5.2,0.8118
+34,3,"Banana leaves",16,10,9.5,0.66
+21,4,"Barley (forage)",34,8.69,4.5,0.57354
+23,5,"Barley (grains) IP",87.1,12.4,11.8,0.8184
+22,6,"Barley (grains) OFC",87.1,12.4,11.8,0.8184
+22,7,"Barley (straw)",87,5.88,0.3,0.38808
+11,8,"Bermuda grass (Cynodon dactylon) - forage",30.3,9.671508,12.6,0.638319528
+11,9,"Bermuda grass (Cynodon dactylon) - hay",93,7.410636,7.6,0.489101976
+50,10,"Berseem clover",11,12.39,26,0.81774
+5,11,"Brachiaria brizantha (forage)",26,7.25479452054795,7.25479452054795,0.478816438356164
+6,12,"Brachiaria hybrid (forage)",26,7.25479452054795,8.25479452054795,0.478816438356164
+7,13,"Canavalia brasiliensis (forage)",30,12.1,22,0.7986
+8,14,"Cassava (Manihot esculenta) - crop residue",16.1,10.006452,19.94,0.660425832
+8,15,"Cassava (Manihot esculenta) - fresh peelings",27.9,4.3124,5.45,0.2846184
+8,16,"Cassava (Manihot esculenta) - tubers",88.84,10.76,1.81,0.71016
+43,17,"Concentrate (commercial)",90,12.1,16,0.7986
+9,18,"Cowpea (Vigna unguiculata) - crop residue",90,9.880848,18.4,0.652135968
+9,19,"Cowpea (Vigna unguiculata) - forage",12.28,10.45,20.56,0.6897
+9,20,"Cowpea (Vigna unguiculata) - grain",89.83,13.21,23.88,0.87186
+9,21,"Cowpea (Vigna unguiculata) - meal",90.17,14,22.53,0.924
+10,22,"Cratylia argentea (forage)",30,9.4,24,0.6204
+11,23,"Cynodon nlemfuensis (forage)",30.3,9.671508,12.6,0.638319528
+12,24,"Dichanthium aristatum (forage)",33,7.25,8,0.4785
+49,25,"Digitaria swazilandensis (forage)",24,9.7,9.9,0.6402
+54,26,"Fava bean (grain)",86.6,13.3,29,0.8778
+54,27,"Fava bean (straw)",89.7,6.4,7.4,0.4224
+15,28,"Gliricidia sepium (forage)",30,11.5,22.3,0.759
+17,29,"Groundnut (Arachis hypogaea) - crop residue",89.53,7.99,6.52,0.52734
+17,30,"Groundnut (Arachis hypogaea) - Kernel",92.7,21.1852,33.2,1.3982232
+17,31,"Groundnut (Arachis hypogaea) - seed hulls",93.12,6.56,16.29,0.43296
+19,32,"Guazuma ulmifolia (forage)",30,11,15,0.726
+24,33,"Hyparrhenia rufa  (forage)",26,6.12931506849315,6,0.404534794520548
+25,34,"Ischaemum ciliare  (forage)",24,6.00383561643836,6,0.396253150684931
+28,35,"Italian ryegrass (forage)",19,8.7,7,0.5742
+28,36,"Italian ryegrass (hay)",85,8.36,6.01,0.55176
+28,37,"Italian ryegrass (silage)",33.5,9.07,5.3,0.59862
+26,38,"Lablab (Lablab purpureus) - forage",18.3,11.43,22.94,0.75438
+26,39,"Lablab (Lablab purpureus) - hay",90,9.29,16.6,0.61314
+26,40,"Lablab (Lablab purpureus) - silage",27.83,7.44,17.51,0.49104
+27,41,"Leucaena (Leucaena leucocephala) - forage",26.2,9.5,19.93,0.627
+32,42,"Lucerne (Medicago sativa) - forage",21,10.08,19.7,0.66528
+32,43,"Lucerne (Medicago sativa) - hay",85,8.36,12.5,0.55176
+32,44,"Lucerne (Medicago sativa) - silage",44.1,9.545904,19.5,0.630029664
+NA,45,"Lupins (Lupinus angustifolius) - crop residue",93.85,5.57,6.44,0.36762
+NA,46,"Lupins (Lupinus angustifolius) - grain",90,19,30,1.254
+NA,47,"Lupins (Lupinus angustifolius) - pods",91.89,7.36,5.54,0.48576
+43,48,"Maize (Zea mays) - bought stover",87,9.127224,5.9,0.602396784
+29,49,"Maize (Zea mays) - cobs ground",90.1,7.578108,2.8,0.500155128
+30,50,"Maize (Zea mays) - cracked grains IP",89,13.020948,10,0.859382568
+29,51,"Maize (Zea mays) - forage",82,10.215792,8.9,0.674242272
+31,52,"Maize (Zea mays) - silage",30,10.79,4.4,0.71214
+29,53,"Maize (Zea mays) - stover",87,9.127224,5.9,0.602396784
+29,54,"Maize (Zea mays) - whole grain",90,15,9,0.99
+33,55,"Moringa oleifera (forage)",26.2,10.6,24.3,0.6996
+NA,56,"Mucuna (Mucuna pruriens) - forage",20.967,10.8,15.77,0.7128
+NA,57,"Mucuna (Mucuna pruriens) - green fodder",20.967,10.8,15.77,0.7128
+NA,58,"Mucuna (Mucuna pruriens) - hay",90.6,10.89,14.8,0.71874
+NA,59,"Mucuna (Mucuna pruriens) - seed",92.37,14.193,27.3,0.936738
+NA,60,"Mulberry (Morus alba)",28.4,10,19.4,0.66
+35,61,"N/A",0,0,0,0
+36,62,"Naturally occuring pasture - grazing",60,5,6,0.33
+36,63,"Naturally occuring pasture - grazing OFR",60,5,6,0.33
+36,64,"Naturally occuring pasture - green fodder",60,5,6,0.33
+2,65,"Oats (Avena sativa) - grain IP",89,12.267324,13.6,0.809643384
+3,66,"Oats (Avena sativa) - green fodder",31,8.36,4,0.55176
+3,67,"Oats (Avena sativa) - hay",85,7.48,3.5,0.49368
+3,68,"Oats (Avena sativa) - hay OFR",85,7.48,3.5,0.49368
+2,69,"Oats (Avena sativa) - hulls",92.4,5.317236,4.1,0.350937576
+43,70,"Oats (Avena sativa) - meal/cereal by-product",91,15.28182,16.2,1.00860012
+3,71,"Oats (Avena sativa) - silage",36.4,8.917884,12.7,0.588580344
+2,72,"Oats (Avena sativa) - straw",88,6.47,0,0.42702
+NA,73,"Orchard grass (Dactylis glomerata) - green fodder",27.4,8.624808,10.1,0.569237328
+NA,74,"Orchard grass (Dactylis glomerata) - hay",90.6,8.16426,8.4,0.53884116
+NA,75,"Orchard tree (Bauhinia variegata) - green leaves",42.85,7.49437,16.15,0.49462842
+38,76,"Panicum maximum (forage)",26,7.54301369863014,9.88219178082192,0.497838904109589
+38,77,"Panicum maximum (green fodder)",26,7.58,10,0.50028
+39,78,"Paspalum notatum (forage)",28,7.54301369863014,8.25479452054795,0.497838904109589
+NA,79,"Pearl Millet (Pennisetum glaucum) - crop residue",86,9.462168,6.4,0.624503088
+NA,80,"Pearl Millet (Pennisetum glaucum) - grain",90.34,12.43,13.88,0.82038
+NA,81,"Pearl Millet (Pennisetum glaucum) - green fodder",25,8.55,13.81,0.5643
+40,82,"Pennisetum purpureum - forage",15,9.880848,11,0.652135968
+41,83,"Pennisetum purpureum - silage",19.5,7.5,6.5,0.495
+42,84,"Pigeon Pea (Cajanus cajan) - crop residue",91.69,7.996788,16.3,0.527788008
+42,85,"Pigeon Pea (Cajanus cajan) - meal",89.4,11.08,19.39,0.73128
+42,86,"Pigeon Pea (Cajanus cajan) - seed",68.7,11.5,21.6,0.759
+NA,87,"Pineapple (Ananas comosus) - crop residue",20.6,11.5137,9.1,0.7599042
+NA,88,"Pineapple (Ananas comosus) - leaf silage",35.12,8.22,7.94,0.54252
+NA,89,"Potato (Solanum tuberosum) - peelings",15.44,10.25,6.96,0.6765
+NA,90,"Potato (Solanum tuberosum) - tuber",16.34,12.99,14.13,0.85734
+43,91,"Poultry litter",78.7,8.16426,17.78,0.53884116
+NA,92,"Pumpkin (Cucurbita maxima) - fruit",22.73,9.91,15.44,0.65406
+NA,93,"Red clover (Trifolium pratense) - green fodder",19.6,10.425132,20.8,0.688058712
+NA,94,"Red clover (Trifolium pratense) - hay",88.4,8.331732,15,0.549894312
+NA,95,"Rhodes grass (Chloris gayana) - forage",28.06,7.54,14.1,0.49764
+NA,96,"Rhodes grass (Chloris gayana) - hay",92.4,9.1,7.7,0.6006
+43,97,"Rice (Oryza sativa) - bran (with germs)",91,10.425132,14,0.688058712
+45,98,"Rice (Oryza sativa) - hulls",92,1.423512,3.1,0.093951792
+45,99,"Rice (Oryza sativa) - straw",91.88,5.64,3.85,0.37224
+NA,100,"Sesbania (Sesbania sesban) - green fodder",28.9,8.54,21.3,0.56364
+NA,101,"Smooth Broome (Bromus inermis) - green fodder",26.1,11.220624,21.3,0.740561184
+NA,102,"Smooth Broome (Bromus inermis) - hay",92.6,8.038656,6,0.530551296
+46,103,"Sorghum (Sorghum bicolor) - crop residue",85,7.033824,4.9,0.464232384
+47,104,"Sorghum (Sorghum bicolor) - forage",27,8.57,3.7,0.56562
+46,105,"Sorghum (Sorghum bicolor) - grain",90,12.392928,12.6,0.817933248
+47,106,"Sorghum (Sorghum bicolor) - silage",30,8.57,3.7,0.56562
+16,107,"Soybean (Glycine max) - crop residue",88,6.322068,5.2,0.417256488
+16,108,"Soybean (Glycine max) - meal",89,13.18842,49.6,0.87043572
+16,109,"Soybean (Glycine max) - seed coats",90.3,12.476664,12.2,0.823459824
+16,110,"Soybean (Glycine max) - whole seed IP",86.4,14.23512,40.3,0.93951792
+NA,111,"Stipa (grazing) OF",72,5.6,5,0.3696
+NA,112,"Stylo (Stylosanthes guianensis) - forage",19.42,9.545904,18.69,0.630029664
+4,113,"Sugar beet (pulp) OFR",89,11.4,8.9,0.7524
+43,114,"Sugarcane (Saccharum officinarum) - BOUGHT",29,6.9,5.9,0.4554
+48,115,"Sugarcane (Saccharum officinarum) - crop residue",96.27,7.44,3.69,0.49104
+48,116,"Sugarcane (Saccharum officinarum) - forage",23.2,9,4.3,0.594
+43,117,"Sugarcane (Saccharum officinarum) - molasses",74.3,10.88568,5.8,0.71845488
+48,118,"Sugarcane (Saccharum officinarum) - tops (forage)",29,6.9,5.9,0.4554
+48,119,"Sugarcane (Saccharum officinarum) - tops (hay)",85,7,5.5,0.462
+20,120,"Sulla",12.3,9.7,20.2,0.6402
+43,121,"Sunflower (Helianthus annuus) - seed cake",94.9,9.127224,17.9,0.602396784
+NA,122,"Sweet potato (Ipomoea batatas) -  leaves",10.8,10.01,19.4,0.66066
+NA,123,"Sweet potato (Ipomoea batatas) -  tubers (fresh)",59,13.58,5.1,0.89628
+NA,124,"Sweet potato (Ipomoea batatas) -  tubers meal (dried)",87.1,11.35,4.6,0.7491
+NA,125,"Sweet potato (Ipomoea batatas) -  vines",10.8,10.01,19.4,0.66066
+14,126,"Tall fescue",21,9.11,8.9,0.60126
+NA,127,"Tomato (Lycopersicon esculentum) - waste fruits",44.08,7.43,21,0.49038
+53,128,"Wheat (bran) IP",87,11,17.3,0.726
+52,129,"Wheat (bran) OFC",87,11,17.3,0.726
+51,130,"Wheat (straw)",88,5.63,4.2,0.37158
+51,131,"Wheat (straw) OFR",88,5.63,4.2,0.37158
+NA,132,"White sweet clover (Melilotus alba) - green fodder",15,9.1,22.5,0.6006

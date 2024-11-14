@@ -1,0 +1,11 @@
+"sys_code","sys_desc","change_factor"
+"1","Long term cultivated, temperate/boreal, dry",0.8
+"2","Long term cultivated, temperate/boreal, moist",0.69
+"3","Long term cultivated, tropical, dry",0.58
+"4","Long term cultivated, tropical, moist/wet",0.48
+"5","Long term cultivated, tropical montane, all",0.64
+"6","Paddy rice",1.1
+"7","Perennial/tree crop",1
+"8","Set aside (< 20 years), temperate/boreal and tropical, dry",0.93
+"9","Set aside (< 20 years), temperate/boreal and tropical, moist/wet",0.82
+"10","Set aside (< 20 years),tropical montane, all",0.88

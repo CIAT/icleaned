@@ -1,0 +1,13 @@
+"orgmatter_code","orgmatter_desc","change_factor"
+"1","Low, temperate/boreal, dry",0.95
+"2","Low, temperate/boreal, moist",0.92
+"3","Low, tropical, dry",0.95
+"4","Low, tropical, moist",0.92
+"5","Low, tropical montane, all",0.94
+"6","Medium, all",1
+"7","High w/OUT manure, temperate/boral and tropical, dry",1.04
+"8","High w/OUT manure, temperate/boral and tropical, moist/wet",1.11
+"9","High w/OUT manure, tropical montane",1.08
+"10","High with manure, temperate/boral and tropical, dry",1.37
+"11","High with manure, temperate/boral and tropical, moist/wet",1.44
+"12","High with manure, tropical montane",1.41

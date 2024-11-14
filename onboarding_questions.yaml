@@ -1,0 +1,20 @@
+
+# This YAML file contains the onboarding questions for new users.
+# The list of questions is stored under the 'questions' key.
+# The 'id' is used for referencing in the Shiny app, and 'question' is the actual text shown to the user.
+
+questions:
+  - id: question_1
+    question: "Why are you planning to use the tool?"
+
+  - id: question_2
+    question: "What specific features are you most interested in?"
+
+  - id: question_3
+    question: "How did you hear about us?"
+    
+  - id: question_4
+    question: "Which livestock system(s) and value chain do you plan to assess?"
+
+  - id: question_5
+    question: "Where are the system(s) located?"
