@@ -25,7 +25,7 @@ feedtype_colnames <- c(
   "Grassland change factor",
   "Land cover C Factor",
   "Slope P Factor",
-  "Main poduct dry yield (t DM/ha)",
+  "Main product dry yield (t DM/ha)",
   "Residue dry yield (t DM/ha)",
   "Main product N content (kg N/kg DM)",
   "Reside N content (kg N/kg DM)",
