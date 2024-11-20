@@ -1,6 +1,6 @@
 # iCLEANED
 
-iCLEANED is a Shiny App that calculates environmental footprints of livestock production systems.
+iCLEANED is a Shiny App that calculates environmental footprints of livestock production systems in a participatory manner.
 
 ## Environment Configuration
 
