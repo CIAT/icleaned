@@ -573,12 +573,8 @@ params_db_server <- function(
       # reset the buttons
       shinyjs::enable(id = paste0("add_rows_", name))
       shinyjs::enable(id = paste0("delete_rows_", name))
-      # Check if the database is the default one or the table is among restricted ones
-      if (input$database_name == "Params DB - Default" ||
-          name %in% c("lkp_croplandsystem", "lkp_tillageregime", 
-                      "lkp_organicmatter", "lkp_grasslandman", 
-                      "lkp_grassinputlevel", "lkp_landcover",
-                      "lkp_slope")) {
+      # Check if the database is the default one
+      if (input$database_name == "Params DB - Default") {
         editablity <- FALSE
         # Disable add and delete rows buttons
         shinyjs::disable(id = paste0("add_rows_", name))

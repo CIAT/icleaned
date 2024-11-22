@@ -255,48 +255,51 @@ params_db_ui <- function(id) {
             tabsetPanel,
             c(
               id = "tabs",
-              lapply(parameters_db_names, function(tab_name) {
-                tabPanel(
-                  sub("^lkp_", "", tab_name),
-                  div(
-                    class = "p-5 bg-light",
-                    fluidRow(
-                      class = "mb-4",
-                      column(
-                        width = 3,
-                        actionButton(
-                          inputId = ns(paste0("add_rows_", tab_name)),
-                          label = "New Row",
-                          class = "btn btn-primary filters-btn",
-                          icon = icon("plus")
-                        )
-                      ),
-                      column(
-                        width = 3,
-                        div(
-                          br(),
-                          class = "d-flex align-items-center px-1",
+              lapply(
+                c("lkp_feeditem", "lkp_feedtype", "lkp_livetype"),
+                function(tab_name) {
+                  tabPanel(
+                    sub("^lkp_", "", tab_name),
+                    div(
+                      class = "p-5 bg-light",
+                      fluidRow(
+                        class = "mb-4",
+                        column(
+                          width = 3,
                           actionButton(
-                            inputId = ns(paste0("delete_rows_", tab_name)),
-                            label = "Delete",
+                            inputId = ns(paste0("add_rows_", tab_name)),
+                            label = "New Row",
                             class = "btn btn-primary filters-btn",
-                            icon = icon("trash")
+                            icon = icon("plus")
+                          )
+                        ),
+                        column(
+                          width = 3,
+                          div(
+                            br(),
+                            class = "d-flex align-items-center px-1",
+                            actionButton(
+                              inputId = ns(paste0("delete_rows_", tab_name)),
+                              label = "Delete",
+                              class = "btn btn-primary filters-btn",
+                              icon = icon("trash")
+                            )
                           )
                         )
-                      )
-                    ),
-                    div(DTOutput(ns(paste0("table_", tab_name))), class = "with_checkbox"),
-                    tags$div(
-                      "The data is immediately saved to the corresponding CSV
+                      ),
+                      div(DTOutput(ns(paste0("table_", tab_name))), class = "with_checkbox"),
+                      tags$div(
+                        "The data is immediately saved to the corresponding CSV
                       file, no confirmation is required!", 
-                      class = "mb-5 mt-5 text-center", 
-                      style = "font-size: 20px; line-height: 20px;
+                        class = "mb-5 mt-5 text-center", 
+                        style = "font-size: 20px; line-height: 20px;
                       font-weight: 500; text-align: left; color: #005275;
                       font-family: 'serif , Merriweather';"
+                      )
                     )
                   )
-                )
-              })
+                }
+              )
             )
           )
         )
