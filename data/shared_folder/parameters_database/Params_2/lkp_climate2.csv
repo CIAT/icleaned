@@ -1,7 +1,7 @@
 climate_code,climate2_code,climate2_desc
 Temperate,Warm Temperate Moist Trial,Warm Temperate Moist  Trial
 Temperate,Warm Temperate Dry,Warm Temperate Dry
-Warm,Tropical Montane,Tropical Montane
-Warm,Tropical Wet,Tropical Wet
-Warm,Tropical Moist,Tropical Moist
-Warm,Tropical Dry,Tropical Dry
+Tropical,Tropical Montane,Tropical Montane
+Tropical,Tropical Wet,Tropical Wet
+Tropical,Tropical Moist,Tropical Moist
+Tropical,Tropical Dry,Tropical Dry
