@@ -259,7 +259,7 @@ params_db_ui <- function(id) {
                 c("lkp_feeditem", "lkp_feedtype", "lkp_livetype"),
                 function(tab_name) {
                   tabPanel(
-                    sub("^lkp_", "", tab_name),
+                    str_to_title(sub("^lkp_", "", tab_name)),
                     div(
                       class = "p-5 bg-light",
                       fluidRow(
