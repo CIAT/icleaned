@@ -13,7 +13,7 @@ server <- function(input, output, session) {
   })
   
   # ------ DATA_DIR VALIDATION -------------------------------------------------
-  # Validate the DATA_DIR environment variable and its required subdirectories
+  # Validate the DATA_DIR environment variable and its required sub directories
   validation <- validate_data_dir(env_var = "DATA_DIR")
   
   # If validation fails, render an error page and stop the application
