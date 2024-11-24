@@ -59,10 +59,6 @@ disable_specific_rows_edit_js <- function(rows_to_disable) {
                       
                     $(td).on("dblclick", function(e) {{
                       e.stopPropagation();
-                      $(td).addClass("disabled-cell");
-                      setTimeout(function() {{
-                        $(td).removeClass("disabled-cell");
-                      }}, 250);
                     }});
                     }}
                   }}')
@@ -72,10 +68,6 @@ disable_all_rows_edit_js <- function() {
   'function (td, cellData, rowData, row, col) {
     $(td).on("dblclick", function(e) {
       e.stopPropagation();
-      $(td).addClass("disabled-cell");
-      setTimeout(function() {
-        $(td).removeClass("disabled-cell");
-      }, 250);
     });
   }'
 }
@@ -86,10 +78,6 @@ disable_and_add_cursor_js <- function() {
     // Disable double-click editing for all cells
     $(td).on("dblclick", function(e) {
       e.stopPropagation();
-      $(td).addClass("disabled-cell");
-      setTimeout(function() {
-        $(td).removeClass("disabled-cell");
-      }, 250);
     });
     
     // Add "not-allowed" cursor style to all cells
