@@ -729,7 +729,6 @@ scenario_server <- function(
       h2("Choose a Fertilizer", class = "mb-3"),
       shinyWidgets::pickerInput(
         ns("fertilizer_code"),
-        "Fertilizer",
         choices = setNames(
           lkp_orgfertilizer()$fertilizer_code,
           lkp_orgfertilizer()$fertilizer_desc
