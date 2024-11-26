@@ -2326,13 +2326,13 @@ scenario_server <- function(
         feed_df <- item[, !(names(item) %in% crop_columns), drop = FALSE]
         feed_data <<- rbind(feed_data, feed_df)
         
-        # Separate crop_inputs_data and add 'Crop' and 'Feed' columns
+        # Separate crop_inputs_data and add 'Feed' and 'Crop' columns
         crop_df <- item[, crop_columns, drop = FALSE]
-        crop_df$Crop <- item$feed_type_name
         crop_df$Feed <- item$feed_item_name
+        crop_df$Crop <- item$feed_type_name
         
-        # Reorder columns to make 'Crop' the first and 'Feed' the second column
-        crop_df <- crop_df[, c("Crop", "Feed", setdiff(names(crop_df), c("Crop", "Feed")))]
+        # Reorder columns to make 'Feed' the first and 'Crop' the second column
+        crop_df <- crop_df[, c("Feed", "Crop", setdiff(names(crop_df), c("Feed", "Crop")))]
         crop_data <<- rbind(crop_data, crop_df)
       }))
       
