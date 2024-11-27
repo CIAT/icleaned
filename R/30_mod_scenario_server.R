@@ -729,7 +729,6 @@ scenario_server <- function(
       h2("Choose a Fertilizer", class = "mb-3"),
       shinyWidgets::pickerInput(
         ns("fertilizer_code"),
-        "Fertilizer",
         choices = setNames(
           lkp_orgfertilizer()$fertilizer_code,
           lkp_orgfertilizer()$fertilizer_desc
@@ -1431,6 +1430,21 @@ scenario_server <- function(
           ),
           list(
             targets = get_column_indices(
+              feedtype_dt, c("water_regime", "ecosystem_type", "organic_amendment")
+            ) - 1,
+            createdCell = JS(disable_with_conditional_cursor_js(rows_not_contains_rice)),
+            searchable = FALSE
+          ),
+          list(
+            targets = get_column_indices(
+              feedtype_dt,
+              c("landcover_c_factor", "slope_p_factor", "grassman_change_factor")
+            ) - 1,
+            createdCell = JS(disable_and_add_cursor_js()),
+            searchable = FALSE
+          ),
+          list(
+            targets = get_column_indices(
               feedtype_dt, 
               c("feed_item_name",
                 "feed_type_name",
@@ -1439,14 +1453,7 @@ scenario_server <- function(
                 "land_cover_desc",
                 "slope_desc",
                 "grassman_desc",
-                "water_regime",
-                "ecosystem_type",
-                "organic_amendment",
-                "category",
-                "landcover_c_factor",
-                "slope_p_factor",
-                "grassman_change_factor"
-              )
+                "category")
             ) - 1, # - 1 Added because rownames = FALSE
             createdCell = JS(disable_all_rows_edit_js()),
             searchable = FALSE

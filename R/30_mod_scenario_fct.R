@@ -54,12 +54,11 @@ js <- function(ns) {
 disable_specific_rows_edit_js <- function(rows_to_disable) {
   glue('function (td, cellData, rowData, row, col) {{
                     if ([{paste(rows_to_disable, collapse = ", ")}].includes(row)) {{
+                    // Add cursor style to indicate disabled state
+                    $(td).css("cursor", "not-allowed");
+                      
                     $(td).on("dblclick", function(e) {{
                       e.stopPropagation();
-                      $(td).addClass("disabled-cell");
-                      setTimeout(function() {{
-                        $(td).removeClass("disabled-cell");
-                      }}, 250);
                     }});
                     }}
                   }}')
@@ -69,12 +68,37 @@ disable_all_rows_edit_js <- function() {
   'function (td, cellData, rowData, row, col) {
     $(td).on("dblclick", function(e) {
       e.stopPropagation();
-      $(td).addClass("disabled-cell");
-      setTimeout(function() {
-        $(td).removeClass("disabled-cell");
-      }, 250);
     });
   }'
+}
+
+# Disable editing and add "not-allowed" cursor to the entire column
+disable_and_add_cursor_js <- function() {
+  'function (td, cellData, rowData, row, col) {
+    // Disable double-click editing for all cells
+    $(td).on("dblclick", function(e) {
+      e.stopPropagation();
+    });
+    
+    // Add "not-allowed" cursor style to all cells
+    $(td).css("cursor", "not-allowed");
+  }'
+}
+
+# Disable editing for all column cells and conditionally add "not-allowed" cursor
+disable_with_conditional_cursor_js <- function(rows_to_highlight) {
+  glue('function (td, cellData, rowData, row, col) {{
+        // Always disable editing
+        $(td).off("dblclick").on("dblclick", function(e) {{
+          e.stopPropagation();
+        }});
+                    
+        // Check if the cell row index is in the rows_to_highlight array
+       if ([{paste(rows_to_highlight, collapse = ", ")}].includes(row)) {{
+         // Add "not-allowed" cursor for these specific rows
+         $(td).css("cursor", "not-allowed");
+       }}
+}}')
 }
 
 # Define a function to click on elements with a specific prefix in their ID
