@@ -67,8 +67,7 @@ primary_excel <- "www/ReadMe.xlsx"
 
 # Graphs Description Information
 url <- paste0( 
-  "https://cgiar-my.sharepoint.com/:x:/g/personal/cleaned_cgiar_org/,
-   "EZRh6GUTtwNDlCTlPRhKGIUB9GbRIK-_rf3nEddPlqmfxw?e=OYR2Fn&nav=MTVfezIxRDRCNDM4LUJFMEMtNDE3My1BMEQyLTZEQzBCMkE4QTRBQ30"
+  "https://cgiar-my.sharepoint.com/:x:/g/personal/cleaned_cgiar_org/", "EZRh6GUTtwNDlCTlPRhKGIUB9GbRIK-_rf3nEddPlqmfxw?e=OYR2Fn&nav=MTVfezIxRDRCNDM4LUJFMEMtNDE3My1BMEQyLTZEQzBCMkE4QTRBQ30"
 )
 graphs_desc <- read_sharepoint(
   url = url,
