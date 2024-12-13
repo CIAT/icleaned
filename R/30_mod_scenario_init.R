@@ -194,8 +194,8 @@ livestock_data_initialization <- data.frame(
 feedtype_initialization <- data.frame(
   feed_type_code = numeric(),
   feed_item_code = numeric(),
-  feed_type_name = character(),
   feed_item_name = character(),
+  feed_type_name = character(),
   source_type = character(),
   intercrop = numeric(),
   intercrop_fraction = numeric(),
@@ -253,8 +253,8 @@ feedtype_initialization <- data.frame(
 )
 
 crop_inputs_data_initialization <- data.frame(
-  Crop = character(),
   Feed = character(),
+  Crop = character(),
   fraction_as_fertilizer = numeric(),
   urea = numeric(),
   npk = numeric(),
