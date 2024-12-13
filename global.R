@@ -10,15 +10,12 @@ library(tidyverse)
 library(glue)
 library(shinyalert)
 library(httr)
-library(readxl)
 
 # TODO: use RENV!
 if (!requireNamespace("cleaned", quietly = TRUE)) {
   remotes::install_github("CIAT/cleaned@cleaned_v0.6.0")
 }
 library(cleaned)
-
-source("R/helpers_global.R")
 
 options(
   spinner.color = "#005275",
@@ -65,13 +62,9 @@ energy_parameters <- fromJSON(
 )
 primary_excel <- "www/ReadMe.xlsx"
 
-# Graphs Description Information
-url <- paste0( 
-  "https://cgiar-my.sharepoint.com/:x:/g/personal/cleaned_cgiar_org/", "EZRh6GUTtwNDlCTlPRhKGIUB9GbRIK-_rf3nEddPlqmfxw?e=OYR2Fn&nav=MTVfezIxRDRCNDM4LUJFMEMtNDE3My1BMEQyLTZEQzBCMkE4QTRBQ30"
-)
-graphs_desc <- read_sharepoint(
-  url = url,
-  sheet = "Graphs Information"
+graphs_desc <- readxl::read_excel(
+  path = "data/iCLEANED - Graphs Information.xlsx",
+  sheet = 2
 )
 
 # Plots default values
