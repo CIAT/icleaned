@@ -11,7 +11,7 @@ library(glue)
 library(shinyalert)
 library(httr)
 
-# TODO: use RENV! 
+# TODO: use RENV!
 if (!requireNamespace("cleaned", quietly = TRUE)) {
   remotes::install_github("CIAT/cleaned@cleaned_v0.6.0")
 }
