@@ -303,31 +303,78 @@ server <- function(input, output, session) {
   roots <- c(Users = file.path(Sys.getenv("DATA_DIR"), "Users"))
   
   # Trigger modal to confirm to clone the file/folder into the admin's folder
+  # Observe event for browsing user data
+  # ------ Observe data browsing and show confirmation modal --------------------
+  
+  # ------ Show confirmation modal when user selects data -----------------------
+
+  # Reactive values to store selected file paths
+  selected_data_path <- reactiveVal(NULL)
+  relative_path <- reactiveVal(NULL)
+
+  # Browse and handle user data file selection
   observeEvent(input$browse_users_data, {
     cat(file = stderr(), "Cloning data confirmation modal\n")
-    # Parse file paths selected by the user
+
     files <- shinyFiles::parseFilePaths(roots, input$browse_users_data)
-    # Only trigger the confirmation modal if a valid file/folder is selected
-    req(files$datapath)  # Ensure a valid selection has been made
-    shinyWidgets::ask_confirmation(
-      inputId = "confirm_clone_super_user",
-      type = "question",
-      title = "Do you want to clone the data to your folder?",
-      btn_colors = c("grey", "#009ADB")
-    )
+    req(files$datapath)
+
+    path <- files$datapath[[1]]
+    selected_data_path(path)
+    relative_path(str_remove(path, "^.*/Users/"))
+
+      showModal(
+        modalDialog(
+          div(
+            paste0("Do you want to clone or download ", relative_path(), "?"),
+            style = "font-size: 25px; margin-bottom: 20px; text-align: center; word-wrap: break-word; overflow-wrap: break-word; max-width: 100%;"
+          )
+          ,
+          footer = tagList(
+            actionButton("confirm_clone_super_user", label = tagList(icon("copy"), "Clone"),, class = "btn-primary"),
+            downloadButton("download_super_user", "Download", class = "btn-primary"),
+            modalButton("Cancel")
+          ),
+          size = "s",
+          easyClose = TRUE
+        )
+      )
   })
-  
+
+  # Handle download of selected user data
+  output$download_super_user <- downloadHandler(
+    filename = function() {
+      rp <- relative_path()
+      safe_name <- gsub("/", "_", rp)
+      paste(safe_name)
+      },
+    content = function(file) {
+      sp <- selected_data_path()
+      rp <- relative_path()
+
+      full_file_path <- file.path(roots["Users"], rp)
+      success <- file.copy(full_file_path, file)
+
+      removeModal()
+
+      if (success) {
+        showNotification("Data is ready for download!", duration = 3, type = "message")
+      } else {
+        showNotification("Failed to download the file. Please try again.", type = "error")
+      }
+    }
+  )
   # Observe Cloning the data
   observeEvent(input$confirm_clone_super_user, {
     cat(file = stderr(), "Cloning the data...\n")
-    
+    removeModal()
     # Check if the user confirmed or cancelled the cloning
-    if (isTRUE(input$confirm_clone_super_user)) {
-      
+    if (input$confirm_clone_super_user) {
+
       # Get the selected file or directory path
       files <- shinyFiles::parseFilePaths(roots, input$browse_users_data)
       selected_path <- files$datapath
-      
+
       # Check if the user is attempting to clone from their own folder
       if (grepl(session$userData$user_folder, selected_path)) {
         showNotification(
