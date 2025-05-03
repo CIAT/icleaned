@@ -26,7 +26,8 @@ board_simulation_server <- function(
       choices = list.files(
         path = file.path(session$userData$user_folder, "scenarios"), 
         full.names = FALSE
-      )
+      ),
+      selected = character(0)
     )
     # ------ Update Last modification date -------------------------------------
     # most recent file in data/objects
@@ -67,7 +68,7 @@ board_simulation_server <- function(
           path = file.path(session$userData$user_folder, "scenarios"),
           full.names = FALSE
         ),
-        selected = input$scenario_name
+        selected = character(0)
       )
     }
   })
@@ -443,9 +444,7 @@ board_simulation_server <- function(
       choices = list.files(
         file.path(session$userData$user_folder, "scenarios"), full.names = FALSE
       ),
-      selected = list.files(
-        file.path(session$userData$user_folder, "scenarios"), full.names = FALSE
-      )[1]
+      selected = character(0)
     )
     shinyWidgets::updatePickerInput(
       inputId = "scenario_results_comp",
