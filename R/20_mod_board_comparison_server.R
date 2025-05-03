@@ -48,7 +48,8 @@ board_comparison_server <- function(
         file.path(
           session$userData$user_folder, "comparisons"
         ), full.names = FALSE
-      )
+      ),
+      selected = character(0)
     )
   })
   
@@ -76,7 +77,7 @@ board_comparison_server <- function(
           path = file.path(session$userData$user_folder, "comparisons"),
           full.names = FALSE
         ),
-        selected = input$comp_name
+        selected = character(0)
       )
       
       # Reset the cloned folder indicator
@@ -277,7 +278,7 @@ board_comparison_server <- function(
       choices = list.files(file.path(
         session$userData$user_folder, "comparisons"
       ), full.names = FALSE),
-      selected = NULL
+      selected = character(0)
     )
     showNotification(
       tags$span(tags$b(input$comp_name), " deleted successfully!"),
