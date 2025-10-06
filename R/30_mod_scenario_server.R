@@ -729,7 +729,6 @@ scenario_server <- function(
       h2("Choose a Fertilizer", class = "mb-3"),
       shinyWidgets::pickerInput(
         ns("fertilizer_code"),
-        "Fertilizer",
         choices = setNames(
           lkp_orgfertilizer()$fertilizer_code,
           lkp_orgfertilizer()$fertilizer_desc
@@ -1431,6 +1430,21 @@ scenario_server <- function(
           ),
           list(
             targets = get_column_indices(
+              feedtype_dt, c("water_regime", "ecosystem_type", "organic_amendment")
+            ) - 1,
+            createdCell = JS(disable_with_conditional_cursor_js(rows_not_contains_rice)),
+            searchable = FALSE
+          ),
+          list(
+            targets = get_column_indices(
+              feedtype_dt,
+              c("landcover_c_factor", "slope_p_factor", "grassman_change_factor")
+            ) - 1,
+            createdCell = JS(disable_and_add_cursor_js()),
+            searchable = FALSE
+          ),
+          list(
+            targets = get_column_indices(
               feedtype_dt, 
               c("feed_item_name",
                 "feed_type_name",
@@ -1439,14 +1453,7 @@ scenario_server <- function(
                 "land_cover_desc",
                 "slope_desc",
                 "grassman_desc",
-                "water_regime",
-                "ecosystem_type",
-                "organic_amendment",
-                "category",
-                "landcover_c_factor",
-                "slope_p_factor",
-                "grassman_change_factor"
-              )
+                "category")
             ) - 1, # - 1 Added because rownames = FALSE
             createdCell = JS(disable_all_rows_edit_js()),
             searchable = FALSE
@@ -2326,13 +2333,13 @@ scenario_server <- function(
         feed_df <- item[, !(names(item) %in% crop_columns), drop = FALSE]
         feed_data <<- rbind(feed_data, feed_df)
         
-        # Separate crop_inputs_data and add 'Crop' and 'Feed' columns
+        # Separate crop_inputs_data and add 'Feed' and 'Crop' columns
         crop_df <- item[, crop_columns, drop = FALSE]
-        crop_df$Crop <- item$feed_type_name
         crop_df$Feed <- item$feed_item_name
+        crop_df$Crop <- item$feed_type_name
         
-        # Reorder columns to make 'Crop' the first and 'Feed' the second column
-        crop_df <- crop_df[, c("Crop", "Feed", setdiff(names(crop_df), c("Crop", "Feed")))]
+        # Reorder columns to make 'Feed' the first and 'Crop' the second column
+        crop_df <- crop_df[, c("Feed", "Crop", setdiff(names(crop_df), c("Feed", "Crop")))]
         crop_data <<- rbind(crop_data, crop_df)
       }))
       

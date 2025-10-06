@@ -564,7 +564,7 @@ params_db_server <- function(
                 "livetype_desc", "ipcc_meth_ef_t1", "ipcc_meth_ef_t2",
                 "ipcc_meth_man", "ipcc_meth_exc")
             ) - 1,
-            createdCell = JS(disable_all_rows_edit_js()),
+            createdCell = JS(disable_and_add_cursor_js()),
             searchable = FALSE
           )
         ))
@@ -576,6 +576,15 @@ params_db_server <- function(
       # Check if the database is the default one
       if (input$database_name == "Params DB - Default") {
         editablity <- FALSE
+        
+        column_defs <- list(
+          list(
+            targets = "_all", # Apply to all cells
+            createdCell = JS(add_cursor_to_disabled_column_js()),
+            searchable = FALSE
+          )
+        )
+        
         # Disable add and delete rows buttons
         shinyjs::disable(id = paste0("add_rows_", name))
         shinyjs::disable(id = paste0("delete_rows_", name))

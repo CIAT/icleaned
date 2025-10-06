@@ -28,3 +28,11 @@ checkbox_link_multi <- function(id, ns, table_name) {
     )
   )
 }
+
+# Add "cursor: not-allowed" to an entire disabled column
+add_cursor_to_disabled_column_js <- function() {
+  'function (td, cellData, rowData, row, col) {
+    // Add "not-allowed" cursor style
+    $(td).css("cursor", "not-allowed");
+  }'
+}
