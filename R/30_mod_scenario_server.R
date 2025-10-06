@@ -19,9 +19,11 @@ scenario_server <- function(
     shinyWidgets::updatePickerInput(
       session,
       "json_file_name",
-      choices = list.files(
-        path = file.path(session$userData$user_folder, "study_objects"),
-        full.names = FALSE
+      choices = sort(
+        list.files(
+          path = file.path(session$userData$user_folder, "study_objects"),
+          full.names = FALSE
+        )
       ),
       selected = character(0)
     )
@@ -30,9 +32,11 @@ scenario_server <- function(
     shinyWidgets::updatePickerInput(
       session = session,
       inputId = "json_shared_folder",
-      choices = list.files(
-        path = file.path("data", "shared_folder", "study_objects"),
-        full.names = FALSE
+      choices = sort(
+        list.files(
+          path = file.path("data", "shared_folder", "study_objects"),
+          full.names = FALSE
+        )
       ),
       selected = character(0)
     )
@@ -41,9 +45,11 @@ scenario_server <- function(
     shinyWidgets::updatePickerInput(
       session,
       "database_code",
-      choices = list.files(
-        path = file.path(session$userData$user_folder, "parameters_database"),
-        full.names = FALSE
+      choices = sort(
+        list.files(
+          path = file.path(session$userData$user_folder, "parameters_database"),
+          full.names = FALSE
+        )
       ),
       selected = character(0)
     )
@@ -85,7 +91,7 @@ scenario_server <- function(
     shinyWidgets::updatePickerInput(
       session,
       "database_code",
-      choices = session$userData$databases(),
+      choices = sort(session$userData$databases()),
       selected = input$database_code
     )
   })
@@ -117,9 +123,11 @@ scenario_server <- function(
       shinyWidgets::updatePickerInput(
         session,
         "json_file_name",
-        choices = list.files(
-          path = file.path(session$userData$user_folder, "study_objects"),
-          full.names = FALSE
+        choices = sort(
+          list.files(
+            path = file.path(session$userData$user_folder, "study_objects"),
+            full.names = FALSE
+          )
         ),
         selected = input$json_file_name
       )
@@ -131,9 +139,11 @@ scenario_server <- function(
       shinyWidgets::updatePickerInput(
         session,
         "database_code",
-        choices = list.files(
-          path = file.path(session$userData$user_folder, "parameters_database"),
-          full.names = FALSE
+        choices = sort(
+          list.files(
+            path = file.path(session$userData$user_folder, "parameters_database"),
+            full.names = FALSE
+          )
         ),
         selected = input$database_code
       )
@@ -206,9 +216,11 @@ scenario_server <- function(
     shinyWidgets::updatePickerInput(
       session = session, 
       inputId = "json_file_name",
-      choices = list.files(
-        path = file.path(session$userData$user_folder, "study_objects"),
-        full.names = FALSE
+      choices = sort(
+        list.files(
+          path = file.path(session$userData$user_folder, "study_objects"),
+          full.names = FALSE
+        )
       )
     )
     
@@ -297,7 +309,9 @@ scenario_server <- function(
     shinyWidgets::updatePickerInput(
       session = session, 
       inputId = "json_file_name",
-      choices = list.files(destination_dir, full.names = FALSE),
+      choices = sort(
+        list.files(destination_dir, full.names = FALSE)
+      ),
       selected = basename(new_file_path)
     )
     
@@ -335,9 +349,11 @@ scenario_server <- function(
       shinyWidgets::updatePickerInput(
         session = session, 
         inputId = "json_file_name",
-        choices = list.files(
-          path = file.path(session$userData$user_folder, "study_objects"),
-          full.names = FALSE
+        choices = sort(
+          list.files(
+            path = file.path(session$userData$user_folder, "study_objects"),
+            full.names = FALSE
+          )
         ),
         selected = paste0(input$json_new_name, ".json")
       )
@@ -381,7 +397,9 @@ scenario_server <- function(
     shinyWidgets::updatePickerInput(
       session = session, 
       inputId = "json_file_name",
-      choices = list.files(destination_dir, full.names = FALSE),
+      choices = sort(
+        list.files(destination_dir, full.names = FALSE)
+      ),
       selected = basename(clone_file_path)
     )
     
@@ -469,7 +487,9 @@ scenario_server <- function(
       shinyWidgets::updatePickerInput(
         session = session, 
         inputId = "json_file_name",
-        choices = list.files(destination_dir, full.names = FALSE),
+        choices = sort(
+          list.files(destination_dir, full.names = FALSE)
+        ),
         selected = basename(clone_file_path)
       )
       
@@ -513,94 +533,96 @@ scenario_server <- function(
       )
     }
   })
-    # Observe Cloning the shared JSON from the pool
-    observeEvent(input$confirm_clone_shared_pool, {
+  # Observe Cloning the shared JSON from the pool
+  observeEvent(input$confirm_clone_shared_pool, {
+    
+    # Check if the user confirmed the cloning
+    if (isTRUE(input$confirm_clone_shared_pool)) {
       
-      # Check if the user confirmed the cloning
-      if (isTRUE(input$confirm_clone_shared_pool)) {
-        
-        # Path for the original file in the shared pool
-        source_file_path <- file.path(
-          Sys.getenv("DATA_DIR"), "shared_pool", "study_objects", input$pool_file_search
+      # Path for the original file in the shared pool
+      source_file_path <- file.path(
+        Sys.getenv("DATA_DIR"), "shared_pool", "study_objects", input$pool_file_search
+      )
+      
+      # Set the base name for the cloned JSON file
+      base_clone_file_name <- tools::file_path_sans_ext(input$pool_file_search)
+      
+      # Define the destination directory for the cloned JSON file
+      destination_dir <- file.path(session$userData$user_folder, "study_objects")
+      
+      # Use versioned_copy to create a versioned clone of the JSON file
+      clone_file_path <- versioned_copy(
+        source_path = source_file_path,
+        destination_dir = destination_dir,
+        base_name = base_clone_file_name,
+        extension = "json",
+        versioning = TRUE
+      )
+      
+      # Read the json file and get the related database's name
+      json_data <- fromJSON(source_file_path)
+      db_name <- json_data$database_code
+      
+      # If the database is not the default database and is available on
+      # the shared_pool folder, clone the database as well
+      if (db_name != "Params DB - Default" &&
+          db_name %in% list.files(
+            file.path(Sys.getenv("DATA_DIR"), "shared_pool", "parameters_database")
+          )) {
+        # Define the source and destination paths for the database directory
+        db_path <- file.path(
+          Sys.getenv("DATA_DIR"), "shared_pool", "parameters_database", db_name
         )
+        destination_dir <- file.path(session$userData$user_folder, "parameters_database")
         
-        # Set the base name for the cloned JSON file
-        base_clone_file_name <- tools::file_path_sans_ext(input$pool_file_search)
-        
-        # Define the destination directory for the cloned JSON file
-        destination_dir <- file.path(session$userData$user_folder, "study_objects")
-        
-        # Use versioned_copy to create a versioned clone of the JSON file
-        clone_file_path <- versioned_copy(
-          source_path = source_file_path,
+        # Use versioned_copy to clone the database directory with versioning
+        versioned_copy(
+          source_path = db_path,
           destination_dir = destination_dir,
-          base_name = base_clone_file_name,
-          extension = "json",
+          base_name = db_name,
           versioning = TRUE
         )
         
-        # Read the json file and get the related database's name
-        json_data <- fromJSON(source_file_path)
-        db_name <- json_data$database_code
-        
-        # If the database is not the default database and is available on
-        # the shared_pool folder, clone the database as well
-        if (db_name != "Params DB - Default" &&
-            db_name %in% list.files(
-              file.path(Sys.getenv("DATA_DIR"), "shared_pool", "parameters_database")
-            )) {
-          # Define the source and destination paths for the database directory
-          db_path <- file.path(
-            Sys.getenv("DATA_DIR"), "shared_pool", "parameters_database", db_name
-          )
-          destination_dir <- file.path(session$userData$user_folder, "parameters_database")
-          
-          # Use versioned_copy to clone the database directory with versioning
-          versioned_copy(
-            source_path = db_path,
-            destination_dir = destination_dir,
-            base_name = db_name,
-            versioning = TRUE
-          )
-          
-          #Update the database picker input with the cloned database
-          shinyWidgets::updatePickerInput(
-            session = session, 
-            inputId = "database_code",
-            choices = list.files(destination_dir, full.names = FALSE),
-            selected = db_name
-          )
-        }
-        
-        # Reset the Text Input
-        updateTextInput(session, "pool_file_search", value = "")
-        
-        # Update the radio button value to 'user'
-        updateRadioButtons(session, inputId = "scenario_folder", selected = "user")
-        
-        # Update the Json PickerInput to the cloned file
+        #Update the database picker input with the cloned database
         shinyWidgets::updatePickerInput(
           session = session, 
-          inputId = "json_file_name",
-          choices = list.files(
-            file.path(session$userData$user_folder, "study_objects"), full.names = FALSE
+          inputId = "database_code",
+          choices = sort(
+            list.files(destination_dir, full.names = FALSE)
           ),
-          selected = basename(clone_file_path)
-        )
-        
-        # Show a success notification
-        showNotification(
-          "The JSON and the related Parameters Database have been cloned successfully!",
-          duration = 3,
-          type = "message"
+          selected = db_name
         )
       }
-    })
+      
+      # Reset the Text Input
+      updateTextInput(session, "pool_file_search", value = "")
+      
+      # Update the radio button value to 'user'
+      updateRadioButtons(session, inputId = "scenario_folder", selected = "user")
+      
+      # Update the Json PickerInput to the cloned file
+      shinyWidgets::updatePickerInput(
+        session = session, 
+        inputId = "json_file_name",
+        choices = list.files(
+          file.path(session$userData$user_folder, "study_objects"), full.names = FALSE
+        ),
+        selected = basename(clone_file_path)
+      )
+      
+      # Show a success notification
+      showNotification(
+        "The JSON and the related Parameters Database have been cloned successfully!",
+        duration = 3,
+        type = "message"
+      )
+    }
+  })
   
   # ----------- Seasons Tab ----------------------------------------------------
   # Reactive value to store the seasons data
   seasons <- reactiveVal(seasons_initialization)
-    
+  
   # Add season button click
   observeEvent(input$add_season, {
     req(input$json_file_name)
@@ -617,7 +639,7 @@ scenario_server <- function(
       )
     ))
   })
-    
+  
   # OK button in modal dialog for adding season
   observeEvent(input$ok_add_season, {
     req(input$season_name)
@@ -631,7 +653,7 @@ scenario_server <- function(
     updateTextInput(session, "season_name", value = "")
     removeModal()
   })
-    
+  
   # Render the table
   output$season_table <- renderDT({
     
@@ -732,7 +754,8 @@ scenario_server <- function(
         choices = setNames(
           lkp_orgfertilizer()$fertilizer_code,
           lkp_orgfertilizer()$fertilizer_desc
-        )
+        )[sort(lkp_orgfertilizer()$fertilizer_desc)],
+        options = list(`live-search` = TRUE)
       ),
       easyClose = TRUE,
       footer = tagList(
@@ -834,7 +857,7 @@ scenario_server <- function(
       )
     )
   }, server = FALSE)
-
+  
   # Delete fertilizer button click
   observeEvent(input$delete_fertilizer, {
     req(nrow(fertilizers()) > 0)     # Ensure there are rows to process
@@ -921,7 +944,11 @@ scenario_server <- function(
       shinyWidgets::pickerInput(
         ns("livestock"),
         label = NULL,
-        choices = setNames(lkp_livetype()$livetype_code, lkp_livetype()$livetype_desc)
+        choices = setNames(
+          lkp_livetype()$livetype_code,
+          lkp_livetype()$livetype_desc
+        )[sort(lkp_livetype()$livetype_desc)],
+        options = list(`live-search` = TRUE)
       ),
       easyClose = TRUE,
       footer = tagList(
@@ -1143,7 +1170,10 @@ scenario_server <- function(
         shinyWidgets::pickerInput(
           inputId = ns("manure_management"),
           label = NULL,
-          choices = unique(lkp_manureman()$manureman_desc)
+          choices = sort(
+            unique(lkp_manureman()$manureman_desc)
+          ),
+          options = list(`live-search` = TRUE)
         ),
         footer = tagList(
           actionButton(ns("ok_update_manure_management"), "OK"),
@@ -1196,14 +1226,19 @@ scenario_server <- function(
       shinyWidgets::pickerInput(
         inputId = ns("feed"),
         label = NULL,
-        choices = setNames(lkp_feeditem()$feed_item_code, lkp_feeditem()$feed_item_name)
+        choices = setNames(
+          lkp_feeditem()$feed_item_code,
+          lkp_feeditem()$feed_item_name
+        )[sort(lkp_feeditem()$feed_item_name)],
+        options = list(`live-search` = TRUE)
       ),
       br(),
       h2("Selected a Crop", class = "mb-3"),
       shinyWidgets::pickerInput(
         inputId = ns("crop"),
         label = NULL,
-        choices = NULL
+        choices = NULL,
+        options = list(`live-search` = TRUE)
       ),
       easyClose = TRUE,
       footer = tagList(
@@ -1217,15 +1252,15 @@ scenario_server <- function(
   observeEvent(input$feed, {
     feed_type_code <- lkp_feeditem()$feed_type_code[lkp_feeditem()$feed_item_code == input$feed]
     choices <- setNames(
-      lkp_feedtype()$feed_type_code[lkp_feedtype()$feed_type_code == feed_type_code],
-      lkp_feedtype()$feed_type_name[lkp_feedtype()$feed_type_code == feed_type_code]
-    )
+        lkp_feedtype()$feed_type_code[lkp_feedtype()$feed_type_code == feed_type_code],
+        lkp_feedtype()$feed_type_name[lkp_feedtype()$feed_type_code == feed_type_code]
+      )
     # remove NA values
     choices <- choices[!is.na(choices)]
     shinyWidgets::updatePickerInput(
       session,
       "crop",
-      choices = choices
+      choices = choices[sort(names(choices))]
     )
   })
   
@@ -1356,7 +1391,7 @@ scenario_server <- function(
     feedtype_dt$intercrop <- generate_shiny_inputs(
       FUN = checkboxInput,
       len = nrow(feedtype_dt),
-      id  = ("intercrop_check"),
+      id = ("intercrop_check"),
       value = checked_boxes$intercrop_checked
     )
     
@@ -1618,7 +1653,10 @@ scenario_server <- function(
           shinyWidgets::pickerInput(
             inputId = ns("source_type"),
             label = NULL,
-            choices = c("Main", "Residue", "Purchased")
+            choices = sort(
+              c("Main", "Residue", "Purchased")
+            ),
+            options = list(`live-search` = TRUE)
           ),
           footer = tagList(
             actionButton(ns("ok_update_source_type"), "OK"),
@@ -1637,9 +1675,10 @@ scenario_server <- function(
             inputId = ns("land_cover"),
             label = NULL,
             choices = setNames(
-              lkp_landcover()$landcover_code,
-              lkp_landcover()$landcover_desc
-            )
+                lkp_landcover()$landcover_code,
+                lkp_landcover()$landcover_desc
+            )[sort(lkp_landcover()$landcover_desc)],
+            options = list(`live-search` = TRUE)
           ),
           footer = tagList(
             actionButton(ns("ok_update_land_cover"), "OK"),
@@ -1657,7 +1696,11 @@ scenario_server <- function(
           shinyWidgets::pickerInput(
             inputId = ns("slope_type"),
             label = NULL,
-            choices = setNames(lkp_slope()$slope_code, lkp_slope()$slope_desc)
+            choices = setNames(
+                lkp_slope()$slope_code,
+                lkp_slope()$slope_desc
+            )[sort(lkp_slope()$slope_desc)],
+            options = list(`live-search` = TRUE)
           ),
           footer = tagList(
             actionButton(ns("ok_update_slope_type"), "OK"),
@@ -1677,7 +1720,11 @@ scenario_server <- function(
             shinyWidgets::pickerInput(
               inputId = ns("grassland_man"),
               label = NULL,
-              choices = setNames(lkp_grasslandman()$management_code, lkp_grasslandman()$management_desc)
+              choices = setNames(
+                  lkp_grasslandman()$management_code,
+                  lkp_grasslandman()$management_desc
+              )[sort(lkp_grasslandman()$management_desc)],
+              options = list(`live-search` = TRUE)
             ),
             footer = tagList(
               actionButton(ns("ok_update_grassland_man"), "OK"),
@@ -1699,7 +1746,8 @@ scenario_server <- function(
             shinyWidgets::pickerInput(
               inputId = ns("water_regime"),
               label = NULL,
-              choices = water_regime_options
+              choices = sort(water_regime_options),
+              options = list(`live-search` = TRUE)
             ),
             footer = tagList(
               actionButton(ns("ok_update_water_regime"), "OK"),
@@ -1721,7 +1769,8 @@ scenario_server <- function(
             shinyWidgets::pickerInput(
               inputId = ns("rice_ecosystem"),
               label = NULL,
-              choices = rice_ecosystem_options
+              choices = sort(rice_ecosystem_options),
+              options = list(`live-search` = TRUE)
             ),
             footer = tagList(
               actionButton(ns("ok_update_rice_ecosystem"), "OK"),
@@ -1743,7 +1792,8 @@ scenario_server <- function(
             shinyWidgets::pickerInput(
               inputId = ns("rice_organic_amendment"),
               label = NULL,
-              choices = rice_organic_amendment_options
+              choices = sort(rice_organic_amendment_options),
+              options = list(`live-search` = TRUE)
             ),
             footer = tagList(
               actionButton(ns("ok_update_rice_organic_amendment"), "OK"),
@@ -1763,7 +1813,10 @@ scenario_server <- function(
           shinyWidgets::pickerInput(
             inputId = ns("feed_category"),
             label = NULL,
-            choices = unique(lkp_feedtype()$category[lkp_feedtype()$category != ""])
+            choices = sort(
+              unique(lkp_feedtype()$category[lkp_feedtype()$category != ""])
+            ),
+            options = list(`live-search` = TRUE)
           ),
           footer = tagList(
             actionButton(ns("ok_update_category"), "OK"),
@@ -2288,7 +2341,9 @@ scenario_server <- function(
     shinyWidgets::updatePickerInput(
       session,
       "database_code",
-      choices = list.files(database_dir, full.names = FALSE),
+      choices = sort(
+        list.files(database_dir, full.names = FALSE)
+      ),
       selected = selected_database
     )
     
@@ -2425,7 +2480,7 @@ scenario_server <- function(
       basket_data <- list()
     }
   })
-
+  
   # Update The scenario's select inputs ----------------------------------------
   observe({
     req(lkp_region())
@@ -2435,58 +2490,77 @@ scenario_server <- function(
     # Reconstruct the region's input
     shinyWidgets::updatePickerInput(
       session, "region",
-      choices = setNames(lkp_region()$region_code, lkp_region()$region_desc),
+      choices = setNames(
+          lkp_region()$region_code,
+          lkp_region()$region_desc
+      )[sort(lkp_region()$region_desc)],
       selected = session$userData$study_object()$region
     )
     
     #Reconstruct the select inputs
     shinyWidgets::updatePickerInput(
       session, "climate_zone",
-      choices = lkp_climate()$climate_desc,
+      choices = sort(
+        lkp_climate()$climate_desc
+      ),
       selected = session$userData$study_object()$climate_zone
     )
     
     shinyWidgets::updatePickerInput(
       session, "climate_zone_2", 
-      choices = lkp_climate2() %>%
-        filter(climate_code == "Temperate") %>%
-        pull(climate2_desc),
+      choices = sort(
+        lkp_climate2() %>%
+          filter(climate_code == "Temperate") %>%
+          pull(climate2_desc)
+      ),
       selected = session$userData$study_object()$climate_zone_2
     )
     
     shinyWidgets::updatePickerInput(
       session, "soil_description", 
-      choices = lkp_soil()$soil_desc,
+      choices = sort(
+        lkp_soil()$soil_desc
+      ),
       selected = session$userData$study_object()$soil_description
     )
     
     shinyWidgets::updatePickerInput(
       session, "cropland_system", 
-      choices = lkp_croplandsystem()$sys_desc,
+      choices = sort(
+        lkp_croplandsystem()$sys_desc
+      ),
       selected = session$userData$study_object()$cropland_system
     )
     
     shinyWidgets::updatePickerInput(
       session, "cropland_tillage", 
-      choices = lkp_tillageregime()$tillage_desc,
+      choices = sort(
+        lkp_tillageregime()$tillage_desc
+      ),
       selected = session$userData$study_object()$cropland_tillage
     )
     
     shinyWidgets::updatePickerInput(
       session, "cropland_orgmatter", 
-      choices = lkp_organicmatter()$orgmatter_desc,
+      choices = sort(
+        lkp_organicmatter()$orgmatter_desc
+      ),
       selected = session$userData$study_object()$cropland_orgmatter
     )
     
     shinyWidgets::updatePickerInput(
       session, "grassland_management", 
-      choices = lkp_grasslandman()$management_desc,
+      choices = sort(
+        lkp_grasslandman()$management_desc
+      ),
       selected = session$userData$study_object()$grassland_management
     )
     
     shinyWidgets::updatePickerInput(
       session, "grassland_implevel", 
-      choices = lkp_grassinputlevel()$grassinputlevel_desc,
+      choices = sort(
+        lkp_grassinputlevel()$grassinputlevel_desc
+      ),
       selected = session$userData$study_object()$grassland_implevel
     )
   })

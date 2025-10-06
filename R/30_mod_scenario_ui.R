@@ -92,7 +92,8 @@ scenario_ui <- function(id) {
               shinyWidgets::pickerInput(
                 inputId = ns("json_file_name"),
                 label = NULL,
-                choices = NULL
+                choices = NULL,
+                options = list(`live-search` = TRUE)
               )
             )
           ),
@@ -158,7 +159,8 @@ scenario_ui <- function(id) {
                 shinyWidgets::pickerInput(
                   inputId = ns("json_shared_folder"),
                   label = NULL,
-                  choices = NULL
+                  choices = NULL,
+                  options = list(`live-search` = TRUE)
                 )
               )
             )
@@ -240,7 +242,8 @@ scenario_ui <- function(id) {
         shinyWidgets::pickerInput(
           inputId = ns("database_code"),
           label = NULL,
-          choices = NULL
+          choices = NULL,
+          options = list(`live-search` = TRUE)
         )
       )
     ),
@@ -284,7 +287,8 @@ scenario_ui <- function(id) {
                             shinyWidgets::pickerInput(
                               inputId = ns("region"),
                               label = NULL,
-                              choices = NULL
+                              choices = NULL,
+                              options = list(`live-search` = TRUE)
                             )
                           ),
                           h2("Climate:", class = "mb-3"),
@@ -293,7 +297,8 @@ scenario_ui <- function(id) {
                             shinyWidgets::pickerInput(
                               inputId = ns("climate_zone"),
                               label = NULL,
-                              choices = NULL
+                              choices = NULL,
+                              options = list(`live-search` = TRUE)
                             ),
                           ),
                           h2("Sub-climate:", class = "mb-3"),
@@ -302,7 +307,8 @@ scenario_ui <- function(id) {
                             shinyWidgets::pickerInput(
                               inputId = ns("climate_zone_2"),
                               label = NULL,
-                              choices = NULL
+                              choices = NULL,
+                              options = list(`live-search` = TRUE)
                             ),
                           ),
                           h2("Farm name:", class = "mb-3"),
@@ -604,7 +610,8 @@ scenario_ui <- function(id) {
                             shinyWidgets::pickerInput(
                               inputId = ns("soil_description"),
                               label = NULL,
-                              choices = NULL
+                              choices = NULL,
+                              options = list(`live-search` = TRUE)
                             )
                           ),
                           h2("Estimated K Value", class = "mb-3"),
@@ -682,7 +689,8 @@ scenario_ui <- function(id) {
                                 shinyWidgets::pickerInput(
                                   inputId = ns("cropland_system"),
                                   label = NULL,
-                                  choices = NULL
+                                  choices = NULL,
+                                  options = list(`live-search` = TRUE)
                                 )
                               )
                             ),
@@ -710,7 +718,8 @@ scenario_ui <- function(id) {
                                 shinyWidgets::pickerInput(
                                   inputId = ns("cropland_tillage"),
                                   label = NULL,
-                                  choices = NULL
+                                  choices = NULL,
+                                  options = list(`live-search` = TRUE)
                                 )
                               )
                             ),
@@ -738,7 +747,8 @@ scenario_ui <- function(id) {
                                 shinyWidgets::pickerInput(
                                   inputId = ns("cropland_orgmatter"),
                                   label = NULL,
-                                  choices = NULL
+                                  choices = NULL,
+                                  options = list(`live-search` = TRUE)
                                 )
                               )
                             ),
@@ -767,7 +777,8 @@ scenario_ui <- function(id) {
                                 shinyWidgets::pickerInput(
                                   inputId = ns("grassland_management"),
                                   label = NULL,
-                                  choices = NULL
+                                  choices = NULL,
+                                  options = list(`live-search` = TRUE)
                                 )
                               )
                             ),
@@ -795,7 +806,8 @@ scenario_ui <- function(id) {
                                 shinyWidgets::pickerInput(
                                   inputId = ns("grassland_implevel"),
                                   label = NULL,
-                                  choices = NULL
+                                  choices = NULL,
+                                  options = list(`live-search` = TRUE)
                                 )
                               )
                             ),
