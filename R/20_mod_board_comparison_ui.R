@@ -43,7 +43,8 @@ board_comparison_ui <- function(id) {
                     label = NULL,
                     choices = NULL,
                     selected = NULL,
-                    multiple = TRUE
+                    multiple = TRUE,
+                    options = list(`live-search` = TRUE)
                   )
                 ),
                 column(
@@ -81,7 +82,8 @@ board_comparison_ui <- function(id) {
             inputId = ns("comp_name"), 
             label = NULL,
             choices = NULL,
-            multiple = FALSE
+            multiple = FALSE,
+            options = list(`live-search` = TRUE)
           )
         )
       ),
@@ -120,9 +122,12 @@ board_comparison_ui <- function(id) {
           shinyWidgets::pickerInput(
             inputId = ns("comp_category"),
             label = NULL,
-            choices = unique(graphs_desc$category)[-1], # remove scenario graphs
+            choices = sort(
+              unique(graphs_desc$category)[-1]
+            ), # remove scenario graphs
             selected = unique(graphs_desc$category)[1],
-            multiple = FALSE
+            multiple = FALSE,
+            options = list(`live-search` = TRUE)
           )
         )
       )

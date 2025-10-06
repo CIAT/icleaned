@@ -10,8 +10,10 @@ board_comparison_server <- function(
     cat(file = stderr(), "20 - Update scenarios lists on new scenario Runs\n")
     shinyWidgets::updatePickerInput(
       inputId = "scenario_results_comp",
-      choices = list.files(
-        file.path(session$userData$user_folder, "scenarios"), full.names = FALSE
+      choices = sort(
+        list.files(
+          file.path(session$userData$user_folder, "scenarios"), full.names = FALSE
+        )
       ),
       selected = list.files(
         file.path(session$userData$user_folder, "scenarios"), full.names = FALSE
@@ -26,10 +28,12 @@ board_comparison_server <- function(
     shinyWidgets::updatePickerInput(
       session = session,
       inputId = "scenario_results_comp",
-      choices = list.files(
-        file.path(
-          session$userData$user_folder, "scenarios"
-        ), full.names = FALSE
+      choices = sort(
+        list.files(
+          file.path(
+            session$userData$user_folder, "scenarios"
+          ), full.names = FALSE
+        )
       ),
       selected = head(
         list.files(
@@ -44,10 +48,12 @@ board_comparison_server <- function(
     shinyWidgets::updatePickerInput(
       session = session,
       inputId = "comp_name",
-      choices = list.files(
-        file.path(
-          session$userData$user_folder, "comparisons"
-        ), full.names = FALSE
+      choices = sort(
+        list.files(
+          file.path(
+            session$userData$user_folder, "comparisons"
+          ), full.names = FALSE
+        )
       ),
       selected = character(0)
     )
@@ -59,9 +65,11 @@ board_comparison_server <- function(
       shinyWidgets::updatePickerInput(
         session,
         "scenario_results_comp",
-        choices = list.files(
-          path = file.path(session$userData$user_folder, "scenarios"),
-          full.names = FALSE
+        choices = sort(
+          list.files(
+            path = file.path(session$userData$user_folder, "scenarios"),
+            full.names = FALSE
+          )
         ),
         selected = input$scenario_results_comp
       )
@@ -73,9 +81,11 @@ board_comparison_server <- function(
       shinyWidgets::updatePickerInput(
         session,
         "comp_name",
-        choices = list.files(
-          path = file.path(session$userData$user_folder, "comparisons"),
-          full.names = FALSE
+        choices = sort(
+          list.files(
+            path = file.path(session$userData$user_folder, "comparisons"),
+            full.names = FALSE
+          )
         ),
         selected = character(0)
       )
@@ -181,10 +191,12 @@ board_comparison_server <- function(
       # update choices for comp_name input
       shinyWidgets::updatePickerInput(
         inputId = "comp_name",
-        choices = list.files(
-          file.path(
-            session$userData$user_folder, "comparisons"
-          ), full.names = FALSE
+        choices = sort(
+          list.files(
+            file.path(
+              session$userData$user_folder, "comparisons"
+            ), full.names = FALSE
+          )
         ),
         selected = paste(input$scenario_results_comp, collapse = " - ")
       )
@@ -268,16 +280,18 @@ board_comparison_server <- function(
     source_file_path <- file.path(
       session$userData$user_folder, "comparisons", input$comp_name
     )
-  
+    
     # Delete the selected comparison folder
     unlink(source_file_path, recursive = TRUE)
     
     # Update the selectInput choices after deletion
     shinyWidgets::updatePickerInput(
       session, "comp_name",
-      choices = list.files(file.path(
-        session$userData$user_folder, "comparisons"
-      ), full.names = FALSE),
+      choices = sort(
+        list.files(file.path(
+          session$userData$user_folder, "comparisons"
+        ), full.names = FALSE)
+      ),
       selected = character(0)
     )
     showNotification(
