@@ -12,8 +12,10 @@ params_db_server <- function(
     shinyWidgets::updatePickerInput(
       session = session,
       inputId = "database_name",
-      choices = list.files(
-        file.path(session$userData$user_folder, "parameters_database"), full.names = FALSE
+      choices = sort(
+        list.files(
+          file.path(session$userData$user_folder, "parameters_database"), full.names = FALSE
+        )
       ),
       selected = character(0)
     )
@@ -22,9 +24,11 @@ params_db_server <- function(
     shinyWidgets::updatePickerInput(
       session = session,
       inputId = "database_shared_folder",
-      choices = list.files(
-        # use file.path function better "data" ..
-        file.path("data", "shared_folder", "parameters_database"), full.names = FALSE
+      choices = sort(
+        list.files(
+          # use file.path function better "data" ..
+          file.path("data", "shared_folder", "parameters_database"), full.names = FALSE
+        )
       ),
       selected = character(0)
     )
@@ -50,9 +54,11 @@ params_db_server <- function(
       shinyWidgets::updatePickerInput(
         session,
         "database_name",
-        choices = list.files(
-          path = file.path(session$userData$user_folder, "parameters_database"),
-          full.names = FALSE
+        choices = sort(
+          list.files(
+            path = file.path(session$userData$user_folder, "parameters_database"),
+            full.names = FALSE
+          )
         ),
         selected = input$database_name
       )
@@ -152,8 +158,10 @@ params_db_server <- function(
     shinyWidgets::updatePickerInput(
       session = session,
       inputId = "database_name",
-      choices = list.files(
-        file.path(session$userData$user_folder, "parameters_database"), full.names = FALSE
+      choices = sort(
+        list.files(
+          file.path(session$userData$user_folder, "parameters_database"), full.names = FALSE
+        )
       )
     )
     
@@ -200,8 +208,10 @@ params_db_server <- function(
     shinyWidgets::updatePickerInput(
       session = session,
       inputId = "database_name",
-      choices = list.files(
-        file.path(session$userData$user_folder, "parameters_database"), full.names = FALSE
+      choices = sort(
+        list.files(
+          file.path(session$userData$user_folder, "parameters_database"), full.names = FALSE
+        )
       ),
       selected = basename(clone_file_path)
     )
@@ -238,9 +248,11 @@ params_db_server <- function(
       shinyWidgets::updatePickerInput(
         session,
         "database_name",
-        choices = list.files(
-          path = file.path(session$userData$user_folder, "parameters_database"),
-          full.names = FALSE
+        choices = sort(
+          list.files(
+            path = file.path(session$userData$user_folder, "parameters_database"),
+            full.names = FALSE
+          )
         ),
         selected = input$database_new_name
       )
@@ -291,7 +303,9 @@ params_db_server <- function(
     shinyWidgets::updatePickerInput(
       session,
       "database_name",
-      choices = list.files(destination_dir, full.names = FALSE),
+      choices = sort(
+        list.files(destination_dir, full.names = FALSE)
+      ),
       selected = basename(clone_file_path)
     )
     
@@ -395,7 +409,9 @@ params_db_server <- function(
       shinyWidgets::updatePickerInput(
         session,
         "database_name",
-        choices = list.files(destination_dir, full.names = FALSE),
+        choices = sort(
+          list.files(destination_dir, full.names = FALSE)
+        ),
         selected = basename(clone_file_path)
       )
       
@@ -477,7 +493,9 @@ params_db_server <- function(
       shinyWidgets::updatePickerInput(
         session,
         "database_name",
-        choices = list.files(destination_dir, full.names = FALSE),
+        choices = sort(
+          list.files(destination_dir, full.names = FALSE)
+        ),
         selected = basename(clone_file_path)
       )
       
@@ -520,9 +538,11 @@ params_db_server <- function(
     shinyWidgets::updatePickerInput(
       session,
       "database_name",
-      choices = list.files(
-        file.path(session$userData$user_folder, "parameters_database"),
-        full.names = FALSE
+      choices = sort(
+        list.files(
+          file.path(session$userData$user_folder, "parameters_database"),
+          full.names = FALSE
+        )
       ),
       selected = session$userData$database_code()
     )

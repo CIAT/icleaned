@@ -89,7 +89,8 @@ params_db_ui <- function(id) {
               shinyWidgets::pickerInput(
                 inputId = ns("database_name"),
                 label = NULL,
-                choices = NULL
+                choices = NULL,
+                options = list(`live-search` = TRUE)
               )
             )
           ),
@@ -155,7 +156,8 @@ params_db_ui <- function(id) {
                 shinyWidgets::pickerInput(
                   inputId = ns("database_shared_folder"),
                   label = NULL,
-                  choices = NULL
+                  choices = NULL,
+                  options = list(`live-search` = TRUE)
                 )
               )
             )
