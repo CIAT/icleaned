@@ -1155,6 +1155,140 @@ scenario_server <- function(
     # Freeze and restore scroll position for livestock table
     freeze_and_unfreeze_scroll(session, ns("livestock_table"))
   })
+
+  # ------ LIVESTOCK TIME VALIDATION -------------------------------------------
+  observeEvent(livestock_data(), {
+    req(livestock_data())
+    
+    livestock_df <- livestock_data()
+    req(nrow(livestock_df) > 0)
+    
+    # ------ Identify relevant columns -----------------------------------------
+    time_columns <- c(
+      "time_in_stable",
+      "time_in_non_roofed_enclosure",
+      "time_in_onfarm_grazing",
+      "time_in_offfarm_grazing"
+    )
+    
+    valid_time_columns <- time_columns[time_columns %in% names(livestock_df)]
+    if (length(valid_time_columns) == 0) return()
+    
+    time_data <- livestock_df |>
+      select(all_of(valid_time_columns))
+    
+    # ------ Get display labels ------------------------------------------------
+    display_labels <- livestock_table_colnames[
+      match(valid_time_columns, names(livestock_data_initialization))
+    ]
+    
+    # ------ Initialize message containers -------------------------------------
+    msg_invalid_value <- data.frame(
+      livestock = character(),
+      message = character(),
+      stringsAsFactors = FALSE
+    )
+    
+    msg_invalid_sum <- data.frame(
+      livestock = character(),
+      message = character(),
+      stringsAsFactors = FALSE
+    )
+    
+    # ------ Check for invalid individual values -------------------------------
+    for (i in seq_along(valid_time_columns)) {
+      column_name <- valid_time_columns[i]
+      column_label <- display_labels[i]
+      
+      invalid_indices <- which(
+        time_data[[column_name]] < 0 |
+          time_data[[column_name]] > 1
+      )
+      
+      if (length(invalid_indices) > 0) {
+        for (r in invalid_indices) {
+          livestock_name <- livestock_df$livetype_desc[r]
+          value <- time_data[[column_name]][r]
+          
+          warning_text <- paste0(
+            " • For <strong>", livestock_name, "</strong>, ",
+            "the value in <strong>", column_label, "</strong> is ",
+            value, ". Please enter a value between 0 and 1."
+          )
+          
+          msg_invalid_value <- rbind(
+            msg_invalid_value,
+            data.frame(
+              livestock = livestock_name,
+              message = warning_text,
+              stringsAsFactors = FALSE
+            )
+          )
+        }
+      }
+    }
+    
+    # ------ Check for invalid totals per livestock ----------------------------
+    row_sums <- rowSums(time_data, na.rm = TRUE)
+    invalid_sum_indices <- which(row_sums != 1)
+    
+    if (length(invalid_sum_indices) > 0) {
+      for (r in invalid_sum_indices) {
+        livestock_name <- livestock_df$livetype_desc[r]
+        total_value <- round(row_sums[r], 2)
+        
+        warning_text <- paste0(
+          " • For <strong>", livestock_name, "</strong>, ",
+          "the total of time fraction columns is ", total_value,
+          ". Please adjust these values so the total equals exactly 1."
+        )
+        
+        msg_invalid_sum <- rbind(
+          msg_invalid_sum,
+          data.frame(
+            livestock = livestock_name,
+            message = warning_text,
+            stringsAsFactors = FALSE
+          )
+        )
+      }
+    }
+    
+    # ------ Sort messages alphabetically --------------------------------------
+    if (nrow(msg_invalid_value) > 0) {
+      msg_invalid_value <- msg_invalid_value[
+        order(msg_invalid_value$livestock),
+      ]
+    }
+    
+    if (nrow(msg_invalid_sum) > 0) {
+      msg_invalid_sum <- msg_invalid_sum[
+        order(msg_invalid_sum$livestock),
+      ]
+    }
+    
+    # ------ Display warnings for invalid values -------------------------------
+    if (nrow(msg_invalid_value) > 0) {
+      shinyjs::html(
+        id = "alert_message_livestock_inputs_invalid_values",
+        html = paste(msg_invalid_value$message, collapse = "<br>")
+      )
+      shinyjs::show(id = "alert_message_livestock_inputs_invalid_values")
+    } else {
+      shinyjs::hide(id = "alert_message_livestock_inputs_invalid_values")
+    }
+    
+    # ------ Display warnings for invalid totals -------------------------------
+    if (nrow(msg_invalid_sum) > 0) {
+      shinyjs::html(
+        id = "alert_message_livestock_inputs_invalid_sum",
+        html = paste(msg_invalid_sum$message, collapse = "<br>")
+      )
+      shinyjs::show(id = "alert_message_livestock_inputs_invalid_sum")
+    } else {
+      shinyjs::hide(id = "alert_message_livestock_inputs_invalid_sum")
+    }
+  })
   
   # Show modal dialog to update manure management
   observeEvent(input$livestock_table_cell_clicked, {
@@ -1252,9 +1386,9 @@ scenario_server <- function(
   observeEvent(input$feed, {
     feed_type_code <- lkp_feeditem()$feed_type_code[lkp_feeditem()$feed_item_code == input$feed]
     choices <- setNames(
-        lkp_feedtype()$feed_type_code[lkp_feedtype()$feed_type_code == feed_type_code],
-        lkp_feedtype()$feed_type_name[lkp_feedtype()$feed_type_code == feed_type_code]
-      )
+      lkp_feedtype()$feed_type_code[lkp_feedtype()$feed_type_code == feed_type_code],
+      lkp_feedtype()$feed_type_name[lkp_feedtype()$feed_type_code == feed_type_code]
+    )
     # remove NA values
     choices <- choices[!is.na(choices)]
     shinyWidgets::updatePickerInput(
@@ -1675,8 +1809,8 @@ scenario_server <- function(
             inputId = ns("land_cover"),
             label = NULL,
             choices = setNames(
-                lkp_landcover()$landcover_code,
-                lkp_landcover()$landcover_desc
+              lkp_landcover()$landcover_code,
+              lkp_landcover()$landcover_desc
             )[sort(lkp_landcover()$landcover_desc)],
             options = list(`live-search` = TRUE)
           ),
@@ -1697,8 +1831,8 @@ scenario_server <- function(
             inputId = ns("slope_type"),
             label = NULL,
             choices = setNames(
-                lkp_slope()$slope_code,
-                lkp_slope()$slope_desc
+              lkp_slope()$slope_code,
+              lkp_slope()$slope_desc
             )[sort(lkp_slope()$slope_desc)],
             options = list(`live-search` = TRUE)
           ),
@@ -1721,8 +1855,8 @@ scenario_server <- function(
               inputId = ns("grassland_man"),
               label = NULL,
               choices = setNames(
-                  lkp_grasslandman()$management_code,
-                  lkp_grasslandman()$management_desc
+                lkp_grasslandman()$management_code,
+                lkp_grasslandman()$management_desc
               )[sort(lkp_grasslandman()$management_desc)],
               options = list(`live-search` = TRUE)
             ),
@@ -2491,8 +2625,8 @@ scenario_server <- function(
     shinyWidgets::updatePickerInput(
       session, "region",
       choices = setNames(
-          lkp_region()$region_code,
-          lkp_region()$region_desc
+        lkp_region()$region_code,
+        lkp_region()$region_desc
       )[sort(lkp_region()$region_desc)],
       selected = session$userData$study_object()$region
     )

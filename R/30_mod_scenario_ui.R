@@ -938,6 +938,18 @@ scenario_ui <- function(id) {
                         )
                       )
                     ),
+                    shinyjs::hidden(
+                      div(
+                        id = ns("alert_message_livestock_inputs_invalid_values"),
+                        class = "alert alert-danger",
+                        style = "display:none;"
+                      ),
+                      div(
+                        id = ns("alert_message_livestock_inputs_invalid_sum"),
+                        class = "alert alert-danger",
+                        style = "display:none;"
+                      )
+                    ),
                     div(DTOutput(ns("livestock_table")), class = "with_checkbox")
                 )
               ),
