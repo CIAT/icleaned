@@ -940,12 +940,12 @@ scenario_ui <- function(id) {
                     ),
                     shinyjs::hidden(
                       div(
-                        id = ns("alert_message_livestock_inputs_invalid_values"),
+                        id = ns("alert_message_livestock_invalid_values_inputs"),
                         class = "alert alert-danger",
                         style = "display:none;"
                       ),
                       div(
-                        id = ns("alert_message_livestock_inputs_invalid_sum"),
+                        id = ns("alert_message_livestock_invalid_sum_inputs"),
                         class = "alert alert-danger",
                         style = "display:none;"
                       )
@@ -1047,6 +1047,20 @@ scenario_ui <- function(id) {
                       )
                     ),
                     h2("Crop areas and residue management", class = "mb-3"),
+                    shinyjs::hidden(
+                      div(
+                        id = ns("alert_message_Intercropping_fraction_inputs"),
+                        class = "alert alert-danger",
+                        style = "display:none;"
+                      )
+                    ),
+                    shinyjs::hidden(
+                      div(
+                        id = ns("alert_message_residue_fractions_inputs"),
+                        class = "alert alert-danger",
+                        style = "display:none;"
+                      )
+                    ),
                     div(DTOutput(ns("crop_table")), class = "with_checkbox"),
                     h2("Crop inputs", class = "mb-3 mt-5"),
                     shinyjs::hidden(
