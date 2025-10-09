@@ -281,6 +281,19 @@ params_db_ui <- function(id) {
                             br(),
                             class = "d-flex align-items-center px-1",
                             actionButton(
+                              inputId = ns(paste0("clone_rows_", tab_name)),
+                              label = "Clone Row",
+                              class = "btn btn-primary filters-btn",
+                              icon = icon("copy")
+                            )
+                          )
+                        ),
+                        column(
+                          width = 3,
+                          div(
+                            br(),
+                            class = "d-flex align-items-center px-1",
+                            actionButton(
                               inputId = ns(paste0("delete_rows_", tab_name)),
                               label = "Delete",
                               class = "btn btn-primary filters-btn",
@@ -289,14 +302,17 @@ params_db_ui <- function(id) {
                           )
                         )
                       ),
-                      div(DTOutput(ns(paste0("table_", tab_name))), class = "with_checkbox"),
+                      div(
+                        DTOutput(ns(paste0("table_", tab_name))),
+                        class = "with_checkbox"
+                      ),
                       tags$div(
                         "The data is immediately saved to the corresponding CSV
-                      file, no confirmation is required!", 
+      file, no confirmation is required!", 
                         class = "mb-5 mt-5 text-center", 
                         style = "font-size: 20px; line-height: 20px;
-                      font-weight: 500; text-align: left; color: #005275;
-                      font-family: 'serif , Merriweather';"
+      font-weight: 500; text-align: left; color: #005275;
+      font-family: 'serif , Merriweather';"
                       )
                     )
                   )

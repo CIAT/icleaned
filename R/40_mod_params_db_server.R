@@ -593,6 +593,8 @@ params_db_server <- function(
       # reset the buttons
       shinyjs::enable(id = paste0("add_rows_", name))
       shinyjs::enable(id = paste0("delete_rows_", name))
+      shinyjs::enable(id = paste0("clone_rows_", name))
+      
       # Check if the database is the default one
       if (input$database_name == "Params DB - Default") {
         editablity <- FALSE
@@ -605,16 +607,16 @@ params_db_server <- function(
           )
         )
         
-        # Disable add and delete rows buttons
+        # Disable all modification buttons
         shinyjs::disable(id = paste0("add_rows_", name))
         shinyjs::disable(id = paste0("delete_rows_", name))
-      } else (
+        shinyjs::disable(id = paste0("clone_rows_", name))
+      } else {
         editablity <- list(
           target = "cell",
-          # Prevent editing of the first column (check boxes for delete rows)
           disable = list(columns = 0)
         )
-      )
+      }
       
       datatable(
         data = data_table,
@@ -706,6 +708,56 @@ params_db_server <- function(
       # Freeze and restore scroll position after adding rows
       freeze_and_unfreeze_scroll(session, ns(paste0("table_", name)))
       
+    })
+  })
+  
+  # ------ * Observe Clone Row button ------------------------------------------
+  lapply(parameters_db_names, function(name) {
+    observeEvent(input[[paste0("clone_rows_", name)]], {
+      req(input$database_name)
+      
+      df <- session$userData$parameters_db[[name]]
+      n <- nrow(df)
+      # Identify selected row
+      selected_rows <- which(
+        sapply(seq_len(n), function(i)
+          isTRUE(input[[paste0("selected_row_", name, "_", i)]])
+        )
+      )
+      # Duplicate the selected row
+      req(length(selected_rows) == 1)
+      row_index <- selected_rows
+      cloned_row <- df[row_index, , drop = FALSE]
+      # Add "_clone" suffix to ID column
+      id_col <- names(df)[1]
+      if (!is.na(cloned_row[[id_col]]) && cloned_row[[id_col]] != "") {
+        cloned_row[[id_col]] <- paste0(cloned_row[[id_col]], "_clone")
+      } else {
+        cloned_row[[id_col]] <- "new_clone"
+      }
+      # Insert cloned row immediately after the original
+      if (row_index < n) {
+        df <- rbind(
+          df[1:row_index, ],
+          cloned_row,
+          df[(row_index + 1):n, ]
+        )
+      } else {
+        df <- rbind(df, cloned_row)
+      }
+      # Save updated data
+      session$userData$parameters_db[[name]] <- df
+      data.table::fwrite(
+        df,
+        file.path(
+          session$userData$user_folder,
+          "parameters_database",
+          input$database_name,
+          paste0(name, ".csv")
+        )
+      )
+      # Freeze and restore scroll position after adding rows
+      freeze_and_unfreeze_scroll(session, ns(paste0("table_", name)))
     })
   })
   
