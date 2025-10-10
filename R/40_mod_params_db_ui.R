@@ -303,28 +303,16 @@ params_db_ui <- function(id) {
                         )
                       ),
                       div(DTOutput(ns(paste0("table_", tab_name))), class = "with_checkbox"),
-                      # --- Unified table footer (entries info + pagination) ------------------------
+                      # Unified table footer (entries info + pagination)
                       div(
-                        class = "table-footer d-flex justify-content-between align-items-center mt-2 px-3 py-2",
-                        # Left: "Showing 1 to 10 of 10 entries"
+                        class = "table-footer d-flex justify-content-between align-items-center mt-2 px-3 py-1",
                         span(
                           textOutput(ns(paste0("entries_info_", tab_name))),
                           class = "text-muted small"
                         ),
-                        
-                        # Right: pagination buttons + page info
                         div(
-                          class = "d-flex align-items-center",
-                          actionButton(
-                            inputId = ns(paste0("prev_page_", tab_name)),
-                            label = "◀ Previous",
-                            class = "btn btn-outline-primary btn-sm me-2"
-                          ),
-                          actionButton(
-                            inputId = ns(paste0("next_page_", tab_name)),
-                            label = "Next ▶",
-                            class = "btn btn-outline-primary btn-sm"
-                          )
+                          class = "pagination-bar-container ms-auto",
+                          uiOutput(ns(paste0("page_buttons_", tab_name)))
                         )
                       ),
                       # --- Pagination controls (below table, right-aligned) ---
@@ -336,8 +324,10 @@ params_db_ui <- function(id) {
                       font-weight: 500; text-align: left; color: #005275;
                       font-family: 'serif , Merriweather';"
                       )
+                      
                     )
                   )
+                  
                 }
               )
             )
