@@ -1156,14 +1156,13 @@ scenario_server <- function(
     freeze_and_unfreeze_scroll(session, ns("livestock_table"))
   })
   
-  # ------ LIVESTOCK TIME VALIDATION -------------------------------------------
+  # ------ LIVESTOCK TIME VALIDATION --------------------------------------------
   observeEvent(livestock_data(), {
     req(livestock_data())
     
     livestock_df <- livestock_data()
     req(nrow(livestock_df) > 0)
-    
-    # ------ Identify relevant columns -----------------------------------------
+    # Identify relevant time columns
     time_columns <- c(
       "time_in_stable",
       "time_in_non_roofed_enclosure",
@@ -1171,18 +1170,18 @@ scenario_server <- function(
       "time_in_offfarm_grazing"
     )
     
-    valid_time_columns <- time_columns[time_columns %in% names(livestock_df)]
+    valid_time_columns <- time_columns[
+      time_columns %in% names(livestock_df)
+    ]
     if (length(valid_time_columns) == 0) return()
     
     time_data <- livestock_df |>
       select(all_of(valid_time_columns))
-    
-    # ------ Get display labels ------------------------------------------------
+    # Get display labels for the valid columns
     display_labels <- livestock_table_colnames[
       match(valid_time_columns, names(livestock_data_initialization))
     ]
-    
-    # ------ Initialize message containers -------------------------------------
+    # Initialize message containers
     msg_invalid_value <- data.frame(
       livestock = character(),
       message = character(),
@@ -1194,8 +1193,7 @@ scenario_server <- function(
       message = character(),
       stringsAsFactors = FALSE
     )
-    
-    # ------ Check for invalid individual values -------------------------------
+    # Check for invalid individual values (<0 or >1)
     for (i in seq_along(valid_time_columns)) {
       column_name <- valid_time_columns[i]
       column_label <- display_labels[i]
@@ -1211,9 +1209,9 @@ scenario_server <- function(
           value <- time_data[[column_name]][r]
           
           warning_text <- paste0(
-            " • For <strong>", livestock_name, "</strong>, ",
-            "the value in <strong>'", column_label, "'</strong> is ",
-            value, ". Please enter a value between 0 and 1."
+            "<strong> • </strong> For '", livestock_name, "', the value in",
+            "<strong>'", column_label, "'</strong> column is ",
+            value, ". value should be ≥ 0 and ≤ 1!"
           )
           
           msg_invalid_value <- rbind(
@@ -1227,8 +1225,7 @@ scenario_server <- function(
         }
       }
     }
-    
-    # ------ Check for invalid totals per livestock ----------------------------
+    # Check for invalid totals (sum ≠ 1)
     row_sums <- rowSums(time_data, na.rm = TRUE)
     invalid_sum_indices <- which(row_sums != 1)
     
@@ -1238,9 +1235,9 @@ scenario_server <- function(
         total_value <- round(row_sums[r], 2)
         
         warning_text <- paste0(
-          " • For <strong>", livestock_name, "</strong>, ",
-          "the total of time fraction columns is ", total_value,
-          ". Please adjust these values so the total equals exactly 1."
+          "<strong> • </strong>For '", livestock_name, "', ",
+          "the sum of values across the <strong> four time-fraction columns </strong> is ",
+          total_value, ". Please adjust these values so the total equals exactly 1."
         )
         
         msg_invalid_sum <- rbind(
@@ -1253,8 +1250,7 @@ scenario_server <- function(
         )
       }
     }
-    
-    # ------ Sort messages alphabetically --------------------------------------
+    # Sort messages alphabetically
     if (nrow(msg_invalid_value) > 0) {
       msg_invalid_value <- msg_invalid_value[
         order(msg_invalid_value$livestock),
@@ -1266,8 +1262,7 @@ scenario_server <- function(
         order(msg_invalid_sum$livestock),
       ]
     }
-    
-    # ------ Display warnings for invalid values -------------------------------
+    # Display warnings for invalid values
     if (nrow(msg_invalid_value) > 0) {
       shinyjs::html(
         id = "alert_message_livestock_invalid_values_inputs",
@@ -1277,8 +1272,7 @@ scenario_server <- function(
     } else {
       shinyjs::hide(id = "alert_message_livestock_invalid_values_inputs")
     }
-    
-    # ------ Display warnings for invalid totals -------------------------------
+    # Display warnings for invalid totals
     if (nrow(msg_invalid_sum) > 0) {
       shinyjs::html(
         id = "alert_message_livestock_invalid_sum_inputs",
@@ -1702,35 +1696,46 @@ scenario_server <- function(
     req(feedtype())
     feedtype_dt <- feedtype()
     req(nrow(feedtype_dt) > 0)
+    # Validate intercropping (yes/no)
+    required_cols_intercrop <- c(
+      "feed_item_name",
+      "intercrop",
+      "intercrop_fraction"
+    )
     
-    # ---- Validate Intercropping (yes/no) -------------------------------------
-    required_cols_intercrop <- c("feed_item_name", "intercrop", "intercrop_fraction")
     if (all(required_cols_intercrop %in% names(feedtype_dt))) {
-      
       msg_invalid_intercrop <- data.frame(
         feed = character(),
         message = character(),
         stringsAsFactors = FALSE
       )
+      
       for (i in seq_len(nrow(feedtype_dt))) {
-        if (!is.na(feedtype_dt$intercrop[i]) && feedtype_dt$intercrop[i] == 1) {
+        if (!is.na(feedtype_dt$intercrop[i]) &&
+            feedtype_dt$intercrop[i] == 1) {
           value <- feedtype_dt$intercrop_fraction[i]
           # Auto-assign 0.01 when checked and NA
           if (is.na(value)) {
             feedtype_dt$intercrop_fraction[i] <- 0.01
             value <- 0.01
           }
-          # Check invalid range (>0 and <1 required)
+          # Validate range > 0 and < 1
           if (value <= 0 || value >= 1) {
             feed_name <- feedtype_dt$feed_item_name[i]
             msg_text <- paste0(
-              "<strong> • </strong> For <strong>", feed_name, "</strong>, ",
-              "'IF intercropping, fraction of field occupied by this crop' ",
-              "column value should be &gt; 0 and &lt; 1!"
+              "<strong> • </strong> For ", feed_name, ", ",
+              "<strong>'IF intercropping, fraction of field ",
+              "occupied by this crop'</strong> column value ",
+              "should be > 0 and < 1!"
             )
+            
             msg_invalid_intercrop <- rbind(
               msg_invalid_intercrop,
-              data.frame(feed = feed_name, message = msg_text, stringsAsFactors = FALSE)
+              data.frame(
+                feed = feed_name,
+                message = msg_text,
+                stringsAsFactors = FALSE
+              )
             )
           }
         } else {
@@ -1738,12 +1743,11 @@ scenario_server <- function(
           feedtype_dt$intercrop_fraction[i] <- 0
         }
       }
-      # Sort alphabetically
+      # Sort and display invalid intercropping messages
       if (nrow(msg_invalid_intercrop) > 0) {
-        msg_invalid_intercrop <- msg_invalid_intercrop[order(msg_invalid_intercrop$feed), ]
-      }
-      # Show or hide alert
-      if (nrow(msg_invalid_intercrop) > 0) {
+        msg_invalid_intercrop <- msg_invalid_intercrop[
+          order(msg_invalid_intercrop$feed),
+        ]
         shinyjs::html(
           id = "alert_message_Intercropping_fraction_inputs",
           html = paste(msg_invalid_intercrop$message, collapse = "<br>")
@@ -1753,23 +1757,26 @@ scenario_server <- function(
         shinyjs::hide(id = "alert_message_Intercropping_fraction_inputs")
       }
     }
-    
-    # ----  Validate Residue Fraction Columns ----------------------------------
+    # Validate residue fraction columns (0 ≤ x ≤ 1)
     residue_cols <- c(
       "cut_carry_fraction",
       "main_product_removal",
       "residue_removal",
       "residue_burnt"
     )
-    residue_cols <- residue_cols[residue_cols %in% names(feedtype_dt)]
+    
+    residue_cols <- residue_cols[
+      residue_cols %in% names(feedtype_dt)
+    ]
+    
     if (length(residue_cols) > 0) {
-      # Dynamically match displayed label from feedtype_colnames
+      # Match residue column labels for user display
       col_labels <- vapply(
         residue_cols,
         function(col) {
           match_idx <- which(names(feedtype_initialization) == col)
           if (length(match_idx) == 1) {
-            label_idx <- match_idx - 1  # Adjust for the first blank column
+            label_idx <- match_idx - 1  # Adjust for blank column
             if (label_idx <= length(feedtype_colnames)) {
               feedtype_colnames[label_idx]
             } else {
@@ -1787,7 +1794,7 @@ scenario_server <- function(
         message = character(),
         stringsAsFactors = FALSE
       )
-      # Validate each residue column
+      # Check invalid residue values
       for (j in seq_along(residue_cols)) {
         col <- residue_cols[j]
         col_label <- col_labels[j]
@@ -1800,21 +1807,26 @@ scenario_server <- function(
         for (i in invalid_rows) {
           feed_name <- feedtype_dt$feed_item_name[i]
           msg_text <- paste0(
-            "<strong> • </strong> For <strong>", feed_name, "</strong>, ",
-            "'", col_label, "' column value should be ≥ 0 and ≤ 1!"
+            "<strong> • </strong> For '", feed_name, "', ",
+            "the value in <strong>'", col_label, "'</strong> ",
+            "column should be ≥ 0 and ≤ 1!"
           )
+          
           msg_invalid_residue <- rbind(
             msg_invalid_residue,
-            data.frame(feed = feed_name, message = msg_text, stringsAsFactors = FALSE)
+            data.frame(
+              feed = feed_name,
+              message = msg_text,
+              stringsAsFactors = FALSE
+            )
           )
         }
       }
-      # Sort alphabetically
+      # Sort and display invalid residue messages
       if (nrow(msg_invalid_residue) > 0) {
-        msg_invalid_residue <- msg_invalid_residue[order(msg_invalid_residue$feed), ]
-      }
-      # Display or hide alert
-      if (nrow(msg_invalid_residue) > 0) {
+        msg_invalid_residue <- msg_invalid_residue[
+          order(msg_invalid_residue$feed),
+        ]
         shinyjs::html(
           id = "alert_message_residue_fractions_inputs",
           html = paste(msg_invalid_residue$message, collapse = "<br>")
@@ -1824,7 +1836,7 @@ scenario_server <- function(
         shinyjs::hide(id = "alert_message_residue_fractions_inputs")
       }
     }
-    # Update feedtype data
+    # Update feedtype data after validation
     feedtype(feedtype_dt)
   })
   
