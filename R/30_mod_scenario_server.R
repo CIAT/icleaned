@@ -1670,153 +1670,135 @@ scenario_server <- function(
     freeze_and_unfreeze_scroll(session, ns("crop_table"))
   })
   
-  # ------ INTERCROPPING & RESIDUE FRACTIONS VALIDATION ------------------------
+  # ------ FEEDTYPE VALIDATION -------------------------------------------------
   observeEvent(feedtype(), {
-    req(feedtype())
-    feedtype_dt <- feedtype()
-    req(nrow(feedtype_dt) > 0)
-    # Validate intercropping (yes/no)
-    required_cols_intercrop <- c(
-      "feed_item_name",
-      "intercrop",
-      "intercrop_fraction"
-    )
+    # Hide previous warnings before running new validation
+    shinyjs::hide("alert_message_Intercropping_fraction_inputs")
+    shinyjs::hide("alert_message_residue_fractions_inputs")
+    # Stop if no feed table data is available
+    feed_table <- feedtype()
+    if (is.null(feed_table) || nrow(feed_table) == 0) return()
     
-    if (all(required_cols_intercrop %in% names(feedtype_dt))) {
-      msg_invalid_intercrop <- data.frame(
-        feed = character(),
-        message = character(),
-        stringsAsFactors = FALSE
-      )
+    # --- Validate intercropping fractions -------------------------------------
+    intercropping_fields <- c("feed_item_name", "intercrop", "intercrop_fraction")
+    if (all(intercropping_fields %in% names(feed_table))) {
       
-      for (i in seq_len(nrow(feedtype_dt))) {
-        if (!is.na(feedtype_dt$intercrop[i]) &&
-            feedtype_dt$intercrop[i] == 1) {
-          value <- feedtype_dt$intercrop_fraction[i]
-          # Auto-assign 0.01 when checked and NA
-          if (is.na(value)) {
-            feedtype_dt$intercrop_fraction[i] <- 0.01
-            value <- 0.01
+      invalid_intercrop_msgs <- character(0)
+      
+      for (row_index in seq_len(nrow(feed_table))) {
+        # Proceed only when intercropping checkbox is checked
+        intercropping_selected <- !is.na(feed_table$intercrop[row_index]) &&
+          feed_table$intercrop[row_index] == 1
+        feed_label <- feed_table$feed_item_name[row_index]
+        
+        if (intercropping_selected) {
+          intercropping_value <- feed_table$intercrop_fraction[row_index]
+          # Auto-assign 0.01 when selected but value left blank
+          if (is.na(intercropping_value)) {
+            intercropping_value <- 0.01
+            feed_table$intercrop_fraction[row_index] <- intercropping_value
           }
-          # Validate range > 0 and < 1
-          if (value <= 0 || value >= 1) {
-            feed_name <- feedtype_dt$feed_item_name[i]
-            msg_text <- paste0(
-              "<strong> • </strong> For ", feed_name, ", ",
-              "<strong>'IF intercropping, fraction of field ",
-              "occupied by this crop'</strong> column value ",
-              "should be > 0 and < 1!"
-            )
-            
-            msg_invalid_intercrop <- rbind(
-              msg_invalid_intercrop,
-              data.frame(
-                feed = feed_name,
-                message = msg_text,
-                stringsAsFactors = FALSE
-              )
+          # Validate that fraction is strictly between 0 and 1
+          if (intercropping_value <= 0 || intercropping_value >= 1) {
+            invalid_intercrop_msgs[feed_label] <- paste0(
+              "<strong>•</strong> For <strong>", feed_label, "</strong>, ",
+              "the value in <strong>'IF intercropping, fraction of field ",
+              "occupied by this crop'</strong> column must be > 0 and < 1."
             )
           }
         } else {
-          # If unchecked, force fraction = 0
-          feedtype_dt$intercrop_fraction[i] <- 0
+          # Reset fraction to 0 when intercropping is unchecked
+          feed_table$intercrop_fraction[row_index] <- 0
         }
       }
-      # Sort and display invalid intercropping messages
-      if (nrow(msg_invalid_intercrop) > 0) {
-        msg_invalid_intercrop <- msg_invalid_intercrop[
-          order(msg_invalid_intercrop$feed),
+      # Display intercropping validation messages
+      if (length(invalid_intercrop_msgs) > 0) {
+        invalid_intercrop_msgs <- invalid_intercrop_msgs[
+          order(names(invalid_intercrop_msgs))
         ]
         shinyjs::html(
           id = "alert_message_Intercropping_fraction_inputs",
-          html = paste(msg_invalid_intercrop$message, collapse = "<br>")
+          html = paste(invalid_intercrop_msgs, collapse = "<br>")
         )
-        shinyjs::show(id = "alert_message_Intercropping_fraction_inputs")
-      } else {
-        shinyjs::hide(id = "alert_message_Intercropping_fraction_inputs")
+        shinyjs::show("alert_message_Intercropping_fraction_inputs")
       }
     }
-    # Validate residue fraction columns (0 ≤ x ≤ 1)
-    residue_cols <- c(
+    
+    # --- Validate residue fraction columns ------------------------------------
+    residue_fields <- c(
       "cut_carry_fraction",
       "main_product_removal",
       "residue_removal",
       "residue_burnt"
     )
-    
-    residue_cols <- residue_cols[
-      residue_cols %in% names(feedtype_dt)
-    ]
-    
-    if (length(residue_cols) > 0) {
-      # Match residue column labels for user display
-      col_labels <- vapply(
-        residue_cols,
-        function(col) {
-          match_idx <- which(names(feedtype_initialization) == col)
-          if (length(match_idx) == 1) {
-            label_idx <- match_idx - 1  # Adjust for blank column
-            if (label_idx <= length(feedtype_colnames)) {
-              feedtype_colnames[label_idx]
-            } else {
-              col
-            }
+    residue_fields <- residue_fields[residue_fields %in% names(feed_table)]
+    # Stop if no residue fields exist in the dataset
+    if (length(residue_fields) == 0) {
+      feedtype(feed_table)
+      return()
+    }
+    # Map technical field names to user-friendly labels for clear UI messages
+    residue_field_labels <- vapply(
+      residue_fields,
+      function(field_name) {
+        # Locate field index in initialization to map to display label
+        field_index <- which(names(feedtype_initialization) == field_name)
+        if (length(field_index) == 1) {
+          # feedtype_colnames starts with a blank label for delete column
+          label_index <- field_index - 1
+          if (label_index <= length(feedtype_colnames)) {
+            # Return matching label text for display
+            feedtype_colnames[label_index]
           } else {
-            col
+            # Fallback to backend name if label index is out of range
+            field_name
           }
-        },
-        character(1)
+        } else {
+          # Fallback if field name not found in initialization
+          field_name
+        }
+      },
+      character(1)
+    )
+    
+    # Validate all residue fractions using lapply for column-wise checks
+    invalid_residue_msgs <- unlist(lapply(seq_along(residue_fields), function(j) {
+      
+      residue_field <- residue_fields[j]
+      residue_label <- residue_field_labels[j]
+      # Identify rows where residue fractions are outside valid range [0,1]
+      invalid_rows <- which(
+        !is.na(feed_table[[residue_field]]) &
+          (feed_table[[residue_field]] < 0 | feed_table[[residue_field]] > 1)
       )
       
-      msg_invalid_residue <- data.frame(
-        feed = character(),
-        message = character(),
-        stringsAsFactors = FALSE
+      if (length(invalid_rows) == 0) return(NULL)
+      
+      feed_labels <- feed_table$feed_item_name[invalid_rows]
+      # Format detailed UI messages for each invalid residue fraction
+      msg_list <- sprintf(
+        "<strong>•</strong> For <strong>%s</strong>, the value in
+        <strong>'%s'</strong> column must be ≥ 0 and ≤ 1.",
+        feed_labels, residue_label
       )
-      # Check invalid residue values
-      for (j in seq_along(residue_cols)) {
-        col <- residue_cols[j]
-        col_label <- col_labels[j]
-        
-        invalid_rows <- which(
-          !is.na(feedtype_dt[[col]]) &
-            (feedtype_dt[[col]] < 0 | feedtype_dt[[col]] > 1)
-        )
-        
-        for (i in invalid_rows) {
-          feed_name <- feedtype_dt$feed_item_name[i]
-          msg_text <- paste0(
-            "<strong> • </strong> For '", feed_name, "', ",
-            "the value in <strong>'", col_label, "'</strong> ",
-            "column should be ≥ 0 and ≤ 1!"
-          )
-          
-          msg_invalid_residue <- rbind(
-            msg_invalid_residue,
-            data.frame(
-              feed = feed_name,
-              message = msg_text,
-              stringsAsFactors = FALSE
-            )
-          )
-        }
-      }
-      # Sort and display invalid residue messages
-      if (nrow(msg_invalid_residue) > 0) {
-        msg_invalid_residue <- msg_invalid_residue[
-          order(msg_invalid_residue$feed),
-        ]
-        shinyjs::html(
-          id = "alert_message_residue_fractions_inputs",
-          html = paste(msg_invalid_residue$message, collapse = "<br>")
-        )
-        shinyjs::show(id = "alert_message_residue_fractions_inputs")
-      } else {
-        shinyjs::hide(id = "alert_message_residue_fractions_inputs")
-      }
+      
+      names(msg_list) <- feed_labels
+      msg_list
+    }))
+    # Display residue validation messages
+    if (length(invalid_residue_msgs) > 0) {
+      invalid_residue_msgs <- invalid_residue_msgs[
+        order(names(invalid_residue_msgs))
+      ]
+      shinyjs::html(
+        id = "alert_message_residue_fractions_inputs",
+        html = paste(invalid_residue_msgs, collapse = "<br>")
+      )
+      shinyjs::show("alert_message_residue_fractions_inputs")
     }
-    # Update feedtype data after validation
-    feedtype(feedtype_dt)
+    
+    # Save updated data so assigned defaults persist in the table
+    feedtype(feed_table)
   })
   
   # Render the crop inputs table
