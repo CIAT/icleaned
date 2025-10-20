@@ -1156,131 +1156,110 @@ scenario_server <- function(
     freeze_and_unfreeze_scroll(session, ns("livestock_table"))
   })
   
-  # ------ LIVESTOCK TIME VALIDATION --------------------------------------------
+  # ------ LIVESTOCK TIME FRACTIONS VALIDATION ---------------------------------
   observeEvent(livestock_data(), {
-    req(livestock_data())
+    # Always hide previous warnings at the start to avoid stale messages
+    shinyjs::hide("alert_message_livestock_invalid_values_inputs")
+    shinyjs::hide("alert_message_livestock_invalid_sum_inputs")
     
-    livestock_df <- livestock_data()
-    req(nrow(livestock_df) > 0)
-    # Identify relevant time columns
-    time_columns <- c(
+    # Validate input data: ensure data exists and contains at least one row
+    time_input <- livestock_data()
+    if (is.null(time_input) || nrow(time_input) == 0) return()
+    
+    # Identify the expected time-fraction columns required by validation rules
+    expected_columns <- c(
       "time_in_stable",
       "time_in_non_roofed_enclosure",
       "time_in_onfarm_grazing",
       "time_in_offfarm_grazing"
     )
     
-    valid_time_columns <- time_columns[
-      time_columns %in% names(livestock_df)
-    ]
-    if (length(valid_time_columns) == 0) return()
+    # Keep only columns that exist in the current dataset
+    valid_columns <- intersect(expected_columns, names(time_input))
+    if (length(valid_columns) == 0) return()
     
-    time_data <- livestock_df |>
-      select(all_of(valid_time_columns))
-    # Get display labels for the valid columns
+    # Extract the relevant subset of time allocation data
+    time_data <- time_input[valid_columns]
+    
+    # Map backend variable names to user-facing display labels
     display_labels <- livestock_table_colnames[
-      match(valid_time_columns, names(livestock_data_initialization))
+      match(valid_columns, names(livestock_data_initialization))
     ]
-    # Initialize message containers
-    msg_invalid_value <- data.frame(
-      livestock = character(),
-      message = character(),
-      stringsAsFactors = FALSE
-    )
     
-    msg_invalid_sum <- data.frame(
-      livestock = character(),
-      message = character(),
-      stringsAsFactors = FALSE
-    )
-    # Check for invalid individual values (<0 or >1)
-    for (i in seq_along(valid_time_columns)) {
-      column_name <- valid_time_columns[i]
+    # Initialize containers for validation results
+    invalid_value_messages <- character(0)
+    livestock_invalid_values <- character(0)
+    invalid_sum_messages <- character(0)
+    livestock_invalid_sums <- character(0)
+    
+    # Check for invalid fraction values (< 0 or > 1)
+    for (i in seq_along(valid_columns)) {
+      column_name <- valid_columns[i]
       column_label <- display_labels[i]
+      fraction_values <- time_data[[column_name]]
       
-      invalid_indices <- which(
-        time_data[[column_name]] < 0 |
-          time_data[[column_name]] > 1
+      # Identify livestock records with invalid values
+      invalid_rows <- which(fraction_values < 0 | fraction_values > 1)
+      if (length(invalid_rows) == 0) next
+      
+      livestock_names <- time_input$livetype_desc[invalid_rows]
+      invalid_values <- fraction_values[invalid_rows]
+      
+      # Build one clear message per invalid value
+      messages <- sprintf(
+        "<strong>•</strong> For <strong>%s</strong>, the value in
+       <strong>%s</strong> is %s. It must be between 0 and 1.",
+        livestock_names, column_label, invalid_values
       )
       
-      if (length(invalid_indices) > 0) {
-        for (r in invalid_indices) {
-          livestock_name <- livestock_df$livetype_desc[r]
-          value <- time_data[[column_name]][r]
-          
-          warning_text <- paste0(
-            "<strong> • </strong> For '", livestock_name, "', the value in",
-            "<strong>'", column_label, "'</strong> column is ",
-            value, ". value should be ≥ 0 and ≤ 1!"
-          )
-          
-          msg_invalid_value <- rbind(
-            msg_invalid_value,
-            data.frame(
-              livestock = livestock_name,
-              message = warning_text,
-              stringsAsFactors = FALSE
-            )
-          )
-        }
-      }
+      invalid_value_messages <- c(invalid_value_messages, messages)
+      livestock_invalid_values <- c(livestock_invalid_values, livestock_names)
     }
-    # Check for invalid totals (sum ≠ 1)
+    
+    # Check for invalid totals (sum of all four fractions ≠ 1)
     row_sums <- rowSums(time_data, na.rm = TRUE)
-    invalid_sum_indices <- which(row_sums != 1)
+    invalid_sum_rows <- which(row_sums != 1)
     
-    if (length(invalid_sum_indices) > 0) {
-      for (r in invalid_sum_indices) {
-        livestock_name <- livestock_df$livetype_desc[r]
-        total_value <- round(row_sums[r], 2)
-        
-        warning_text <- paste0(
-          "<strong> • </strong>For '", livestock_name, "', ",
-          "the sum of values across the <strong> four time-fraction columns </strong> is ",
-          total_value, ". Please adjust these values so the total equals exactly 1."
-        )
-        
-        msg_invalid_sum <- rbind(
-          msg_invalid_sum,
-          data.frame(
-            livestock = livestock_name,
-            message = warning_text,
-            stringsAsFactors = FALSE
-          )
-        )
-      }
-    }
-    # Sort messages alphabetically
-    if (nrow(msg_invalid_value) > 0) {
-      msg_invalid_value <- msg_invalid_value[
-        order(msg_invalid_value$livestock),
-      ]
+    if (length(invalid_sum_rows) > 0) {
+      livestock_names <- time_input$livetype_desc[invalid_sum_rows]
+      total_values <- round(row_sums[invalid_sum_rows], 2)
+      
+      messages <- sprintf(
+        "<strong>•</strong> For <strong>%s</strong>, the total across
+       the four time-fraction columns is %s. It must equal 1.",
+        livestock_names, total_values
+      )
+      
+      invalid_sum_messages <- c(invalid_sum_messages, messages)
+      livestock_invalid_sums <- c(livestock_invalid_sums, livestock_names)
     }
     
-    if (nrow(msg_invalid_sum) > 0) {
-      msg_invalid_sum <- msg_invalid_sum[
-        order(msg_invalid_sum$livestock),
-      ]
+    # Sort messages alphabetically by livestock name
+    if (length(invalid_value_messages) > 0) {
+      order_index <- order(tolower(livestock_invalid_values))
+      invalid_value_messages <- invalid_value_messages[order_index]
     }
-    # Display warnings for invalid values
-    if (nrow(msg_invalid_value) > 0) {
-      shinyjs::html(
-        id = "alert_message_livestock_invalid_values_inputs",
-        html = paste(msg_invalid_value$message, collapse = "<br>")
-      )
-      shinyjs::show(id = "alert_message_livestock_invalid_values_inputs")
-    } else {
-      shinyjs::hide(id = "alert_message_livestock_invalid_values_inputs")
+    
+    if (length(invalid_sum_messages) > 0) {
+      order_index <- order(tolower(livestock_invalid_sums))
+      invalid_sum_messages <- invalid_sum_messages[order_index]
     }
-    # Display warnings for invalid totals
-    if (nrow(msg_invalid_sum) > 0) {
+    
+    # Display validation results only if there are issues
+    if (length(invalid_value_messages) > 0) {
       shinyjs::html(
-        id = "alert_message_livestock_invalid_sum_inputs",
-        html = paste(msg_invalid_sum$message, collapse = "<br>")
+        "alert_message_livestock_invalid_values_inputs",
+        html = paste(invalid_value_messages, collapse = "<br>")
       )
-      shinyjs::show(id = "alert_message_livestock_invalid_sum_inputs")
-    } else {
-      shinyjs::hide(id = "alert_message_livestock_invalid_sum_inputs")
+      shinyjs::show("alert_message_livestock_invalid_values_inputs")
+    }
+    
+    if (length(invalid_sum_messages) > 0) {
+      shinyjs::html(
+        "alert_message_livestock_invalid_sum_inputs",
+        html = paste(invalid_sum_messages, collapse = "<br>")
+      )
+      shinyjs::show("alert_message_livestock_invalid_sum_inputs")
     }
   })
   
