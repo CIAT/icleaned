@@ -1434,4 +1434,30 @@ table.dataTable tbody tr>.dtfc-fixed-left{
     line-height: 32px;
   }
 }
+:root {
+  --picker-min-height: 96px;
+  --picker-max-height: 210px;
+  --picker-viewport-cap: calc(100vh - 220px);
+}
+
+// ------ Adaptive Bootstrap-select Dropdown Height ---------------------------
+.bootstrap-select {
+  --picker-active-max-height: var(--picker-max-height);
+
+  .inner.open {
+    max-height: clamp(
+      var(--picker-min-height, 96px),
+      var(--picker-active-max-height),
+      var(--picker-viewport-cap, 70vh)
+    ) !important;
+    overflow-y: auto !important;   // keeps scroll active
+    min-height: var(--picker-min-height, 96px);
+  }
+}
+
+.modal {
+  .bootstrap-select {
+    --picker-active-max-height: var(--modal-picker-max-height, var(--picker-max-height));
+  }
+}
 
