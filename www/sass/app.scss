@@ -1434,30 +1434,48 @@ table.dataTable tbody tr>.dtfc-fixed-left{
     line-height: 32px;
   }
 }
+
 :root {
-  --picker-min-height: 96px;
-  --picker-max-height: 210px;
-  --picker-viewport-cap: calc(100vh - 220px);
+  // Default sizing constraints used by all Bootstrap-select menus
+  --picker-min-height: 96px;             // ensure a usable scroll pane
+  --picker-max-height: 210px;            // baseline cap for standard pages
+  --picker-viewport-cap: calc(100vh - 220px); // guard against viewport overflow
 }
 
 // ------ Adaptive Bootstrap-select Dropdown Height ---------------------------
 .bootstrap-select {
-  --picker-active-max-height: var(--picker-max-height);
+  // Effective max height; modals can override this via --modal-picker-max-height
+  --picker-effective-max-height: var(--picker-max-height);
 
   .inner.open {
+    // Keep the menu scrollable while respecting both modal and viewport limits
     max-height: clamp(
       var(--picker-min-height, 96px),
-      var(--picker-active-max-height),
+      var(--picker-effective-max-height),
       var(--picker-viewport-cap, 70vh)
     ) !important;
-    overflow-y: auto !important;   // keeps scroll active
     min-height: var(--picker-min-height, 96px);
+    overflow-y: auto !important;
   }
 }
 
 .modal {
   .bootstrap-select {
-    --picker-active-max-height: var(--modal-picker-max-height, var(--picker-max-height));
+    --picker-effective-max-height: var(--modal-picker-max-height, var(--picker-max-height));
+
+    // Allow long option labels to wrap naturally inside modal dropdowns
+    .dropdown-menu {
+      .dropdown-item {
+        align-items: flex-start;
+
+        .text {
+          display: block;
+          max-width: none;
+          white-space: normal; // wrap only on word boundaries
+          overflow: visible;
+          text-overflow: clip;
+        }
+      }
+    }
   }
 }
-
