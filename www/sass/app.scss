@@ -1479,3 +1479,43 @@ table.dataTable tbody tr>.dtfc-fixed-left{
     }
   }
 }
+
+/* ========================================================= */
+/* === RESPONSIVE MODAL WIDTH (WIDER BELOW 1300PX) ========= */
+/* ========================================================= */
+
+.modal-dialog.modal-lg {
+  width: 72vw;           /* default width for large screens */
+  max-width: 1160px;     /* baseline for desktops */
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ========================================================= */
+/* === RESPONSIVE MODAL WIDTH (+30% BELOW 1300PX) ========== */
+/* ========================================================= */
+
+.modal-dialog.modal-lg {
+  width: 72vw;           /* default width for large screens */
+  max-width: 1160px;     /* baseline for desktops */
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Widen modal by ~30% on smaller screens */
+@media (max-width: 1299.98px) {
+  .modal-dialog.modal-lg {
+    width: 94vw !important;       /* becomes ~30% wider than 72vw */
+    max-width: 1508px !important; /* 1160 × 1.3 = 1508px cap */
+    margin: auto;
+    --bs-modal-margin: 0.75rem;   /* smaller outer margin for tight viewports */
+  }
+
+  .modal .modal-body {
+    padding: calc(2rem + 1vw) calc(2.5rem + 1vw); /* proportional padding */
+  }
+}
