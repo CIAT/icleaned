@@ -803,6 +803,14 @@ params_db_server <- function(
       # Get the info of the edited cell
       info <- input[[paste0("table_", name, "_cell_edit")]]
       new_data <- session$userData$parameters_db[[name]]
+
+      page_var <- paste0(name, "_page")
+      current_page <- pagination_state[[page_var]]
+      if (is.null(current_page) || !is.finite(current_page)) {
+        current_page <- 1
+      }
+      start_row <- (current_page - 1) * rows_per_page
+      info$row <- info$row + start_row
       
       # Update the specific cell while preserving the column's data type
       new_data <- update_cell(new_data, info, offset = 0)
