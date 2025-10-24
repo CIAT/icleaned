@@ -1202,6 +1202,40 @@ table.dataTable tbody tr>.dtfc-fixed-left{
     color: $danger !important;
 }
 
+/* =====================  */
+/* ====== ALERTS =======  */
+/* =====================  */
+
+.alert {
+  font-family: "serif , Merriweather";
+  font-weight: 400;
+
+  &.alert-danger {
+    /* Keep Bootstrap's default color palette */
+    background-color: var(--bs-danger-bg-subtle, #f8d7da);
+    border: 1px solid var(--bs-danger-border-subtle, #f5c2c7);
+    color: var(--bs-danger-text, #842029);
+
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    font-size: 1.2rem; // warning text size
+
+    /* Let text inside inherit font and style from alert */
+    * {
+      font-family: inherit;
+      font-weight: inherit;
+      color: inherit;
+    }
+    
+    /* Restore bold for <strong> inside alerts */
+    strong {
+      font-weight: 600;
+      color: inherit;
+    }
+  }
+}
+
+
 
 /* Add x-axis only for pie chart (plot_water_feed) */ 
 .plot_water_feed {

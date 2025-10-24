@@ -1166,7 +1166,7 @@ scenario_server <- function(
     time_input <- livestock_data()
     if (is.null(time_input) || nrow(time_input) == 0) return()
     
-    # Identify the expected time-fraction columns required by validation rules
+    # Identify the expected time-fraction columns
     expected_columns <- c(
       "time_in_stable",
       "time_in_non_roofed_enclosure",
@@ -1178,37 +1178,35 @@ scenario_server <- function(
     valid_columns <- intersect(expected_columns, names(time_input))
     if (length(valid_columns) == 0) return()
     
-    # Extract the relevant subset of time allocation data
+    # Extract subset of time allocation data
     time_data <- time_input[valid_columns]
     
-    # Map backend variable names to user-facing display labels
+    # Map backend variable names to display labels
     display_labels <- livestock_table_colnames[
       match(valid_columns, names(livestock_data_initialization))
     ]
     
-    # Initialize containers for validation results
+    # Initialize result containers
     invalid_value_messages <- character(0)
     livestock_invalid_values <- character(0)
     invalid_sum_messages <- character(0)
     livestock_invalid_sums <- character(0)
     
-    # Check for invalid fraction values (< 0 or > 1)
+    # Check for invalid fraction values (<0 or >1)
     for (i in seq_along(valid_columns)) {
       column_name <- valid_columns[i]
       column_label <- display_labels[i]
       fraction_values <- time_data[[column_name]]
       
-      # Identify livestock records with invalid values
       invalid_rows <- which(fraction_values < 0 | fraction_values > 1)
       if (length(invalid_rows) == 0) next
       
       livestock_names <- time_input$livetype_desc[invalid_rows]
       invalid_values <- fraction_values[invalid_rows]
       
-      # Build one clear message per invalid value
       messages <- sprintf(
-        "<strong>•</strong> For <strong>%s</strong>, the value in
-       <strong>%s</strong> is %s. It must be between 0 and 1.",
+        "<strong>•</strong> For <strong> %s </strong>, the value in 
+       <strong>'%s'</strong> is <strong> %s </strong>. It must be ≥ 0 and ≤ 1!",
         livestock_names, column_label, invalid_values
       )
       
@@ -1218,16 +1216,27 @@ scenario_server <- function(
     
     # Check for invalid totals (sum of all four fractions ≠ 1)
     row_sums <- rowSums(time_data, na.rm = TRUE)
-    invalid_sum_rows <- which(row_sums != 1)
+    
+    # Use a small tolerance when checking equality to 1
+    # This avoids false warnings from floating-point rounding errors
+    tolerance <- 1e-6
+    invalid_sum_rows <- which(abs(row_sums - 1) > tolerance)
     
     if (length(invalid_sum_rows) > 0) {
       livestock_names <- time_input$livetype_desc[invalid_sum_rows]
-      total_values <- round(row_sums[invalid_sum_rows], 2)
+      total_values <- row_sums[invalid_sum_rows]
+      
+      # Display decimals only when needed (e.g., 0.9998 vs 1)
+      formatted_totals <- ifelse(
+        abs(total_values %% 1) < 1e-6,
+        as.character(round(total_values, 0)),
+        formatC(total_values, format = "f", digits = 4)
+      )
       
       messages <- sprintf(
-        "<strong>•</strong> For <strong>%s</strong>, the total across
-       the four time-fraction columns is %s. It must equal 1.",
-        livestock_names, total_values
+        "<strong>•</strong> For <strong> %s </strong>, the total across
+       the four time-fraction columns is <strong> %s </strong>. It must equal 1!",
+        livestock_names, formatted_totals
       )
       
       invalid_sum_messages <- c(invalid_sum_messages, messages)
@@ -1245,7 +1254,7 @@ scenario_server <- function(
       invalid_sum_messages <- invalid_sum_messages[order_index]
     }
     
-    # Display validation results only if there are issues
+    # Display messages if there are issues
     if (length(invalid_value_messages) > 0) {
       shinyjs::html(
         "alert_message_livestock_invalid_values_inputs",
@@ -1700,10 +1709,11 @@ scenario_server <- function(
           }
           # Validate that fraction is strictly between 0 and 1
           if (intercropping_value <= 0 || intercropping_value >= 1) {
-            invalid_intercrop_msgs[feed_label] <- paste0(
-              "<strong>•</strong> For <strong>", feed_label, "</strong>, ",
-              "the value in <strong>'IF intercropping, fraction of field ",
-              "occupied by this crop'</strong> column must be > 0 and < 1."
+            invalid_intercrop_msgs[feed_label] <- sprintf(
+              "<strong>•</strong> For <strong> %s </strong>, the value in 
+              <strong>'IF intercropping, fraction of field occupied by this crop'</strong> 
+              column must be > 0 and < 1!",
+              feed_label
             )
           }
         } else {
@@ -1777,8 +1787,8 @@ scenario_server <- function(
       feed_labels <- feed_table$feed_item_name[invalid_rows]
       # Format detailed UI messages for each invalid residue fraction
       msg_list <- sprintf(
-        "<strong>•</strong> For <strong>%s</strong>, the value in
-        <strong>'%s'</strong> column must be ≥ 0 and ≤ 1.",
+        "<strong>•</strong> For <strong> %s </strong>, the value in 
+        <strong>'%s'</strong> column must be ≥ 0 and ≤ 1!",
         feed_labels, residue_label
       )
       

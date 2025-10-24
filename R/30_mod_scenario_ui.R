@@ -1067,8 +1067,10 @@ scenario_ui <- function(id) {
                       div(
                         id = ns("alert_message_crop_inputs"),
                         class = "alert alert-danger",
-                        "The total of 'Fraction collected manure used as fertilizer'
-                    across all rows should not exceed 1!"
+                        HTML(
+                          "The total of <strong> 'Fraction collected manure used 
+                          as fertilizer' </strong> across all rows should not exceed 1!"
+                        )
                       )
                     ),
                     div(DTOutput(ns("crop_inputs_table")), class = "without_checkbox"),
