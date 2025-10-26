@@ -207,7 +207,7 @@
         border-radius: 0px;
     }
     &-body {
-        padding: 80px 120px;
+        padding: 80px 100px;
         background: $light;
     }
  /*   .modal-footer {
@@ -710,8 +710,10 @@ table.dataTable tbody tr>.dtfc-fixed-left{
     background-color: #ebeff1;
 }
 .modal-dialog:not(.modal-lg) {
-    max-width: 50%; 
-    width: 50%;
+    max-width: 60%; 
+    width: 60%;
+    margin-top: 5%;
+    margin-bottom: 3%;
 }
 .file-label {
   width: 100%;
@@ -1218,7 +1220,7 @@ table.dataTable tbody tr>.dtfc-fixed-left{
 
     border-radius: 12px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    font-size: 1.2rem; // warning text size
+    font-size: 1rem; // warning text size
 
     /* Let text inside inherit font and style from alert */
     * {
