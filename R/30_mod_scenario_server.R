@@ -19,9 +19,11 @@ scenario_server <- function(
     shinyWidgets::updatePickerInput(
       session,
       "json_file_name",
-      choices = list.files(
-        path = file.path(session$userData$user_folder, "study_objects"),
-        full.names = FALSE
+      choices = sort(
+        list.files(
+          path = file.path(session$userData$user_folder, "study_objects"),
+          full.names = FALSE
+        )
       ),
       selected = character(0)
     )
@@ -30,9 +32,11 @@ scenario_server <- function(
     shinyWidgets::updatePickerInput(
       session = session,
       inputId = "json_shared_folder",
-      choices = list.files(
-        path = file.path("data", "shared_folder", "study_objects"),
-        full.names = FALSE
+      choices = sort(
+        list.files(
+          path = file.path("data", "shared_folder", "study_objects"),
+          full.names = FALSE
+        )
       ),
       selected = character(0)
     )
@@ -41,9 +45,11 @@ scenario_server <- function(
     shinyWidgets::updatePickerInput(
       session,
       "database_code",
-      choices = list.files(
-        path = file.path(session$userData$user_folder, "parameters_database"),
-        full.names = FALSE
+      choices = sort(
+        list.files(
+          path = file.path(session$userData$user_folder, "parameters_database"),
+          full.names = FALSE
+        )
       ),
       selected = character(0)
     )
@@ -85,7 +91,7 @@ scenario_server <- function(
     shinyWidgets::updatePickerInput(
       session,
       "database_code",
-      choices = session$userData$databases(),
+      choices = sort(session$userData$databases()),
       selected = input$database_code
     )
   })
@@ -117,9 +123,11 @@ scenario_server <- function(
       shinyWidgets::updatePickerInput(
         session,
         "json_file_name",
-        choices = list.files(
-          path = file.path(session$userData$user_folder, "study_objects"),
-          full.names = FALSE
+        choices = sort(
+          list.files(
+            path = file.path(session$userData$user_folder, "study_objects"),
+            full.names = FALSE
+          )
         ),
         selected = input$json_file_name
       )
@@ -131,9 +139,11 @@ scenario_server <- function(
       shinyWidgets::updatePickerInput(
         session,
         "database_code",
-        choices = list.files(
-          path = file.path(session$userData$user_folder, "parameters_database"),
-          full.names = FALSE
+        choices = sort(
+          list.files(
+            path = file.path(session$userData$user_folder, "parameters_database"),
+            full.names = FALSE
+          )
         ),
         selected = input$database_code
       )
@@ -206,9 +216,11 @@ scenario_server <- function(
     shinyWidgets::updatePickerInput(
       session = session, 
       inputId = "json_file_name",
-      choices = list.files(
-        path = file.path(session$userData$user_folder, "study_objects"),
-        full.names = FALSE
+      choices = sort(
+        list.files(
+          path = file.path(session$userData$user_folder, "study_objects"),
+          full.names = FALSE
+        )
       )
     )
     
@@ -297,7 +309,9 @@ scenario_server <- function(
     shinyWidgets::updatePickerInput(
       session = session, 
       inputId = "json_file_name",
-      choices = list.files(destination_dir, full.names = FALSE),
+      choices = sort(
+        list.files(destination_dir, full.names = FALSE)
+      ),
       selected = basename(new_file_path)
     )
     
@@ -335,9 +349,11 @@ scenario_server <- function(
       shinyWidgets::updatePickerInput(
         session = session, 
         inputId = "json_file_name",
-        choices = list.files(
-          path = file.path(session$userData$user_folder, "study_objects"),
-          full.names = FALSE
+        choices = sort(
+          list.files(
+            path = file.path(session$userData$user_folder, "study_objects"),
+            full.names = FALSE
+          )
         ),
         selected = paste0(input$json_new_name, ".json")
       )
@@ -381,7 +397,9 @@ scenario_server <- function(
     shinyWidgets::updatePickerInput(
       session = session, 
       inputId = "json_file_name",
-      choices = list.files(destination_dir, full.names = FALSE),
+      choices = sort(
+        list.files(destination_dir, full.names = FALSE)
+      ),
       selected = basename(clone_file_path)
     )
     
@@ -469,7 +487,9 @@ scenario_server <- function(
       shinyWidgets::updatePickerInput(
         session = session, 
         inputId = "json_file_name",
-        choices = list.files(destination_dir, full.names = FALSE),
+        choices = sort(
+          list.files(destination_dir, full.names = FALSE)
+        ),
         selected = basename(clone_file_path)
       )
       
@@ -513,94 +533,96 @@ scenario_server <- function(
       )
     }
   })
-    # Observe Cloning the shared JSON from the pool
-    observeEvent(input$confirm_clone_shared_pool, {
+  # Observe Cloning the shared JSON from the pool
+  observeEvent(input$confirm_clone_shared_pool, {
+    
+    # Check if the user confirmed the cloning
+    if (isTRUE(input$confirm_clone_shared_pool)) {
       
-      # Check if the user confirmed the cloning
-      if (isTRUE(input$confirm_clone_shared_pool)) {
-        
-        # Path for the original file in the shared pool
-        source_file_path <- file.path(
-          Sys.getenv("DATA_DIR"), "shared_pool", "study_objects", input$pool_file_search
+      # Path for the original file in the shared pool
+      source_file_path <- file.path(
+        Sys.getenv("DATA_DIR"), "shared_pool", "study_objects", input$pool_file_search
+      )
+      
+      # Set the base name for the cloned JSON file
+      base_clone_file_name <- tools::file_path_sans_ext(input$pool_file_search)
+      
+      # Define the destination directory for the cloned JSON file
+      destination_dir <- file.path(session$userData$user_folder, "study_objects")
+      
+      # Use versioned_copy to create a versioned clone of the JSON file
+      clone_file_path <- versioned_copy(
+        source_path = source_file_path,
+        destination_dir = destination_dir,
+        base_name = base_clone_file_name,
+        extension = "json",
+        versioning = TRUE
+      )
+      
+      # Read the json file and get the related database's name
+      json_data <- fromJSON(source_file_path)
+      db_name <- json_data$database_code
+      
+      # If the database is not the default database and is available on
+      # the shared_pool folder, clone the database as well
+      if (db_name != "Params DB - Default" &&
+          db_name %in% list.files(
+            file.path(Sys.getenv("DATA_DIR"), "shared_pool", "parameters_database")
+          )) {
+        # Define the source and destination paths for the database directory
+        db_path <- file.path(
+          Sys.getenv("DATA_DIR"), "shared_pool", "parameters_database", db_name
         )
+        destination_dir <- file.path(session$userData$user_folder, "parameters_database")
         
-        # Set the base name for the cloned JSON file
-        base_clone_file_name <- tools::file_path_sans_ext(input$pool_file_search)
-        
-        # Define the destination directory for the cloned JSON file
-        destination_dir <- file.path(session$userData$user_folder, "study_objects")
-        
-        # Use versioned_copy to create a versioned clone of the JSON file
-        clone_file_path <- versioned_copy(
-          source_path = source_file_path,
+        # Use versioned_copy to clone the database directory with versioning
+        versioned_copy(
+          source_path = db_path,
           destination_dir = destination_dir,
-          base_name = base_clone_file_name,
-          extension = "json",
+          base_name = db_name,
           versioning = TRUE
         )
         
-        # Read the json file and get the related database's name
-        json_data <- fromJSON(source_file_path)
-        db_name <- json_data$database_code
-        
-        # If the database is not the default database and is available on
-        # the shared_pool folder, clone the database as well
-        if (db_name != "Params DB - Default" &&
-            db_name %in% list.files(
-              file.path(Sys.getenv("DATA_DIR"), "shared_pool", "parameters_database")
-            )) {
-          # Define the source and destination paths for the database directory
-          db_path <- file.path(
-            Sys.getenv("DATA_DIR"), "shared_pool", "parameters_database", db_name
-          )
-          destination_dir <- file.path(session$userData$user_folder, "parameters_database")
-          
-          # Use versioned_copy to clone the database directory with versioning
-          versioned_copy(
-            source_path = db_path,
-            destination_dir = destination_dir,
-            base_name = db_name,
-            versioning = TRUE
-          )
-          
-          #Update the database picker input with the cloned database
-          shinyWidgets::updatePickerInput(
-            session = session, 
-            inputId = "database_code",
-            choices = list.files(destination_dir, full.names = FALSE),
-            selected = db_name
-          )
-        }
-        
-        # Reset the Text Input
-        updateTextInput(session, "pool_file_search", value = "")
-        
-        # Update the radio button value to 'user'
-        updateRadioButtons(session, inputId = "scenario_folder", selected = "user")
-        
-        # Update the Json PickerInput to the cloned file
+        #Update the database picker input with the cloned database
         shinyWidgets::updatePickerInput(
           session = session, 
-          inputId = "json_file_name",
-          choices = list.files(
-            file.path(session$userData$user_folder, "study_objects"), full.names = FALSE
+          inputId = "database_code",
+          choices = sort(
+            list.files(destination_dir, full.names = FALSE)
           ),
-          selected = basename(clone_file_path)
-        )
-        
-        # Show a success notification
-        showNotification(
-          "The JSON and the related Parameters Database have been cloned successfully!",
-          duration = 3,
-          type = "message"
+          selected = db_name
         )
       }
-    })
+      
+      # Reset the Text Input
+      updateTextInput(session, "pool_file_search", value = "")
+      
+      # Update the radio button value to 'user'
+      updateRadioButtons(session, inputId = "scenario_folder", selected = "user")
+      
+      # Update the Json PickerInput to the cloned file
+      shinyWidgets::updatePickerInput(
+        session = session, 
+        inputId = "json_file_name",
+        choices = list.files(
+          file.path(session$userData$user_folder, "study_objects"), full.names = FALSE
+        ),
+        selected = basename(clone_file_path)
+      )
+      
+      # Show a success notification
+      showNotification(
+        "The JSON and the related Parameters Database have been cloned successfully!",
+        duration = 3,
+        type = "message"
+      )
+    }
+  })
   
   # ----------- Seasons Tab ----------------------------------------------------
   # Reactive value to store the seasons data
   seasons <- reactiveVal(seasons_initialization)
-    
+  
   # Add season button click
   observeEvent(input$add_season, {
     req(input$json_file_name)
@@ -617,7 +639,7 @@ scenario_server <- function(
       )
     ))
   })
-    
+  
   # OK button in modal dialog for adding season
   observeEvent(input$ok_add_season, {
     req(input$season_name)
@@ -631,7 +653,7 @@ scenario_server <- function(
     updateTextInput(session, "season_name", value = "")
     removeModal()
   })
-    
+  
   # Render the table
   output$season_table <- renderDT({
     
@@ -732,7 +754,8 @@ scenario_server <- function(
         choices = setNames(
           lkp_orgfertilizer()$fertilizer_code,
           lkp_orgfertilizer()$fertilizer_desc
-        )
+        )[sort(lkp_orgfertilizer()$fertilizer_desc)],
+        options = list(`live-search` = TRUE)
       ),
       easyClose = TRUE,
       footer = tagList(
@@ -834,7 +857,7 @@ scenario_server <- function(
       )
     )
   }, server = FALSE)
-
+  
   # Delete fertilizer button click
   observeEvent(input$delete_fertilizer, {
     req(nrow(fertilizers()) > 0)     # Ensure there are rows to process
@@ -921,7 +944,11 @@ scenario_server <- function(
       shinyWidgets::pickerInput(
         ns("livestock"),
         label = NULL,
-        choices = setNames(lkp_livetype()$livetype_code, lkp_livetype()$livetype_desc)
+        choices = setNames(
+          lkp_livetype()$livetype_code,
+          lkp_livetype()$livetype_desc
+        )[sort(lkp_livetype()$livetype_desc)],
+        options = list(`live-search` = TRUE)
       ),
       easyClose = TRUE,
       footer = tagList(
@@ -1129,6 +1156,122 @@ scenario_server <- function(
     freeze_and_unfreeze_scroll(session, ns("livestock_table"))
   })
   
+  # ------ LIVESTOCK TIME FRACTIONS VALIDATION ---------------------------------
+  observeEvent(livestock_data(), {
+    # Always hide previous warnings at the start to avoid stale messages
+    shinyjs::hide("alert_message_livestock_invalid_values_inputs")
+    shinyjs::hide("alert_message_livestock_invalid_sum_inputs")
+    
+    # Validate input data: ensure data exists and contains at least one row
+    time_input <- livestock_data()
+    if (is.null(time_input) || nrow(time_input) == 0) return()
+    
+    # Identify the expected time-fraction columns
+    expected_columns <- c(
+      "time_in_stable",
+      "time_in_non_roofed_enclosure",
+      "time_in_onfarm_grazing",
+      "time_in_offfarm_grazing"
+    )
+    
+    # Keep only columns that exist in the current dataset
+    valid_columns <- intersect(expected_columns, names(time_input))
+    if (length(valid_columns) == 0) return()
+    
+    # Extract subset of time allocation data
+    time_data <- time_input[valid_columns]
+    
+    # Map backend variable names to display labels
+    display_labels <- livestock_table_colnames[
+      match(valid_columns, names(livestock_data_initialization))
+    ]
+    
+    # Initialize result containers
+    invalid_value_messages <- character(0)
+    livestock_invalid_values <- character(0)
+    invalid_sum_messages <- character(0)
+    livestock_invalid_sums <- character(0)
+    
+    # Check for invalid fraction values (<0 or >1)
+    for (i in seq_along(valid_columns)) {
+      column_name <- valid_columns[i]
+      column_label <- display_labels[i]
+      fraction_values <- time_data[[column_name]]
+      
+      invalid_rows <- which(fraction_values < 0 | fraction_values > 1)
+      if (length(invalid_rows) == 0) next
+      
+      livestock_names <- time_input$livetype_desc[invalid_rows]
+      invalid_values <- fraction_values[invalid_rows]
+      
+      messages <- sprintf(
+        "<strong>•</strong> For <strong> %s </strong>, the value in 
+       <strong>'%s'</strong> is <strong> %s </strong>. It must be ≥ 0 and ≤ 1!",
+        livestock_names, column_label, invalid_values
+      )
+      
+      invalid_value_messages <- c(invalid_value_messages, messages)
+      livestock_invalid_values <- c(livestock_invalid_values, livestock_names)
+    }
+    
+    # Check for invalid totals (sum of all four fractions ≠ 1)
+    row_sums <- rowSums(time_data, na.rm = TRUE)
+    
+    # Use a small tolerance when checking equality to 1
+    # This avoids false warnings from floating-point rounding errors
+    tolerance <- 1e-6
+    invalid_sum_rows <- which(abs(row_sums - 1) > tolerance)
+    
+    if (length(invalid_sum_rows) > 0) {
+      livestock_names <- time_input$livetype_desc[invalid_sum_rows]
+      total_values <- row_sums[invalid_sum_rows]
+      
+      # Display decimals only when needed (e.g., 0.9998 vs 1)
+      formatted_totals <- ifelse(
+        abs(total_values %% 1) < 1e-6,
+        as.character(round(total_values, 0)),
+        formatC(total_values, format = "f", digits = 4)
+      )
+      
+      messages <- sprintf(
+        "<strong>•</strong> For <strong> %s </strong>, the total across
+       the four time-fraction columns is <strong> %s </strong>. It must equal 1!",
+        livestock_names, formatted_totals
+      )
+      
+      invalid_sum_messages <- c(invalid_sum_messages, messages)
+      livestock_invalid_sums <- c(livestock_invalid_sums, livestock_names)
+    }
+    
+    # Sort messages alphabetically by livestock name
+    if (length(invalid_value_messages) > 0) {
+      order_index <- order(tolower(livestock_invalid_values))
+      invalid_value_messages <- invalid_value_messages[order_index]
+    }
+    
+    if (length(invalid_sum_messages) > 0) {
+      order_index <- order(tolower(livestock_invalid_sums))
+      invalid_sum_messages <- invalid_sum_messages[order_index]
+    }
+    
+    # Display messages if there are issues
+    if (length(invalid_value_messages) > 0) {
+      shinyjs::html(
+        "alert_message_livestock_invalid_values_inputs",
+        html = paste(invalid_value_messages, collapse = "<br>")
+      )
+      shinyjs::show("alert_message_livestock_invalid_values_inputs")
+    }
+    
+    if (length(invalid_sum_messages) > 0) {
+      shinyjs::html(
+        "alert_message_livestock_invalid_sum_inputs",
+        html = paste(invalid_sum_messages, collapse = "<br>")
+      )
+      shinyjs::show("alert_message_livestock_invalid_sum_inputs")
+    }
+  })
+  
   # Show modal dialog to update manure management
   observeEvent(input$livestock_table_cell_clicked, {
     info <- input$livestock_table_cell_clicked
@@ -1143,7 +1286,10 @@ scenario_server <- function(
         shinyWidgets::pickerInput(
           inputId = ns("manure_management"),
           label = NULL,
-          choices = unique(lkp_manureman()$manureman_desc)
+          choices = sort(
+            unique(lkp_manureman()$manureman_desc)
+          ),
+          options = list(`live-search` = TRUE)
         ),
         footer = tagList(
           actionButton(ns("ok_update_manure_management"), "OK"),
@@ -1196,14 +1342,19 @@ scenario_server <- function(
       shinyWidgets::pickerInput(
         inputId = ns("feed"),
         label = NULL,
-        choices = setNames(lkp_feeditem()$feed_item_code, lkp_feeditem()$feed_item_name)
+        choices = setNames(
+          lkp_feeditem()$feed_item_code,
+          lkp_feeditem()$feed_item_name
+        )[sort(lkp_feeditem()$feed_item_name)],
+        options = list(`live-search` = TRUE)
       ),
       br(),
       h2("Selected a Crop", class = "mb-3"),
       shinyWidgets::pickerInput(
         inputId = ns("crop"),
         label = NULL,
-        choices = NULL
+        choices = NULL,
+        options = list(`live-search` = TRUE)
       ),
       easyClose = TRUE,
       footer = tagList(
@@ -1225,7 +1376,7 @@ scenario_server <- function(
     shinyWidgets::updatePickerInput(
       session,
       "crop",
-      choices = choices
+      choices = choices[sort(names(choices))]
     )
   })
   
@@ -1351,12 +1502,11 @@ scenario_server <- function(
     
     # Update feedtype with the modified feedtype_dt
     feedtype(feedtype_dt)
-    
     # Checkboxes for enabling/disabling intercrop
     feedtype_dt$intercrop <- generate_shiny_inputs(
       FUN = checkboxInput,
       len = nrow(feedtype_dt),
-      id  = ("intercrop_check"),
+      id = ("intercrop_check"),
       value = checked_boxes$intercrop_checked
     )
     
@@ -1501,21 +1651,165 @@ scenario_server <- function(
       )
   }, server = FALSE)
   
-  # Update the crop table data when check box is checked
-  observeEvent(
-    input$checkbox_info, {
-      info <- input$checkbox_info
-      checked_boxes$intercrop_checked[info$row] <- info$value
-      feedtype_dt <- feedtype()
-      feedtype_dt$intercrop <- as.numeric(checked_boxes$intercrop_checked) # we need integer for json
-      # Reset the disabled cell to the value 0
-      feedtype_dt$intercrop_fraction[feedtype_dt$intercrop == 0] <- 0
-      feedtype(feedtype_dt)
-      
-      # Freeze and restore scroll position for crop table
-      freeze_and_unfreeze_scroll(session, ns("crop_table"))
+  # ------ CROP INTERCROPPING FRACTION AUTO-UPDATE -----------------------------
+  observeEvent(input$checkbox_info, {
+    info <- input$checkbox_info
+    req(length(info) > 0)
+    # Update stored checkbox states
+    checked_boxes$intercrop_checked[info$row] <- info$value
+    # Retrieve the current crop table data
+    feedtype_dt <- feedtype()
+    # Ensure required columns exist
+    required_columns <- c("intercrop", "intercrop_fraction")
+    if (!all(required_columns %in% names(feedtype_dt))) return()
+    # Update intercropping flag (numeric for JSON export)
+    feedtype_dt$intercrop <- as.numeric(checked_boxes$intercrop_checked)
+    # Apply logic for automatic fraction updates when checked 
+    if (isTRUE(info$value)) {
+      if (is.na(feedtype_dt$intercrop_fraction[info$row]) ||
+          feedtype_dt$intercrop_fraction[info$row] == 0) {
+        feedtype_dt$intercrop_fraction[info$row] <- 0.01
+      }
+    } else {
+      feedtype_dt$intercrop_fraction[info$row] <- 0
     }
-  )
+    # Push updated table back into reactive
+    feedtype(feedtype_dt)
+    # Keep scroll position stable after re-render
+    freeze_and_unfreeze_scroll(session, ns("crop_table"))
+  })
+  
+  # ------ FEEDTYPE VALIDATION -------------------------------------------------
+  observeEvent(feedtype(), {
+    # Hide previous warnings before running new validation
+    shinyjs::hide("alert_message_Intercropping_fraction_inputs")
+    shinyjs::hide("alert_message_residue_fractions_inputs")
+    # Stop if no feed table data is available
+    feed_table <- feedtype()
+    if (is.null(feed_table) || nrow(feed_table) == 0) return()
+    
+    # --- Validate intercropping fractions -------------------------------------
+    intercropping_fields <- c("feed_item_name", "intercrop", "intercrop_fraction")
+    if (all(intercropping_fields %in% names(feed_table))) {
+      
+      invalid_intercrop_msgs <- character(0)
+      
+      for (row_index in seq_len(nrow(feed_table))) {
+        # Proceed only when intercropping checkbox is checked
+        intercropping_selected <- !is.na(feed_table$intercrop[row_index]) &&
+          feed_table$intercrop[row_index] == 1
+        feed_label <- feed_table$feed_item_name[row_index]
+        
+        if (intercropping_selected) {
+          intercropping_value <- feed_table$intercrop_fraction[row_index]
+          # Auto-assign 0.01 when selected but value left blank
+          if (is.na(intercropping_value)) {
+            intercropping_value <- 0.01
+            feed_table$intercrop_fraction[row_index] <- intercropping_value
+          }
+          # Validate that fraction is strictly between 0 and 1
+          if (intercropping_value <= 0 || intercropping_value >= 1) {
+            invalid_intercrop_msgs[feed_label] <- sprintf(
+              "<strong>•</strong> For <strong> %s </strong>, the value in 
+              <strong>'IF intercropping, fraction of field occupied by this crop'</strong> 
+              column must be > 0 and < 1!",
+              feed_label
+            )
+          }
+        } else {
+          # Reset fraction to 0 when intercropping is unchecked
+          feed_table$intercrop_fraction[row_index] <- 0
+        }
+      }
+      # Display intercropping validation messages
+      if (length(invalid_intercrop_msgs) > 0) {
+        invalid_intercrop_msgs <- invalid_intercrop_msgs[
+          order(names(invalid_intercrop_msgs))
+        ]
+        shinyjs::html(
+          id = "alert_message_Intercropping_fraction_inputs",
+          html = paste(invalid_intercrop_msgs, collapse = "<br>")
+        )
+        shinyjs::show("alert_message_Intercropping_fraction_inputs")
+      }
+    }
+    
+    # --- Validate residue fraction columns ------------------------------------
+    residue_fields <- c(
+      "cut_carry_fraction",
+      "main_product_removal",
+      "residue_removal",
+      "residue_burnt"
+    )
+    residue_fields <- residue_fields[residue_fields %in% names(feed_table)]
+    # Stop if no residue fields exist in the dataset
+    if (length(residue_fields) == 0) {
+      feedtype(feed_table)
+      return()
+    }
+    # Map technical field names to user-friendly labels for clear UI messages
+    residue_field_labels <- vapply(
+      residue_fields,
+      function(field_name) {
+        # Locate field index in initialization to map to display label
+        field_index <- which(names(feedtype_initialization) == field_name)
+        if (length(field_index) == 1) {
+          # feedtype_colnames starts with a blank label for delete column
+          label_index <- field_index - 1
+          if (label_index <= length(feedtype_colnames)) {
+            # Return matching label text for display
+            feedtype_colnames[label_index]
+          } else {
+            # Fallback to backend name if label index is out of range
+            field_name
+          }
+        } else {
+          # Fallback if field name not found in initialization
+          field_name
+        }
+      },
+      character(1)
+    )
+    
+    # Validate all residue fractions using lapply for column-wise checks
+    invalid_residue_msgs <- unlist(lapply(seq_along(residue_fields), function(j) {
+      
+      residue_field <- residue_fields[j]
+      residue_label <- residue_field_labels[j]
+      # Identify rows where residue fractions are outside valid range [0,1]
+      invalid_rows <- which(
+        !is.na(feed_table[[residue_field]]) &
+          (feed_table[[residue_field]] < 0 | feed_table[[residue_field]] > 1)
+      )
+      
+      if (length(invalid_rows) == 0) return(NULL)
+      
+      feed_labels <- feed_table$feed_item_name[invalid_rows]
+      # Format detailed UI messages for each invalid residue fraction
+      msg_list <- sprintf(
+        "<strong>•</strong> For <strong> %s </strong>, the value in 
+        <strong>'%s'</strong> column must be ≥ 0 and ≤ 1!",
+        feed_labels, residue_label
+      )
+      
+      names(msg_list) <- feed_labels
+      msg_list
+    }))
+    # Display residue validation messages
+    if (length(invalid_residue_msgs) > 0) {
+      invalid_residue_msgs <- invalid_residue_msgs[
+        order(names(invalid_residue_msgs))
+      ]
+      shinyjs::html(
+        id = "alert_message_residue_fractions_inputs",
+        html = paste(invalid_residue_msgs, collapse = "<br>")
+      )
+      shinyjs::show("alert_message_residue_fractions_inputs")
+    }
+    
+    # Save updated data so assigned defaults persist in the table
+    feedtype(feed_table)
+  })
   
   # Render the crop inputs table
   output$crop_inputs_table <- renderDT({
@@ -1618,7 +1912,10 @@ scenario_server <- function(
           shinyWidgets::pickerInput(
             inputId = ns("source_type"),
             label = NULL,
-            choices = c("Main", "Residue", "Purchased")
+            choices = sort(
+              c("Main", "Residue", "Purchased")
+            ),
+            options = list(`live-search` = TRUE)
           ),
           footer = tagList(
             actionButton(ns("ok_update_source_type"), "OK"),
@@ -1639,7 +1936,8 @@ scenario_server <- function(
             choices = setNames(
               lkp_landcover()$landcover_code,
               lkp_landcover()$landcover_desc
-            )
+            )[sort(lkp_landcover()$landcover_desc)],
+            options = list(`live-search` = TRUE)
           ),
           footer = tagList(
             actionButton(ns("ok_update_land_cover"), "OK"),
@@ -1657,7 +1955,11 @@ scenario_server <- function(
           shinyWidgets::pickerInput(
             inputId = ns("slope_type"),
             label = NULL,
-            choices = setNames(lkp_slope()$slope_code, lkp_slope()$slope_desc)
+            choices = setNames(
+              lkp_slope()$slope_code,
+              lkp_slope()$slope_desc
+            )[sort(lkp_slope()$slope_desc)],
+            options = list(`live-search` = TRUE)
           ),
           footer = tagList(
             actionButton(ns("ok_update_slope_type"), "OK"),
@@ -1677,7 +1979,11 @@ scenario_server <- function(
             shinyWidgets::pickerInput(
               inputId = ns("grassland_man"),
               label = NULL,
-              choices = setNames(lkp_grasslandman()$management_code, lkp_grasslandman()$management_desc)
+              choices = setNames(
+                lkp_grasslandman()$management_code,
+                lkp_grasslandman()$management_desc
+              )[sort(lkp_grasslandman()$management_desc)],
+              options = list(`live-search` = TRUE)
             ),
             footer = tagList(
               actionButton(ns("ok_update_grassland_man"), "OK"),
@@ -1699,7 +2005,8 @@ scenario_server <- function(
             shinyWidgets::pickerInput(
               inputId = ns("water_regime"),
               label = NULL,
-              choices = water_regime_options
+              choices = sort(water_regime_options),
+              options = list(`live-search` = TRUE)
             ),
             footer = tagList(
               actionButton(ns("ok_update_water_regime"), "OK"),
@@ -1721,7 +2028,8 @@ scenario_server <- function(
             shinyWidgets::pickerInput(
               inputId = ns("rice_ecosystem"),
               label = NULL,
-              choices = rice_ecosystem_options
+              choices = sort(rice_ecosystem_options),
+              options = list(`live-search` = TRUE)
             ),
             footer = tagList(
               actionButton(ns("ok_update_rice_ecosystem"), "OK"),
@@ -1743,7 +2051,8 @@ scenario_server <- function(
             shinyWidgets::pickerInput(
               inputId = ns("rice_organic_amendment"),
               label = NULL,
-              choices = rice_organic_amendment_options
+              choices = sort(rice_organic_amendment_options),
+              options = list(`live-search` = TRUE)
             ),
             footer = tagList(
               actionButton(ns("ok_update_rice_organic_amendment"), "OK"),
@@ -1763,7 +2072,10 @@ scenario_server <- function(
           shinyWidgets::pickerInput(
             inputId = ns("feed_category"),
             label = NULL,
-            choices = unique(lkp_feedtype()$category[lkp_feedtype()$category != ""])
+            choices = sort(
+              unique(lkp_feedtype()$category[lkp_feedtype()$category != ""])
+            ),
+            options = list(`live-search` = TRUE)
           ),
           footer = tagList(
             actionButton(ns("ok_update_category"), "OK"),
@@ -2288,7 +2600,9 @@ scenario_server <- function(
     shinyWidgets::updatePickerInput(
       session,
       "database_code",
-      choices = list.files(database_dir, full.names = FALSE),
+      choices = sort(
+        list.files(database_dir, full.names = FALSE)
+      ),
       selected = selected_database
     )
     
@@ -2425,7 +2739,7 @@ scenario_server <- function(
       basket_data <- list()
     }
   })
-
+  
   # Update The scenario's select inputs ----------------------------------------
   observe({
     req(lkp_region())
@@ -2435,58 +2749,77 @@ scenario_server <- function(
     # Reconstruct the region's input
     shinyWidgets::updatePickerInput(
       session, "region",
-      choices = setNames(lkp_region()$region_code, lkp_region()$region_desc),
+      choices = setNames(
+        lkp_region()$region_code,
+        lkp_region()$region_desc
+      )[sort(lkp_region()$region_desc)],
       selected = session$userData$study_object()$region
     )
     
     #Reconstruct the select inputs
     shinyWidgets::updatePickerInput(
       session, "climate_zone",
-      choices = lkp_climate()$climate_desc,
+      choices = sort(
+        lkp_climate()$climate_desc
+      ),
       selected = session$userData$study_object()$climate_zone
     )
     
     shinyWidgets::updatePickerInput(
       session, "climate_zone_2", 
-      choices = lkp_climate2() %>%
-        filter(climate_code == "Temperate") %>%
-        pull(climate2_desc),
+      choices = sort(
+        lkp_climate2() %>%
+          filter(climate_code == "Temperate") %>%
+          pull(climate2_desc)
+      ),
       selected = session$userData$study_object()$climate_zone_2
     )
     
     shinyWidgets::updatePickerInput(
       session, "soil_description", 
-      choices = lkp_soil()$soil_desc,
+      choices = sort(
+        lkp_soil()$soil_desc
+      ),
       selected = session$userData$study_object()$soil_description
     )
     
     shinyWidgets::updatePickerInput(
       session, "cropland_system", 
-      choices = lkp_croplandsystem()$sys_desc,
+      choices = sort(
+        lkp_croplandsystem()$sys_desc
+      ),
       selected = session$userData$study_object()$cropland_system
     )
     
     shinyWidgets::updatePickerInput(
       session, "cropland_tillage", 
-      choices = lkp_tillageregime()$tillage_desc,
+      choices = sort(
+        lkp_tillageregime()$tillage_desc
+      ),
       selected = session$userData$study_object()$cropland_tillage
     )
     
     shinyWidgets::updatePickerInput(
       session, "cropland_orgmatter", 
-      choices = lkp_organicmatter()$orgmatter_desc,
+      choices = sort(
+        lkp_organicmatter()$orgmatter_desc
+      ),
       selected = session$userData$study_object()$cropland_orgmatter
     )
     
     shinyWidgets::updatePickerInput(
       session, "grassland_management", 
-      choices = lkp_grasslandman()$management_desc,
+      choices = sort(
+        lkp_grasslandman()$management_desc
+      ),
       selected = session$userData$study_object()$grassland_management
     )
     
     shinyWidgets::updatePickerInput(
       session, "grassland_implevel", 
-      choices = lkp_grassinputlevel()$grassinputlevel_desc,
+      choices = sort(
+        lkp_grassinputlevel()$grassinputlevel_desc
+      ),
       selected = session$userData$study_object()$grassland_implevel
     )
   })

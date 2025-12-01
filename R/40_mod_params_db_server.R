@@ -5,6 +5,14 @@ params_db_server <- function(
   ns <- session$ns
   jns <- function(x) paste0("#", ns(x))
   
+  # ------ PAGINATION STATE MANAGEMENT -----------------------------------------
+  # Tracks current page number per parameter table for consistent navigation.
+  pagination_state <- reactiveValues()
+  rows_per_page <- 10
+  for (tbl in parameters_db_names) {
+    pagination_state[[paste0(tbl, "_page")]] <- 1
+  }
+  
   # ------ * Initialize the parameters database inputs -------------------------
   observe({
     cat(file = stderr(), "40 - Initializing the parameters database inputs...\n")
@@ -12,8 +20,10 @@ params_db_server <- function(
     shinyWidgets::updatePickerInput(
       session = session,
       inputId = "database_name",
-      choices = list.files(
-        file.path(session$userData$user_folder, "parameters_database"), full.names = FALSE
+      choices = sort(
+        list.files(
+          file.path(session$userData$user_folder, "parameters_database"), full.names = FALSE
+        )
       ),
       selected = character(0)
     )
@@ -22,9 +32,11 @@ params_db_server <- function(
     shinyWidgets::updatePickerInput(
       session = session,
       inputId = "database_shared_folder",
-      choices = list.files(
-        # use file.path function better "data" ..
-        file.path("data", "shared_folder", "parameters_database"), full.names = FALSE
+      choices = sort(
+        list.files(
+          # use file.path function better "data" ..
+          file.path("data", "shared_folder", "parameters_database"), full.names = FALSE
+        )
       ),
       selected = character(0)
     )
@@ -50,9 +62,11 @@ params_db_server <- function(
       shinyWidgets::updatePickerInput(
         session,
         "database_name",
-        choices = list.files(
-          path = file.path(session$userData$user_folder, "parameters_database"),
-          full.names = FALSE
+        choices = sort(
+          list.files(
+            path = file.path(session$userData$user_folder, "parameters_database"),
+            full.names = FALSE
+          )
         ),
         selected = input$database_name
       )
@@ -152,8 +166,10 @@ params_db_server <- function(
     shinyWidgets::updatePickerInput(
       session = session,
       inputId = "database_name",
-      choices = list.files(
-        file.path(session$userData$user_folder, "parameters_database"), full.names = FALSE
+      choices = sort(
+        list.files(
+          file.path(session$userData$user_folder, "parameters_database"), full.names = FALSE
+        )
       )
     )
     
@@ -200,8 +216,10 @@ params_db_server <- function(
     shinyWidgets::updatePickerInput(
       session = session,
       inputId = "database_name",
-      choices = list.files(
-        file.path(session$userData$user_folder, "parameters_database"), full.names = FALSE
+      choices = sort(
+        list.files(
+          file.path(session$userData$user_folder, "parameters_database"), full.names = FALSE
+        )
       ),
       selected = basename(clone_file_path)
     )
@@ -238,9 +256,11 @@ params_db_server <- function(
       shinyWidgets::updatePickerInput(
         session,
         "database_name",
-        choices = list.files(
-          path = file.path(session$userData$user_folder, "parameters_database"),
-          full.names = FALSE
+        choices = sort(
+          list.files(
+            path = file.path(session$userData$user_folder, "parameters_database"),
+            full.names = FALSE
+          )
         ),
         selected = input$database_new_name
       )
@@ -291,7 +311,9 @@ params_db_server <- function(
     shinyWidgets::updatePickerInput(
       session,
       "database_name",
-      choices = list.files(destination_dir, full.names = FALSE),
+      choices = sort(
+        list.files(destination_dir, full.names = FALSE)
+      ),
       selected = basename(clone_file_path)
     )
     
@@ -395,7 +417,9 @@ params_db_server <- function(
       shinyWidgets::updatePickerInput(
         session,
         "database_name",
-        choices = list.files(destination_dir, full.names = FALSE),
+        choices = sort(
+          list.files(destination_dir, full.names = FALSE)
+        ),
         selected = basename(clone_file_path)
       )
       
@@ -477,7 +501,9 @@ params_db_server <- function(
       shinyWidgets::updatePickerInput(
         session,
         "database_name",
-        choices = list.files(destination_dir, full.names = FALSE),
+        choices = sort(
+          list.files(destination_dir, full.names = FALSE)
+        ),
         selected = basename(clone_file_path)
       )
       
@@ -520,9 +546,11 @@ params_db_server <- function(
     shinyWidgets::updatePickerInput(
       session,
       "database_name",
-      choices = list.files(
-        file.path(session$userData$user_folder, "parameters_database"),
-        full.names = FALSE
+      choices = sort(
+        list.files(
+          file.path(session$userData$user_folder, "parameters_database"),
+          full.names = FALSE
+        )
       ),
       selected = session$userData$database_code()
     )
@@ -573,6 +601,8 @@ params_db_server <- function(
       # reset the buttons
       shinyjs::enable(id = paste0("add_rows_", name))
       shinyjs::enable(id = paste0("delete_rows_", name))
+      shinyjs::enable(id = paste0("clone_rows_", name))
+      
       # Check if the database is the default one
       if (input$database_name == "Params DB - Default") {
         editablity <- FALSE
@@ -585,37 +615,185 @@ params_db_server <- function(
           )
         )
         
-        # Disable add and delete rows buttons
+        # Disable all modification buttons
         shinyjs::disable(id = paste0("add_rows_", name))
         shinyjs::disable(id = paste0("delete_rows_", name))
-      } else (
+        shinyjs::disable(id = paste0("clone_rows_", name))
+      } else {
         editablity <- list(
           target = "cell",
           # Prevent editing of the first column (check boxes for delete rows)
           disable = list(columns = 0)
         )
-      )
+      }
       
+      page_var <- paste0(name, "_page")
+      current_page <- pagination_state[[page_var]]
+      # Determine visible rows based on current page (e.g., page 2 → rows 11–20)
+      start_row <- (current_page - 1) * rows_per_page + 1
+      end_row <- min(start_row + rows_per_page - 1, nrow(data_table))
+      paged_data <- data_table[start_row:end_row, , drop = FALSE]
+      
+      # Render paged datatable
       datatable(
-        data = data_table,
+        data = paged_data,
         editable = editablity,
         rownames = FALSE,
         escape = FALSE,
         extensions = "FixedColumns",
         selection = "none",
-        # Set the first column (selected) name to an empty string
-        colnames = c("", colnames(data_table)[-1]),
+        colnames = c("", colnames(data_table)[-1]),  # Hide first column name
         options = list(
           scrollX = TRUE,
           processing = FALSE,
           paging = FALSE,
           searching = FALSE,
+          info = FALSE,
           columnDefs = column_defs,
-          drawCallback = JS(checkbox_link_multi(id = "selected_row", ns = ns, table_name = name)),
+          drawCallback = JS(
+            checkbox_link_multi(
+              id = "selected_row",
+              ns = ns,
+              table_name = name
+            )
+          ),
           fixedColumns = list(leftColumns = 1)
         )
       )
+      
     }, server = FALSE)
+  })
+  
+  # ------ PAGINATION CONTROLS (NEXT, PREVIOUS, RANGE LABEL) -------------------
+  # Handles navigation across table pages and displays visible entry range.
+  lapply(parameters_db_names, function(table_name) {
+    # Move forward unless already on the last page.
+    observeEvent(input[[paste0("next_page_", table_name)]], {
+      total_rows <- nrow(session$userData$parameters_db[[table_name]])
+      total_pages <- ceiling(total_rows / rows_per_page)
+      current_page <- pagination_state[[paste0(table_name, "_page")]]
+      
+      if (current_page < total_pages) {
+        pagination_state[[paste0(table_name, "_page")]] <- current_page + 1
+      }
+    })
+    
+    # Move backward unless already on the first page.
+    observeEvent(input[[paste0("prev_page_", table_name)]], {
+      current_page <- pagination_state[[paste0(table_name, "_page")]]
+      if (current_page > 1) {
+        pagination_state[[paste0(table_name, "_page")]] <- current_page - 1
+      }
+    })
+    
+    # Example: “Showing 11 – 20 of 47 total entries”.
+    output[[paste0("entries_info_", table_name)]] <- renderText({
+      total_entries <- nrow(session$userData$parameters_db[[table_name]])
+      if (total_entries == 0) return("No entries")
+      
+      current_page <- pagination_state[[paste0(table_name, "_page")]]
+      first_entry <- (current_page - 1) * rows_per_page + 1
+      last_entry <- min(first_entry + rows_per_page - 1, total_entries)
+      
+      sprintf("Showing %d – %d of %d total entries",
+              first_entry, last_entry, total_entries)
+    })
+  })
+  
+  # ------ Compact pagination UI with ellipsis and error guard -----------------
+  lapply(parameters_db_names, function(name) {
+    
+    output[[paste0("page_buttons_", name)]] <- renderUI({
+      # Skip rendering if table not yet initialized
+      if (is.null(session$userData$parameters_db[[name]])) return(NULL)
+      
+      total_rows <- nrow(session$userData$parameters_db[[name]])
+      if (is.na(total_rows) || total_rows == 0) return(NULL)
+      
+      total_pages <- ceiling(total_rows / rows_per_page)
+      current_page <- pagination_state[[paste0(name, "_page")]]
+      if (total_pages <= 1) return(NULL)
+      
+      # Determine visible pages (first 2, last 2, ±2 around current)
+      visible_pages <- unique(sort(c(
+        1, 2,
+        seq(current_page - 2, current_page + 2),
+        total_pages - 1, total_pages
+      )))
+      visible_pages <- visible_pages[
+        visible_pages >= 1 & visible_pages <= total_pages
+      ]
+      
+      # Insert ellipsis for skipped page ranges
+      page_labels <- c()
+      for (i in seq_along(visible_pages)) {
+        page_labels <- c(page_labels, as.character(visible_pages[i]))
+        if (i < length(visible_pages) &&
+            (visible_pages[i + 1] - visible_pages[i]) > 1) {
+          page_labels <- c(page_labels, "…")
+        }
+      }
+      
+      # Build pagination buttons
+      tagList(
+        actionButton(
+          inputId = ns(paste0("prev_page_", name)),
+          label = "◀ ",
+          class = "btn btn-outline-primary btn-sm me-1"
+        ),
+        lapply(page_labels, function(label) {
+          if (label == "…") {
+            span("...", class = "mx-1 text-muted")
+          } else {
+            p <- as.numeric(label)
+            style_class <- if (p == current_page)
+              "btn btn-primary btn-sm fw-bold"
+            else
+              "btn btn-outline-primary btn-sm"
+            
+            actionButton(
+              inputId = ns(paste0("go_page_", name, "_", p)),
+              label = label,
+              class = style_class,
+              style = "min-width: 35px;"
+            )
+          }
+        }),
+        actionButton(
+          inputId = ns(paste0("next_page_", name)),
+          label = " ▶",
+          class = "btn btn-outline-primary btn-sm ms-1"
+        )
+      )
+    })
+    
+    # --- Observe dynamic go-to-page buttons safely ----------------------------
+    observe({
+      # Defensive checks for uninitialized tables
+      if (is.null(session$userData$parameters_db[[name]])) return()
+      
+      total_rows <- nrow(session$userData$parameters_db[[name]])
+      if (is.na(total_rows) || total_rows <= 0) return()
+      
+      total_pages <- max(1, ceiling(total_rows / rows_per_page))
+      if (!is.finite(total_pages) || total_pages < 1) {
+        total_pages <- 1
+      }
+      
+      lapply(
+        seq_len(total_pages),
+        function(p) {
+          input_id <- paste0("go_page_", name, "_", p)
+          observeEvent(
+            input[[input_id]],
+            {
+              pagination_state[[paste0(name, "_page")]] <- p
+            },
+            ignoreInit = TRUE
+          )
+        }
+      )
+    })
   })
   
   # ------ * Observe edits on rendered DT  -------------------------------------
@@ -625,6 +803,14 @@ params_db_server <- function(
       # Get the info of the edited cell
       info <- input[[paste0("table_", name, "_cell_edit")]]
       new_data <- session$userData$parameters_db[[name]]
+
+      page_var <- paste0(name, "_page")
+      current_page <- pagination_state[[page_var]]
+      if (is.null(current_page) || !is.finite(current_page)) {
+        current_page <- 1
+      }
+      start_row <- (current_page - 1) * rows_per_page
+      info$row <- info$row + start_row
       
       # Update the specific cell while preserving the column's data type
       new_data <- update_cell(new_data, info, offset = 0)
@@ -644,49 +830,134 @@ params_db_server <- function(
     })
   })
   
-  # ------ * Observe delete and add empty rows buttons  ------------------------
-  lapply(parameters_db_names, function(name) {
-    observeEvent(input[[paste0("delete_rows_", name)]], {
+  # ------ DELETE ROW BUTTON ---------------------------------------------------
+  # Delete selected parameter records from the current visible page.
+  # Keeps pagination stable and updates memory + disk immediately.
+  lapply(parameters_db_names, function(table_name) {
+    observeEvent(input[[paste0("delete_rows_", table_name)]], {
       req(input$database_name)
-      rows_to_delete <- which(
-        sapply(
-          seq_len(nrow(session$userData$parameters_db[[name]])),
-          function(i) input[[paste0("selected_row_", name, "_", i)]]
-        )
-      )
-      # Proceed only if there are rows selected to delete
-      if (length(rows_to_delete) > 0) {
-        session$userData$parameters_db[[name]] <- session$userData$parameters_db[[name]][-rows_to_delete]
-        # Write updated table back to CSV
-        fwrite(
-          session$userData$parameters_db[[name]],
-          file.path(session$userData$user_folder, "parameters_database",
-                    input$database_name, paste0(name, ".csv"))
-        )
-      }
       
-      # Freeze and restore scroll position after deletion
-      freeze_and_unfreeze_scroll(session, ns(paste0("table_", name)))
-    })
-  })
-  
-  lapply(parameters_db_names, function(name) {
-    observeEvent(input[[paste0("add_rows_", name)]], {
-      req(input$database_name)
-      session$userData$parameters_db[[name]] <- rbind(
-        session$userData$parameters_db[[name]],
-        as.list(rep(NA, ncol(session$userData$parameters_db[[name]])))
-      )
+      parameter_table <- session$userData$parameters_db[[table_name]]
+      if (nrow(parameter_table) == 0) return()
+      # Identify the visible range of rows for the current page
+      current_page <- pagination_state[[paste0(table_name, "_page")]]
+      first_row <- (current_page - 1) * rows_per_page + 1
+      last_row <- min(first_row + rows_per_page - 1, nrow(parameter_table))
+      # Detect which visible checkboxes are selected
+      selected_indices_visible <- which(vapply(
+        seq_len(last_row - first_row + 1),
+        function(i) isTRUE(input[[paste0("selected_row_", table_name, "_", i)]]),
+        logical(1)
+      ))
+      if (length(selected_indices_visible) == 0) return()
+      # Translate visible selection into global indices and remove rows
+      rows_to_delete <- first_row + selected_indices_visible - 1
+      parameter_table <- parameter_table[-rows_to_delete, , drop = FALSE]
+      # Update memory and re-sync pagination in case last page became empty
+      session$userData$parameters_db[[table_name]] <- parameter_table
+      total_pages <- max(1, ceiling(nrow(parameter_table) / rows_per_page))
+      pagination_state[[paste0(table_name, "_page")]] <-
+        min(pagination_state[[paste0(table_name, "_page")]], total_pages)
+      # Persist to disk and refresh UI
       fwrite(
-        session$userData$parameters_db[[name]],
-        file.path(session$userData$user_folder, "parameters_database",
-                  input$database_name, paste0(name, ".csv"))
+        parameter_table,
+        file.path(
+          session$userData$user_folder,
+          "parameters_database",
+          input$database_name,
+          paste0(table_name, ".csv")
+        )
       )
-      
-      # Freeze and restore scroll position after adding rows
-      freeze_and_unfreeze_scroll(session, ns(paste0("table_", name)))
-      
+      # Maintain visual continuity after deletion
+      freeze_and_unfreeze_scroll(session, ns(paste0("table_", table_name)))
     })
   })
   
-})}
+  # ------ ADD ROW BUTTON ------------------------------------------------------
+  # Add a single empty record and navigate automatically to the last page.
+  lapply(parameters_db_names, function(table_name) {
+    observeEvent(input[[paste0("add_rows_", table_name)]], {
+      req(input$database_name)
+      
+      # Retrieve current table from memory
+      parameter_table <- session$userData$parameters_db[[table_name]]
+      # Append one empty record with NA placeholders
+      new_record <- as.list(rep(NA, ncol(parameter_table)))
+      parameter_table <- rbind(parameter_table, new_record)
+      # Update in-memory data and persist to disk
+      session$userData$parameters_db[[table_name]] <- parameter_table
+      fwrite(
+        parameter_table,
+        file.path(
+          session$userData$user_folder,
+          "parameters_database",
+          input$database_name,
+          paste0(table_name, ".csv")
+        )
+      )
+      # Move user to the last page so new entry is immediately visible
+      pagination_state[[paste0(table_name, "_page")]] <-
+        ceiling(nrow(parameter_table) / rows_per_page)
+      # Keep table scroll position to prevent UI jump
+      freeze_and_unfreeze_scroll(session, ns(paste0("table_", table_name)))
+    })
+  })
+  
+  # ------ CLONE ROW BUTTON ----------------------------------------------------
+  # Duplicates a selected parameter record and inserts it immediately after.
+  # Only one record can be cloned at a time.
+  lapply(parameters_db_names, function(table_name) {
+    observeEvent(input[[paste0("clone_rows_", table_name)]], {
+      req(input$database_name)
+      
+      parameter_table <- session$userData$parameters_db[[table_name]]
+      if (nrow(parameter_table) == 0) return()
+      # Identify visible range and which record is selected
+      current_page <- pagination_state[[paste0(table_name, "_page")]]
+      first_row <- (current_page - 1) * rows_per_page + 1
+      last_row <- min(first_row + rows_per_page - 1, nrow(parameter_table))
+      
+      selected_visible <- which(vapply(
+        seq_len(last_row - first_row + 1),
+        function(i) isTRUE(input[[paste0("selected_row_", table_name, "_", i)]]),
+        logical(1)
+      ))
+      req(length(selected_visible) == 1)
+      
+      selected_row <- first_row + selected_visible - 1
+      # Clone the selected record and ensure unique ID
+      cloned_record <- parameter_table[selected_row, , drop = FALSE]
+      id_column <- names(parameter_table)[1]
+      
+      if (!is.na(cloned_record[[id_column]]) && cloned_record[[id_column]] != "") {
+        cloned_record[[id_column]] <- paste0(cloned_record[[id_column]], "_clone")
+      } else {
+        cloned_record[[id_column]] <- "new_clone"
+      }
+      # Insert cloned record immediately after original
+      if (selected_row < nrow(parameter_table)) {
+        parameter_table <- rbind(
+          parameter_table[1:selected_row, ],
+          cloned_record,
+          parameter_table[(selected_row + 1):nrow(parameter_table), ]
+        )
+      } else {
+        parameter_table <- rbind(parameter_table, cloned_record)
+      }
+      # Update memory and persist to disk
+      session$userData$parameters_db[[table_name]] <- parameter_table
+      fwrite(
+        parameter_table,
+        file.path(
+          session$userData$user_folder,
+          "parameters_database",
+          input$database_name,
+          paste0(table_name, ".csv")
+        )
+      )
+      # Keep scroll position for a seamless editing experience
+      freeze_and_unfreeze_scroll(session, ns(paste0("table_", table_name)))
+    })
+  })
+})
+}

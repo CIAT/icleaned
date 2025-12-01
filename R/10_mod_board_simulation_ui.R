@@ -41,6 +41,7 @@ board_simulation_ui <- function(id) {
               choices = NULL,
               multiple = TRUE,
               options = list(
+                `live-search` = TRUE,
                 `selected-text-format` = "count",
                 `count-selected-text` = "{0}/{1} Scenarios"
               )
@@ -98,7 +99,8 @@ board_simulation_ui <- function(id) {
             inputId = ns("scenario_name"), 
             label = NULL,
             choices = NULL,
-            multiple = FALSE
+            multiple = FALSE,
+            options = list(`live-search` = TRUE)
           )
         )
       ),
