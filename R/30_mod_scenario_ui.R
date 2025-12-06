@@ -345,7 +345,7 @@ scenario_ui <- function(id) {
                                 class = "d-flex align-items-center px-1",
                                 actionButton(
                                   inputId = ns("delete_season"),
-                                  label = "Delete",
+                                  label = "Remove",
                                   class = "btn btn-primary filters-btn",
                                   icon = icon("trash")
                                 )
