@@ -586,6 +586,12 @@ scenario_ui <- function(id) {
                       class = "carousel-item",
                       div(class = "p-5 bg-light",
                           h2("Area", class = "tabsH2"),
+                          shinyjs::hidden(
+                          div(
+                            id = ns("alert_message_area_inputs"),
+                            class = "alert alert-danger"
+                          )
+                        ),
                           h2("Annual precipitation (mm/yr)", class = "mb-3"),
                           tags$div(
                             class = "mb-4",
@@ -670,7 +676,7 @@ scenario_ui <- function(id) {
                               value = 0
                             )
                           ),
-                          h2("ETO (mm/year)", class = "mb-3"),
+                          h2("ET₀ (mm/year)", class = "mb-3"),
                           tags$div(
                             class = "mb-5",
                             numericInput(

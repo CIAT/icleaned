@@ -69,6 +69,9 @@ scenario_server <- function(
     shinyjs::html(id = "last_update_date", html = last_modification_date)
   })
   
+  # ----- Validation Module ----------------------------------------------------
+  validation_server("validation", input = input, parent_session = session)
+
   # -----  * Show Scenario Editor Section after selection ----------------------
   observeEvent(input$json_file_name, {
     shinyjs::show(id = "scenario_editor_section")
