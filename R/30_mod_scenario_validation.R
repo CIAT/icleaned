@@ -14,6 +14,8 @@ validation_conditions <- list(
   non_negative = function(x) x >= 0,
   # Validates value is strictly greater than zero
   positive = function(x) x > 0,
+  # Validates value is a percentage (0-100 inclusive)
+  percentage = function(x) x >= 0 && x <= 100,
   # Validates value is a proportion (0-1 inclusive)
   between_0_1 = function(x) x >= 0 && x <= 1
 )
@@ -23,6 +25,7 @@ validation_conditions <- list(
 error_message_templates <- list(
   non_negative = "It must be ≥ 0!",
   positive = "It must be > 0!",
+  percentage = "It must be ≥ 0 and ≤ 100!",
   between_0_1 = "It must be ≥ 0 and ≤ 1!"
 )
 
@@ -71,6 +74,51 @@ area_fields_config <- list(
   )
 )
 
+# Configuration for waste input fields (percentages)
+# Each field specifies its input ID, display label, and validation rule
+waste_fields_config <- list(
+  list(
+    id = "waste_production_milk",
+    label = "Production (milk)",
+    validator = "percentage"
+  ),
+  list(
+    id = "waste_distribution_milk",
+    label = "Distribution (milk)",
+    validator = "percentage"
+  ),
+  list(
+    id = "waste_processing_milk",
+    label = "Processing (milk)",
+    validator = "percentage"
+  ),
+  list(
+    id = "waste_consume_milk",
+    label = "Consumption (milk)",
+    validator = "percentage"
+  ),
+  list(
+    id = "waste_production_meat",
+    label = "Production (meat)",
+    validator = "percentage"
+  ),
+  list(
+    id = "waste_distribution_meat",
+    label = "Distribution (meat)",
+    validator = "percentage"
+  ),
+  list(
+    id = "waste_processing_meat",
+    label = "Processing (meat)",
+    validator = "percentage"
+  ),
+  list(
+    id = "waste_consume_meat",
+    label = "Consumption (meat)",
+    validator = "percentage"
+  )
+)
+
 # ------ VALIDATION REGISTRY -----------------------------------------------------
 
 # Central registry organizing validation configurations by input group
@@ -79,6 +127,10 @@ validation_registry <- list(
   area_inputs = list(
     fields = area_fields_config,
     alert_id = "alert_message_area_inputs"
+  ),
+  waste_inputs = list(
+    fields = waste_fields_config,
+    alert_id = "alert_message_waste_inputs"
   )
 )
 
@@ -226,6 +278,32 @@ validation_server <- function(id, input, parent_session) {
       execute_validation(
         fields = prepared_fields,
         alert_id = parent_session$ns(area_validation_config$alert_id)
+      )
+    })
+
+    # Retrieve validation configuration for waste inputs
+    waste_validation_config <- validation_registry$waste_inputs
+
+    # Create a reactive trigger that fires when any waste input field changes
+    # This reactive returns a list of all field values, causing it to
+    # re-execute whenever any field in the list changes
+    waste_inputs_trigger <- reactive({
+      lapply(waste_validation_config$fields, function(field_config) {
+        input[[field_config$id]]
+      })
+    })
+
+    # Observe the reactive trigger and execute validation when it fires
+    observeEvent(waste_inputs_trigger(), {
+      # Prepare fields with current values and validation functions
+      prepared_fields <- prepare_fields(
+        waste_validation_config$fields
+      )
+
+      # Execute validation and update UI
+      execute_validation(
+        fields = prepared_fields,
+        alert_id = parent_session$ns(waste_validation_config$alert_id)
       )
     })
   })

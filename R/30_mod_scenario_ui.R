@@ -438,6 +438,12 @@ scenario_ui <- function(id) {
                       class = "carousel-item",
                       div(class = "p-5 bg-light",
                           h2("Waste of milk and meat", class = "tabsH2"),
+                        shinyjs::hidden(
+                          div(
+                            id = ns("alert_message_waste_inputs"),
+                            class = "alert alert-danger"
+                          )
+                        ),
                           fluidRow(
                             column(
                               width = 6,
