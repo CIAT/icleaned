@@ -163,18 +163,20 @@ execute_validation <- function(fields, alert_id) {
   # Initially hide the alert message element
   shinyjs::hide(id = alert_id, asis = TRUE)
 
-  # Initialize empty vector to collect validation error messages
-  validation_error_messages <- character(0)
+  # Initialize empty list to collect validation errors with field information
+  validation_errors <- list()
 
-  # Iterate through each field configuration
-  for (field in fields) {
+  # Iterate through each field configuration with index
+  for (i in seq_along(fields)) {
+    field <- fields[[i]]
+
     # Only validate fields with non-null and non-NA values
     # Empty or NA values are considered acceptable and skip validation
     if (!is.null(field$value) && !is.na(field$value)) {
       # Apply the validation function to the field's current value
       is_valid <- field$validate_fn(field$value)
 
-      # If validation fails, construct and collect error message
+      # If validation fails, construct and collect error with field index
       if (!is_valid) {
         formatted_error_message <- sprintf(
           "<strong>•</strong> The value in <strong>'%s'</strong> is <strong>%s</strong>. %s",
@@ -182,13 +184,24 @@ execute_validation <- function(fields, alert_id) {
           field$value,
           field$error_msg
         )
-        validation_error_messages <- c(validation_error_messages, formatted_error_message)
+
+        # Store error with field index for sorting
+        validation_errors[[length(validation_errors) + 1]] <- list(
+          index = i,
+          message = formatted_error_message
+        )
       }
     }
   }
 
-  # If any validation errors were found, display them
-  if (length(validation_error_messages) > 0) {
+  # If any validation errors were found, sort and display them
+  if (length(validation_errors) > 0) {
+    # Sort errors by field index to maintain config order
+    sorted_errors <- validation_errors[order(sapply(validation_errors, function(e) e$index))]
+
+    # Extract just the messages
+    validation_error_messages <- sapply(sorted_errors, function(e) e$message)
+
     # Combine all error messages with line breaks for display
     combined_error_html <- paste(validation_error_messages, collapse = "<br>")
 
