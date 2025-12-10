@@ -119,6 +119,31 @@ waste_fields_config <- list(
   )
 )
 
+# Configuration for manure/fertilizer input fields
+# Each field specifies its input ID, display label, and validation rule
+manure_fields_config <- list(
+  list(
+    id = "purchased_manure",
+    label = "Annual purchase of manure (kg N)",
+    validator = "non_negative"
+  ),
+  list(
+    id = "purchased_compost",
+    label = "Annual purchase of compost (kg N)",
+    validator = "non_negative"
+  ),
+  list(
+    id = "purchased_organic_n",
+    label = "Annual purchase of other organic N additions (kg N)",
+    validator = "non_negative"
+  ),
+  list(
+    id = "purchased_bedding",
+    label = "Annual purchase of bedding materials (kg N)",
+    validator = "non_negative"
+  )
+)
+
 # ------ VALIDATION REGISTRY -----------------------------------------------------
 
 # Central registry organizing validation configurations by input group
@@ -131,6 +156,10 @@ validation_registry <- list(
   waste_inputs = list(
     fields = waste_fields_config,
     alert_id = "alert_message_waste_inputs"
+  ),
+  manure_inputs = list(
+    fields = manure_fields_config,
+    alert_id = "alert_message_manure_inputs"
   )
 )
 
@@ -317,6 +346,32 @@ validation_server <- function(id, input, parent_session) {
       execute_validation(
         fields = prepared_fields,
         alert_id = parent_session$ns(waste_validation_config$alert_id)
+      )
+    })
+
+    # Retrieve validation configuration for manure inputs
+    manure_validation_config <- validation_registry$manure_inputs
+
+    # Create a reactive trigger that fires when any manure input field changes
+    # This reactive returns a list of all field values, causing it to
+    # re-execute whenever any field in the list changes
+    manure_inputs_trigger <- reactive({
+      lapply(manure_validation_config$fields, function(field_config) {
+        input[[field_config$id]]
+      })
+    })
+
+    # Observe the reactive trigger and execute validation when it fires
+    observeEvent(manure_inputs_trigger(), {
+      # Prepare fields with current values and validation functions
+      prepared_fields <- prepare_fields(
+        manure_validation_config$fields
+      )
+
+      # Execute validation and update UI
+      execute_validation(
+        fields = prepared_fields,
+        alert_id = parent_session$ns(manure_validation_config$alert_id)
       )
     })
   })

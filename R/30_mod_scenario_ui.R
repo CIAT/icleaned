@@ -368,6 +368,12 @@ scenario_ui <- function(id) {
                       div(class = "p-5 bg-light",
                           h2("Manure/Fertilizer bought", class = "tabsH2"),
                           h2("Manure", class = "mb-4"),
+                          shinyjs::hidden(
+                             div(
+                               id = ns("alert_message_manure_inputs"),
+                               class = "alert alert-danger"
+                             )
+                          ),
                           h2("Annual purchase of manure (kg N):", class = "mb-3"),
                           tags$div(
                             class = "mb-4",
