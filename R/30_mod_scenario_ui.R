@@ -377,7 +377,7 @@ scenario_ui <- function(id) {
                           h2("Annual purchase of manure (kg N):", class = "mb-3"),
                           tags$div(
                             class = "mb-4",
-                            textInput(
+                            numericInput(
                               inputId = ns("purchased_manure"),
                               label = NULL,
                               value = 0
@@ -386,7 +386,7 @@ scenario_ui <- function(id) {
                           h2("Annual purchase of compost (kg N):", class = "mb-3"),
                           tags$div(
                             class = "mb-4",
-                            textInput(
+                            numericInput(
                               inputId = ns("purchased_compost"),
                               label = NULL,
                               value = 0
@@ -395,7 +395,7 @@ scenario_ui <- function(id) {
                           h2("Annual purchase of other organic N additions (kg N):", class = "mb-3"),
                           tags$div(
                             class = "mb-4",
-                            textInput(
+                            numericInput(
                               inputId = ns("purchased_organic_n"),
                               label = NULL,
                               value = 0
@@ -404,7 +404,7 @@ scenario_ui <- function(id) {
                           h2("Annual purchase of bedding materials (kg N):", class = "mb-3"),
                           tags$div(
                             class = "mb-5",
-                            textInput(
+                            numericInput(
                               inputId = ns("purchased_bedding"),
                               label = NULL,
                               value = 0
