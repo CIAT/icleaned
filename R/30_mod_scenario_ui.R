@@ -1098,9 +1098,16 @@ scenario_ui <- function(id) {
               tabPanel(
                 "Livestock Feeding",
                 div(class = "p-5 bg-light",
-                    uiOutput(ns("livestock_feeding_ui")),
-                    h2("Allocation in percentage of a feed to livestock by season", class = "mb-5"),
-                    uiOutput(ns("livestock_feeding_table"))
+                  uiOutput(ns("livestock_feeding_ui")),
+                  h2("Allocation in percentage of a feed to livestock by season", class = "mb-5"),
+                  shinyjs::hidden(
+                   div(
+                    id = ns("alert_livestock_feeding_global"),
+                    class = "alert alert-danger",
+                    style = "margin-bottom: 20px;"
+                    )
+                  ),
+                  uiOutput(ns("livestock_feeding_table"))
                 )
               )
             )

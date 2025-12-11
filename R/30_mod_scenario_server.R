@@ -2285,6 +2285,14 @@ scenario_server <- function(
   # Reactive value to store the data frames for each season
   basket_data <- reactiveValues()
   
+  # Initialize livestock feeding validation
+  livestock_feeding_validation_server(
+    id = "validation",
+    basket_data = basket_data,
+    seasons = seasons,
+    parent_session = session
+  )
+  
   # UI output for the Season/Feed Allocation tab
   output$livestock_feeding_ui <- renderUI({
     tags$div(

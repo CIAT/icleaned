@@ -10,6 +10,10 @@
 #' 1. FARM TAB: farm_validation_server()
 #'    Field-level validation for Area, Waste, and Manure inputs
 #'    Rules: non-negative, positive, percentage, between 0-1
+#'
+#' 2. LIVESTOCK FEEDING TAB: livestock_feeding_validation_server()
+#'    Table-level validation for allocation percentages
+#'    Rule: Each livestock column must sum to exactly 100% per season
 
 # ------ SECTION 1: FARM TAB VALIDATION --------------------------------------
 
@@ -367,6 +371,164 @@ farm_validation_server <- function(id, input, parent_session) {
         fields = prepared_fields,
         alert_id = parent_session$ns(manure_validation_config$alert_id)
       )
+    })
+  })
+}
+
+# ------ SECTION 2: LIVESTOCK FEEDING TAB VALIDATION -------------------------
+
+# ------ LIVESTOCK FEEDING TABLE VALIDATION ----------------------------------
+
+#' Validate Livestock Feeding Allocation Percentages
+#'
+#' Validates that allocation percentages for each livestock type sum to 100%
+#' per season. This is a table-based validation where each column (livestock)
+#' must sum to exactly 100 across all feed rows.
+#'
+#' @param season_data Data frame containing allocation percentages for one season
+#'   Rows represent feeds, columns represent livestock types
+#' @param season_name Character string specifying the season name for error messages
+#'
+#' @return List containing:
+#'   - has_errors: Logical, TRUE if any column sum is not 100
+#'   - error_messages: Character vector of formatted error messages
+
+validate_season_allocations <- function(season_data, season_name) {
+  # Initialize result structure
+  validation_result <- list(
+    has_errors = FALSE,
+    error_messages = character(0)
+  )
+
+  # Return early if data is NULL or empty
+  if (is.null(season_data) || nrow(season_data) == 0 || ncol(season_data) == 0) {
+    return(validation_result)
+  }
+
+  # Exclude the "Total" row from validation (it's auto-calculated)
+  # We only validate the actual allocation rows
+  data_without_total <- season_data[rownames(season_data) != "Total", , drop = FALSE]
+
+  # Return early if no data rows to validate
+  if (nrow(data_without_total) == 0) {
+    return(validation_result)
+  }
+
+  # Calculate column sums for each livestock type
+  column_sums <- colSums(data_without_total, na.rm = TRUE)
+
+  # Identify columns where sum is not 100 (with small tolerance for floating point)
+  # Using tolerance of 0.01 to handle floating point arithmetic issues
+  tolerance <- 0.01
+  invalid_columns <- which(abs(column_sums - 100) > tolerance)
+
+  # If any invalid columns found, generate error messages
+  if (length(invalid_columns) > 0) {
+    validation_result$has_errors <- TRUE
+
+    # Generate formatted error message for each invalid column
+    validation_result$error_messages <- sapply(invalid_columns, function(col_index) {
+      livestock_name <- names(column_sums)[col_index]
+      actual_sum <- round(column_sums[col_index], 2)
+
+      sprintf(
+        paste0(
+          "<strong>•</strong> For season <strong>'%s'</strong>, ",
+          "the total of feed allocations in <strong>'%s'</strong> ",
+          "is <strong>%s%%</strong>. It must equal <strong>100%%</strong>."
+        ),
+        season_name,
+        livestock_name,
+        actual_sum
+      )
+    })
+  }
+
+  return(validation_result)
+}
+
+#' Livestock Feeding Tab Validation Server Module
+#'
+#' TARGET TAB: Livestock Feeding
+#'
+#' Validates allocation tables: each livestock column must sum to 100% per season.
+#' Uses single observer pattern to prevent observer accumulation.
+#'
+#' @param id Module namespace ID
+#' @param basket_data ReactiveValues containing allocation data per season
+#' @param seasons Reactive data frame with season information
+#' @param parent_session Shiny session object from parent scope
+#'
+#' @return Shiny module server function
+
+
+livestock_feeding_validation_server <- function(
+  id,
+  basket_data,
+  seasons,
+  parent_session
+) {
+  moduleServer(id, function(input, output, session) {
+    # Reactive values to track validation errors for each season
+    # Using reactiveValues() allows direct assignment
+    season_errors <- reactiveValues()
+
+    # Single observer that validates all seasons when any data changes
+    observeEvent(c(seasons(), reactiveValuesToList(basket_data)), {
+      # Get current seasons
+      current_seasons <- if (!is.null(seasons()) && nrow(seasons()) > 0) {
+        seasons()$Season
+      } else {
+        character(0)
+      }
+
+      # Clean up errors for deleted seasons
+      all_error_keys <- names(reactiveValuesToList(season_errors))
+      deleted_keys <- setdiff(all_error_keys, current_seasons)
+      for (key in deleted_keys) {
+        season_errors[[key]] <- NULL
+      }
+
+      # Validate each existing season
+      for (season in current_seasons) {
+        season_data <- basket_data[[season]]
+        
+        # Skip if no valid data
+        if (is.null(season_data) || !is.data.frame(season_data) || nrow(season_data) == 0) {
+          next
+        }
+
+        # Validate and store errors
+        validation_result <- validate_season_allocations(
+          season_data = season_data,
+          season_name = season
+        )
+        season_errors[[season]] <- if (validation_result$has_errors) {
+          validation_result$error_messages
+        } else {
+          NULL
+        }
+      }
+    }, ignoreNULL = FALSE, ignoreInit = FALSE)
+
+    # Observer to update the global alert based on all validation errors
+    observe({
+      global_alert_id <- parent_session$ns("alert_livestock_feeding_global")
+      
+      # Get all error messages
+      all_errors <- reactiveValuesToList(season_errors)
+      non_null_errors <- all_errors[!sapply(all_errors, is.null)]
+      messages <- unlist(non_null_errors)
+
+      if (length(messages) > 0) {
+        # Show alert with combined errors
+        combined_html <- paste(messages, collapse = "<br>")
+        shinyjs::html(id = global_alert_id, html = combined_html, asis = TRUE)
+        shinyjs::show(id = global_alert_id, asis = TRUE)
+      } else {
+        # Hide alert when no errors
+        shinyjs::hide(id = global_alert_id, asis = TRUE)
+      }
     })
   })
 }
