@@ -1,11 +1,19 @@
-# ------ VALIDATION MODULE -----------------------------------------------------
+# ------ VALIDATION MODULE ---------------------------------------------------
 #'
-#' Real-time validation for scenario input fields. Validates user inputs against
-#' predefined rules and displays formatted error messages.
+#' Real-time data validation engine providing immediate feedback on user inputs
+#' across multiple application tabs. Implements rule-based validation logic with
+#' dynamic error messaging to ensure data integrity and guide users toward
+#' correct input values.
 #'
-#' Usage: Call \code{validation_server()} in the main server function.
+#' VALIDATION SYSTEMS:
+#'
+#' 1. FARM TAB: farm_validation_server()
+#'    Field-level validation for Area, Waste, and Manure inputs
+#'    Rules: non-negative, positive, percentage, between 0-1
 
-# ------ VALIDATION RULES & ERROR MESSAGES -----------------------------------------------------
+# ------ SECTION 1: FARM TAB VALIDATION --------------------------------------
+
+# VALIDATION RULES & ERROR MESSAGES ------------------------------------------
 
 # Lookup table for validation rule functions
 # Each function takes a numeric value and returns TRUE if valid, FALSE otherwise
@@ -144,7 +152,7 @@ manure_fields_config <- list(
   )
 )
 
-# ------ VALIDATION REGISTRY -----------------------------------------------------
+# ------ VALIDATION REGISTRY -------------------------------------------------
 
 # Central registry organizing validation configurations by input group
 # Each entry contains field configurations and the associated alert element ID
@@ -163,7 +171,7 @@ validation_registry <- list(
   )
 )
 
-# ------ CORE VALIDATION LOGIC -----------------------------------------------------
+# ------ CORE VALIDATION LOGIC -----------------------------------------------
 
 #' Execute validation logic and synchronize UI state
 #'
@@ -180,14 +188,7 @@ validation_registry <- list(
 #'   validation messages
 #'
 #' @return Invisible logical: TRUE if validation errors found, FALSE otherwise
-#'
-#' @details
-#'   The function performs the following steps:
-#'   1. Hides the alert element initially
-#'   2. Validates each field with a non-null, non-NA value
-#'   3. Collects error messages for invalid fields
-#'   4. Displays combined error messages in the alert element if any errors found
-#'   5. Returns TRUE if errors found, FALSE if all fields valid
+
 execute_validation <- function(fields, alert_id) {
   # Initially hide the alert message element
   shinyjs::hide(id = alert_id, asis = TRUE)
@@ -247,29 +248,22 @@ execute_validation <- function(fields, alert_id) {
   return(invisible(FALSE))
 }
 
-# ------ SERVER MODULE -----------------------------------------------------
+# ------ FARM TAB VALIDATION SERVER MODULE -----------------------------------
 
-#' Validation Server Module
+#' Farm Tab Validation Server Module
 #'
-#' Shiny server module that provides reactive validation for input fields.
-#' Automatically validates inputs when they change and displays error messages.
+#' TARGET TAB: Farm
 #'
-#' @param id Character string specifying the module namespace ID
-#' @param input Shiny input object from the parent scope
-#' @param parent_session Shiny session object from the parent scope, used for
-#'   proper namespacing of alert elements
+#' Validates Area, Waste, and Manure input fields. Displays errors in
+#' tab-specific alert elements.
 #'
-#' @return A Shiny module server function
+#' @param id Module namespace ID
+#' @param input Shiny input object from parent scope
+#' @param parent_session Shiny session object from parent scope
 #'
-#' @details
-#'   This module monitors specified input fields and triggers validation
-#'   whenever any field value changes. It uses the validation registry to
-#'   determine which fields to monitor and which rules to apply.
-#'
-#' @examples
-#' # In server.R:
-#' validation_server("validation", input, session)
-validation_server <- function(id, input, parent_session) {
+#' @return Shiny module server function
+
+farm_validation_server <- function(id, input, parent_session) {
   moduleServer(id, function(input_module, output, session) {
     #' Prepare field configurations with current input values
     #'

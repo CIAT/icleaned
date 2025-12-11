@@ -70,7 +70,7 @@ scenario_server <- function(
   })
   
   # ----- Validation Module ----------------------------------------------------
-  validation_server("validation", input = input, parent_session = session)
+  farm_validation_server("validation", input = input, parent_session = session)
 
   # -----  * Show Scenario Editor Section after selection ----------------------
   observeEvent(input$json_file_name, {
