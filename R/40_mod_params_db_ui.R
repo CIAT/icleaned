@@ -303,19 +303,7 @@ params_db_ui <- function(id) {
                         )
                       ),
                       div(DTOutput(ns(paste0("table_", tab_name))), class = "with_checkbox"),
-                      # Unified table footer (entries info + pagination)
-                      div(
-                        class = "table-footer d-flex justify-content-between align-items-center mt-2 px-3 py-1",
-                        span(
-                          textOutput(ns(paste0("entries_info_", tab_name))),
-                          class = "text-muted small"
-                        ),
-                        div(
-                          class = "pagination-bar-container ms-auto",
-                          uiOutput(ns(paste0("page_buttons_", tab_name)))
-                        )
-                      ),
-                      # --- Pagination controls (below table, right-aligned) ---
+                      # Informational message: edits are auto-saved to CSV
                       tags$div(
                         "The data is immediately saved to the corresponding CSV
                       file, no confirmation is required!", 
