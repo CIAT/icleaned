@@ -302,6 +302,20 @@ fertilizer_percentages <- c(
   "Ammonia" = 82
 )
 
+# Fertilizer name to column mapping --------------------------------------------
+# Maps fertilizer names from the 'Farm > Fertilizer' tab to their corresponding
+# column names in the 'Crop Inputs' dataframe. Used to dynamically identify
+# and control column editability.
+fertilizer_column_mapping <- c(
+  "Urea" = "urea",
+  "NPK" = "npk",
+  "DAP" = "dap",
+  "Ammonium nitrate" = "ammonium_nitrate",
+  "Ammonium sulfate" = "ammonium_sulfate",
+  "N solutions" = "n_solutions",
+  "Ammonia" = "ammonia"
+)
+
 # Water regime SelectInput options ---------------------------------------------
 water_regime_options <- c(
   "Non-flooded pre-season <180 days( often in double cropping of rice)",

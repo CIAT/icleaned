@@ -1813,13 +1813,28 @@ scenario_server <- function(
   
   # Render the crop inputs table
   output$crop_inputs_table <- renderDT({
+    req(fertilizers())
+
+    # Identifies all available fertilizer columns based on the mapping
+    all_fertilizer_cols <- unname(fertilizer_column_mapping)
+    all_col_names <- colnames(crop_inputs_data())
+    fertilizer_col_indices <- which(all_col_names %in% all_fertilizer_cols)
+
+    # Identifies currently active fertilizer columns based on user selection
+    active_col_names <- fertilizer_column_mapping[fertilizers()$fertilizer_desc]
+    active_col_indices <- which(all_col_names %in% active_col_names)
+
+    # Calculates indices of inactive fertilizer columns to disable
+    blocked_col_indices <- setdiff(fertilizer_col_indices, active_col_indices)
+
+    # Adjusts indices to 0-based for DataTables (JavaScript) compatibility
+    blocked_js_indices <- blocked_col_indices - 1
+
     datatable(
       crop_inputs_data(),
       colnames = crop_inputs_table_colnames,
       editable = list(
-        target = "cell",
-        # Prevent editing of the first column (check boxes for delete rows)
-        disable = list(columns = 0)
+        target = "cell"
       ),
       selection = "none",
       rownames = FALSE,
@@ -1831,14 +1846,21 @@ scenario_server <- function(
         paging = FALSE,
         fixedColumns = list(leftColumns = 1),
         columnDefs = list(
+          # Visually block Feed (0) and Crop (1) columns from double-click interaction
           list(
             targets = get_column_indices(crop_inputs_data(), c("Feed", "Crop")) - 1,
             createdCell = JS(disable_all_rows_edit_js()),
             searchable = FALSE
+          ),
+          # Applies visual 'not-allowed' cursor to inactive fertilizer columns
+          list(
+            targets = blocked_js_indices,
+            createdCell = JS(disable_and_add_cursor_js()),
+            searchable = FALSE
           )
         )
       )
-    ) %>% 
+    ) %>%
       formatStyle(
         columns = 3:ncol(crop_inputs_data()),
         backgroundColor = "#a9d18e"
