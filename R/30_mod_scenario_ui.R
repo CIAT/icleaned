@@ -345,7 +345,7 @@ scenario_ui <- function(id) {
                                 class = "d-flex align-items-center px-1",
                                 actionButton(
                                   inputId = ns("delete_season"),
-                                  label = "Delete",
+                                  label = "Remove",
                                   class = "btn btn-primary filters-btn",
                                   icon = icon("trash")
                                 )
@@ -368,10 +368,16 @@ scenario_ui <- function(id) {
                       div(class = "p-5 bg-light",
                           h2("Manure/Fertilizer bought", class = "tabsH2"),
                           h2("Manure", class = "mb-4"),
+                          shinyjs::hidden(
+                             div(
+                               id = ns("alert_message_manure_inputs"),
+                               class = "alert alert-danger"
+                             )
+                          ),
                           h2("Annual purchase of manure (kg N):", class = "mb-3"),
                           tags$div(
                             class = "mb-4",
-                            textInput(
+                            numericInput(
                               inputId = ns("purchased_manure"),
                               label = NULL,
                               value = 0
@@ -380,7 +386,7 @@ scenario_ui <- function(id) {
                           h2("Annual purchase of compost (kg N):", class = "mb-3"),
                           tags$div(
                             class = "mb-4",
-                            textInput(
+                            numericInput(
                               inputId = ns("purchased_compost"),
                               label = NULL,
                               value = 0
@@ -389,7 +395,7 @@ scenario_ui <- function(id) {
                           h2("Annual purchase of other organic N additions (kg N):", class = "mb-3"),
                           tags$div(
                             class = "mb-4",
-                            textInput(
+                            numericInput(
                               inputId = ns("purchased_organic_n"),
                               label = NULL,
                               value = 0
@@ -398,7 +404,7 @@ scenario_ui <- function(id) {
                           h2("Annual purchase of bedding materials (kg N):", class = "mb-3"),
                           tags$div(
                             class = "mb-5",
-                            textInput(
+                            numericInput(
                               inputId = ns("purchased_bedding"),
                               label = NULL,
                               value = 0
@@ -438,6 +444,12 @@ scenario_ui <- function(id) {
                       class = "carousel-item",
                       div(class = "p-5 bg-light",
                           h2("Waste of milk and meat", class = "tabsH2"),
+                        shinyjs::hidden(
+                          div(
+                            id = ns("alert_message_waste_inputs"),
+                            class = "alert alert-danger"
+                          )
+                        ),
                           fluidRow(
                             column(
                               width = 6,
@@ -586,6 +598,12 @@ scenario_ui <- function(id) {
                       class = "carousel-item",
                       div(class = "p-5 bg-light",
                           h2("Area", class = "tabsH2"),
+                          shinyjs::hidden(
+                          div(
+                            id = ns("alert_message_area_inputs"),
+                            class = "alert alert-danger"
+                          )
+                        ),
                           h2("Annual precipitation (mm/yr)", class = "mb-3"),
                           tags$div(
                             class = "mb-4",
@@ -670,7 +688,7 @@ scenario_ui <- function(id) {
                               value = 0
                             )
                           ),
-                          h2("ETO (mm/year)", class = "mb-3"),
+                          h2("ET₀ (mm/year)", class = "mb-3"),
                           tags$div(
                             class = "mb-5",
                             numericInput(
@@ -1080,9 +1098,16 @@ scenario_ui <- function(id) {
               tabPanel(
                 "Livestock Feeding",
                 div(class = "p-5 bg-light",
-                    uiOutput(ns("livestock_feeding_ui")),
-                    h2("Allocation in percentage of a feed to livestock by season", class = "mb-5"),
-                    uiOutput(ns("livestock_feeding_table"))
+                  uiOutput(ns("livestock_feeding_ui")),
+                  h2("Allocation in percentage of a feed to livestock by season", class = "mb-5"),
+                  shinyjs::hidden(
+                   div(
+                    id = ns("alert_livestock_feeding_global"),
+                    class = "alert alert-danger",
+                    style = "margin-bottom: 20px;"
+                    )
+                  ),
+                  uiOutput(ns("livestock_feeding_table"))
                 )
               )
             )
