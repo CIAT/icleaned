@@ -1815,6 +1815,13 @@ scenario_server <- function(
   output$crop_inputs_table <- renderDT({
     req(fertilizers())
 
+    # Observe fertilizers to show/hide the warning message
+    if (nrow(fertilizers()) == 0) {
+      shinyjs::show("alert_no_fertilizers")
+    } else {
+      shinyjs::hide("alert_no_fertilizers")
+    }
+
     # Identifies all available fertilizer columns based on the mapping
     all_fertilizer_cols <- unname(fertilizer_column_mapping)
     all_col_names <- colnames(crop_inputs_data())

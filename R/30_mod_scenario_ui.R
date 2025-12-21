@@ -1073,6 +1073,18 @@ scenario_ui <- function(id) {
                         )
                       )
                     ),
+                    # Displays a warning if no fertilizers are selected
+                    # controlled via shinyjs in the server
+                    shinyjs::hidden(
+                      div(
+                        id = ns("alert_no_fertilizers"),
+                        class = "alert alert-danger",
+                        HTML(
+                          "No fertilizers have been selected in the <strong> 'Farm > Fertilizer' </strong> tab. 
+                          Please add at least one fertilizer to enable editing."
+                        )
+                      )
+                    ),
                     div(DTOutput(ns("crop_inputs_table")), class = "without_checkbox"),
                     br()
                 )
