@@ -28,3 +28,8 @@
         display: block !important;
     }
 }
+
+// Hide the FixedColumns scrollbar blocker that overlaps with header
+.dtfc-right-top-blocker {
+    display: none !important;
+}
