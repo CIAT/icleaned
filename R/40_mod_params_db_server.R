@@ -725,6 +725,13 @@ params_db_server <- function(
       
       # Append one empty record with NA placeholders
       new_record <- as.list(rep(NA, ncol(parameter_table)))
+      names(new_record) <- names(parameter_table)
+
+      # Auto-generate unique code for first column
+      code_column <- names(parameter_table)[1]
+      new_record[[code_column]] <- generate_next_code(parameter_table, code_column)
+
+      # Append to table
       parameter_table <- rbind(parameter_table, new_record)
       
       # Update in-memory data and persist to disk

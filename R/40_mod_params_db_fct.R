@@ -95,3 +95,19 @@ init_column_search_js <- function() {
     }, 30);
   }'
 }
+
+# Generate next unique numeric code for parameters database tables
+# Used when adding new rows to auto-assign sequential unique codes
+generate_next_code <- function(parameter_table, code_column) {
+  # Extract existing codes and convert to numeric
+  existing_codes <- parameter_table[[code_column]]
+  numeric_codes <- as.numeric(existing_codes[!is.na(existing_codes)])
+
+  # Handle empty table case
+  if (length(numeric_codes) == 0) {
+    return(1)
+  }
+
+  # Return next available code
+  return(max(numeric_codes, na.rm = TRUE) + 1)
+}
