@@ -5,24 +5,37 @@ checkbox_link_multi <- function(id, ns, table_name) {
       'function(settings) {
         console.log("Checkbox link function called for table: ', table_name, '");
 
-        // Select all checkbox inputs within the current DataTable
-        var checkboxes = $(settings.nTable).find("input[type=checkbox]");
-        console.log("Checkboxes found in table ', table_name, ':", checkboxes.length);
+        // Create DataTables API instance to access row-level methods
+        var api = new $.fn.dataTable.Api(settings);
 
-        // Iterate over each checkbox element
-        checkboxes.each(function(i) {
-          
-          var checkboxId = "', ns(paste0(id, "_", table_name)), '_" + (i + 1);
-          console.log("Assigning checkbox ID for table ', table_name, ':", checkboxId);
+        // Iterate through all rows using DataTables API
+        // This ensures we get the correct data row index regardless of sorting/filtering
+        api.rows().every(function(displayIdx) {
+          var row = this;
+          var node = row.node();
 
-          // Send the initial state of the checkbox to Shiny
-          Shiny.setInputValue(checkboxId, this.checked, {priority: "event"});
-          
-          // Add an event listener to update the state on change
-          $(this).on("change", function() {
-            // Update Shiny input with the new state of the checkbox
-            Shiny.setInputValue(checkboxId, this.checked, {priority: "event"});
-          });
+          // Find the checkbox input in this row
+          var checkbox = $(node).find("input[type=checkbox]").first();
+
+          if (checkbox.length > 0) {
+            // Get the ORIGINAL data row index (0-based)
+            // This index is CONSTANT - it does not change when user sorts/filters the table
+            var dataIdx = row.index();
+
+            // Create checkbox ID based on DATA index (convert to 1-based for R)
+            // This ensures the checkbox ID always matches the same data row
+            var checkboxId = "', ns(paste0(id, "_", table_name)), '_" + (dataIdx + 1);
+            console.log("Display row:", displayIdx, "-> Data row:", dataIdx, "-> Checkbox ID:", checkboxId);
+
+            // Initialize checkbox state in Shiny
+            Shiny.setInputValue(checkboxId, checkbox.prop("checked"), {priority: "event"});
+
+            // Listen for checkbox changes and update Shiny
+            // Remove any existing listeners first to avoid duplicates
+            checkbox.off("change").on("change", function() {
+              Shiny.setInputValue(checkboxId, this.checked, {priority: "event"});
+            });
+          }
         });
       }'
     )
@@ -96,18 +109,31 @@ init_column_search_js <- function() {
   }'
 }
 
-# Generate next unique numeric code for parameters database tables
-# Used when adding new rows to auto-assign sequential unique codes
-generate_next_code <- function(parameter_table, code_column) {
-  # Extract existing codes and convert to numeric
-  existing_codes <- parameter_table[[code_column]]
-  numeric_codes <- as.numeric(existing_codes[!is.na(existing_codes)])
-
-  # Handle empty table case
-  if (length(numeric_codes) == 0) {
+#' Generate Next Unique Code
+#'
+#' Calculates the next sequential code for a new row by finding the maximum
+#' existing numeric code in the specified column and adding 1.
+#'
+#' @param data A data frame containing the parameter table
+#' @param code_column Character string, name of the code column
+#'
+#' @return Integer, the next unique code (max + 1, or 1 if table is empty)
+#'
+#' @examples
+#' generate_next_code(crops_data, "crop_code")
+generate_next_code <- function(data, code_column) {
+  if (nrow(data) == 0 || all(is.na(data[[code_column]]))) {
     return(1)
   }
 
-  # Return next available code
-  return(max(numeric_codes, na.rm = TRUE) + 1)
+  # Extract numeric codes, ignoring non-numeric values
+  existing_codes <- suppressWarnings(as.numeric(data[[code_column]]))
+  existing_codes <- existing_codes[!is.na(existing_codes)]
+
+  if (length(existing_codes) == 0) {
+    return(1)
+  }
+
+  next_code <- max(existing_codes) + 1
+  return(next_code)
 }
