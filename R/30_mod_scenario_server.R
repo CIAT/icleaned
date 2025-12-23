@@ -1368,8 +1368,8 @@ scenario_server <- function(
   observeEvent(input$feed, {
     crop_code <- lkp_feeditem()$crop_code[lkp_feeditem()$feed_item_code == input$feed]
     choices <- setNames(
-      lkp_feedtype()$crop_code[lkp_feedtype()$crop_code == crop_code],
-      lkp_feedtype()$crop_name[lkp_feedtype()$crop_code == crop_code]
+      lkp_crops()$crop_code[lkp_crops()$crop_code == crop_code],
+      lkp_crops()$crop_name[lkp_crops()$crop_code == crop_code]
     )
     # remove NA values
     choices <- choices[!is.na(choices)]
@@ -1388,7 +1388,7 @@ scenario_server <- function(
         crop_code = input$crop,
         feed_item_code = input$feed,
         feed_item_name = lkp_feeditem()$feed_item_name[lkp_feeditem()$feed_item_code == input$feed],
-        crop_name = lkp_feedtype()$crop_name[lkp_feedtype()$crop_code == input$crop],
+        crop_name = lkp_crops()$crop_name[lkp_crops()$crop_code == input$crop],
         source_type = "Main", # Only column that is hard coded like the qt app
         intercrop = 0,
         intercrop_fraction = 0,
@@ -1410,33 +1410,33 @@ scenario_server <- function(
         grassman_change_factor = lkp_grasslandman()$change_factor[1],
         landcover_c_factor = lkp_landcover()$c_factor[1],
         slope_p_factor = lkp_slope()$p_factor[1],
-        dry_yield = lkp_feedtype()$dry_yield[lkp_feedtype()$crop_code == input$crop],
-        residue_dry_yield = lkp_feedtype()$residue_dry_yield[lkp_feedtype()$crop_code == input$crop],
+        dry_yield = lkp_crops()$dry_yield[lkp_crops()$crop_code == input$crop],
+        residue_dry_yield = lkp_crops()$residue_dry_yield[lkp_crops()$crop_code == input$crop],
         n_content = 0,
-        residue_n = lkp_feedtype()$residue_n[lkp_feedtype()$crop_code == input$crop],
-        kc_initial = lkp_feedtype()$kc_initial[lkp_feedtype()$crop_code == input$crop],
-        kc_midseason = lkp_feedtype()$kc_midseason[lkp_feedtype()$crop_code == input$crop],
-        kc_late = lkp_feedtype()$kc_late[lkp_feedtype()$crop_code == input$crop],
-        category = lkp_feedtype()$category[lkp_feedtype()$crop_code == input$crop],
-        trees_ha = lkp_feedtype()$trees_ha[lkp_feedtype()$crop_code == input$crop],
-        trees_dhb = lkp_feedtype()$trees_dhb[lkp_feedtype()$crop_code == input$crop],
-        trees_growth = lkp_feedtype()$trees_growth[lkp_feedtype()$crop_code == input$crop],
-        trees_removal = lkp_feedtype()$trees_removal[lkp_feedtype()$crop_code == input$crop],
-        trees_ha_dbh25 = lkp_feedtype()$trees_ha_dbh25[lkp_feedtype()$crop_code == input$crop],
-        average_dbh25 = lkp_feedtype()$average_dbh25[lkp_feedtype()$crop_code == input$crop],
-        increase_dbh25 = lkp_feedtype()$increase_dbh25[lkp_feedtype()$crop_code == input$crop],
-        trees_ha_dbh2550 = lkp_feedtype()$trees_ha_dbh2550[lkp_feedtype()$crop_code == input$crop],
-        average_dbh2550 = lkp_feedtype()$average_dbh2550[lkp_feedtype()$crop_code == input$crop],
-        increase_dbh2550 = lkp_feedtype()$increase_dbh2550[lkp_feedtype()$crop_code == input$crop],
-        trees_ha_dbh50 = lkp_feedtype()$trees_ha_dbh50[lkp_feedtype()$crop_code == input$crop],
-        average_dbh50 = lkp_feedtype()$average_dbh50[lkp_feedtype()$crop_code == input$crop],
-        increase_dbh50 = lkp_feedtype()$increase_dbh50[lkp_feedtype()$crop_code == input$crop],
-        time_horizon = lkp_feedtype()$time_horizon[lkp_feedtype()$crop_code == input$crop],
-        diameter_breast = lkp_feedtype()$diameter_breast[lkp_feedtype()$crop_code == input$crop],
+        residue_n = lkp_crops()$residue_n[lkp_crops()$crop_code == input$crop],
+        kc_initial = lkp_crops()$kc_initial[lkp_crops()$crop_code == input$crop],
+        kc_midseason = lkp_crops()$kc_midseason[lkp_crops()$crop_code == input$crop],
+        kc_late = lkp_crops()$kc_late[lkp_crops()$crop_code == input$crop],
+        category = lkp_crops()$category[lkp_crops()$crop_code == input$crop],
+        trees_ha = lkp_crops()$trees_ha[lkp_crops()$crop_code == input$crop],
+        trees_dhb = lkp_crops()$trees_dhb[lkp_crops()$crop_code == input$crop],
+        trees_growth = lkp_crops()$trees_growth[lkp_crops()$crop_code == input$crop],
+        trees_removal = lkp_crops()$trees_removal[lkp_crops()$crop_code == input$crop],
+        trees_ha_dbh25 = lkp_crops()$trees_ha_dbh25[lkp_crops()$crop_code == input$crop],
+        average_dbh25 = lkp_crops()$average_dbh25[lkp_crops()$crop_code == input$crop],
+        increase_dbh25 = lkp_crops()$increase_dbh25[lkp_crops()$crop_code == input$crop],
+        trees_ha_dbh2550 = lkp_crops()$trees_ha_dbh2550[lkp_crops()$crop_code == input$crop],
+        average_dbh2550 = lkp_crops()$average_dbh2550[lkp_crops()$crop_code == input$crop],
+        increase_dbh2550 = lkp_crops()$increase_dbh2550[lkp_crops()$crop_code == input$crop],
+        trees_ha_dbh50 = lkp_crops()$trees_ha_dbh50[lkp_crops()$crop_code == input$crop],
+        average_dbh50 = lkp_crops()$average_dbh50[lkp_crops()$crop_code == input$crop],
+        increase_dbh50 = lkp_crops()$increase_dbh50[lkp_crops()$crop_code == input$crop],
+        time_horizon = lkp_crops()$time_horizon[lkp_crops()$crop_code == input$crop],
+        diameter_breast = lkp_crops()$diameter_breast[lkp_crops()$crop_code == input$crop],
         # These ones are available in the json but not in the DT
         fraction_as_manure = "NULL", # We should get null in the json
         n_fertilizer = "NULL", # We should get null in the json
-        main_n = lkp_feedtype()$main_n[lkp_feedtype()$crop_code == input$crop],
+        main_n = lkp_crops()$main_n[lkp_crops()$crop_code == input$crop],
         land_cover = lkp_landcover()$landcover_code[1],
         slope = lkp_slope()$slope_code[1],
         grassman = lkp_grasslandman()$management_code[1],
@@ -1445,7 +1445,7 @@ scenario_server <- function(
       
       new_input_row <- data.frame(
         Feed = lkp_feeditem()$feed_item_name[lkp_feeditem()$feed_item_code == input$feed],
-        Crop = lkp_feedtype()$crop_name[lkp_feedtype()$crop_code == input$crop],
+        Crop = lkp_crops()$crop_name[lkp_crops()$crop_code == input$crop],
         fraction_as_fertilizer = 0,
         urea = 0,
         npk = 0,
@@ -2102,7 +2102,7 @@ scenario_server <- function(
             inputId = ns("feed_category"),
             label = NULL,
             choices = sort(
-              unique(lkp_feedtype()$category[lkp_feedtype()$category != ""])
+              unique(lkp_crops()$category[lkp_crops()$category != ""])
             ),
             options = list(`live-search` = TRUE)
           ),
@@ -2289,7 +2289,7 @@ scenario_server <- function(
     shinyWidgets::updatePickerInput(
       session,
       "feed_category",
-      selected = lkp_feedtype()$category[1]
+      selected = lkp_crops()$category[1]
     )
     removeModal()
     

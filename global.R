@@ -42,7 +42,7 @@ Sys.setlocale("LC_TIME", "C")  # Set to C locale for English
 # List of all parameter tables
 parameters_db_names <- c(
   "lkp_climate", "lkp_climate2", "lkp_croplandsystem", "lkp_feeditem",
-  "lkp_feedtype", "lkp_grassinputlevel", "lkp_grasslandman", "lkp_landcover",
+  "lkp_crops", "lkp_grassinputlevel", "lkp_grasslandman", "lkp_landcover",
   "lkp_livetype", "lkp_manureman", "lkp_organicmatter", "lkp_orgfertilizer",
   "lkp_region", "lkp_slope", "lkp_soil", "lkp_tillageregime"
 )
