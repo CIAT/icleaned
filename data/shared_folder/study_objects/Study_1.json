@@ -1,4 +1,4 @@
-{
+﻿{
   "seasons": [
     {
       "season_name": "wet",
@@ -160,9 +160,9 @@
   ],
   "feed_items": [
     {
-      "feed_type_code": "43",
+      "crop_code": "43",
       "feed_item_code": "17",
-      "feed_type_name": "Purchased",
+      "crop_name": "Purchased",
       "feed_item_name": "Concentrate (commercial)",
       "source_type": "Main",
       "intercrop": 0,
@@ -224,9 +224,9 @@
       "ammonia": 0
     },
     {
-      "feed_type_code": "36",
+      "crop_code": "36",
       "feed_item_code": "64",
-      "feed_type_name": "Natural pasture",
+      "crop_name": "Natural pasture",
       "feed_item_name": "Naturally occuring pasture - green fodder",
       "source_type": "Main",
       "intercrop": 0,
@@ -288,9 +288,9 @@
       "ammonia": 0
     },
     {
-      "feed_type_code": "40",
+      "crop_code": "40",
       "feed_item_code": "82",
-      "feed_type_name": "Pennisetum purpureum",
+      "crop_name": "Pennisetum purpureum",
       "feed_item_name": "Pennisetum purpureum - forage",
       "source_type": "Main",
       "intercrop": 0,
@@ -352,9 +352,9 @@
       "ammonia": 0
     },
     {
-      "feed_type_code": "17",
+      "crop_code": "17",
       "feed_item_code": "29",
-      "feed_type_name": "Groundnut",
+      "crop_name": "Groundnut",
       "feed_item_name": "Groundnut (Arachis hypogaea) - crop residue",
       "source_type": "Residue",
       "intercrop": 0,
@@ -416,9 +416,9 @@
       "ammonia": 0
     },
     {
-      "feed_type_code": "6",
+      "crop_code": "6",
       "feed_item_code": "12",
-      "feed_type_name": "Brachiaria hybrid",
+      "crop_name": "Brachiaria hybrid",
       "feed_item_name": "Brachiaria hybrid (forage)",
       "source_type": "Main",
       "intercrop": 0,
@@ -480,9 +480,9 @@
       "ammonia": 0
     },
     {
-      "feed_type_code": "34",
+      "crop_code": "34",
       "feed_item_code": "3",
-      "feed_type_name": "Musa spp.",
+      "crop_name": "Musa spp.",
       "feed_item_name": "Banana leaves",
       "source_type": "Residue",
       "intercrop": 0,
@@ -544,9 +544,9 @@
       "ammonia": 0
     },
     {
-      "feed_type_code": "26",
+      "crop_code": "26",
       "feed_item_code": "38",
-      "feed_type_name": "Lablab",
+      "crop_name": "Lablab",
       "feed_item_name": "Lablab (Lablab purpureus) - forage",
       "source_type": "Main",
       "intercrop": 0,
@@ -621,7 +621,7 @@
       "feeds": [
         {
           "feed_item_code": "17",
-          "feed_type_code": "43",
+          "crop_code": "43",
           "livestock": [
             {
               "livetype_code": "2",
@@ -635,7 +635,7 @@
         },
         {
           "feed_item_code": "64",
-          "feed_type_code": "36",
+          "crop_code": "36",
           "livestock": [
             {
               "livetype_code": "2",
@@ -649,7 +649,7 @@
         },
         {
           "feed_item_code": "82",
-          "feed_type_code": "40",
+          "crop_code": "40",
           "livestock": [
             {
               "livetype_code": "2",
@@ -663,7 +663,7 @@
         },
         {
           "feed_item_code": "29",
-          "feed_type_code": "17",
+          "crop_code": "17",
           "livestock": [
             {
               "livetype_code": "2",
@@ -677,7 +677,7 @@
         },
         {
           "feed_item_code": "12",
-          "feed_type_code": "6",
+          "crop_code": "6",
           "livestock": [
             {
               "livetype_code": "2",
@@ -691,7 +691,7 @@
         },
         {
           "feed_item_code": "3",
-          "feed_type_code": "34",
+          "crop_code": "34",
           "livestock": [
             {
               "livetype_code": "2",
@@ -705,7 +705,7 @@
         },
         {
           "feed_item_code": "38",
-          "feed_type_code": "26",
+          "crop_code": "26",
           "livestock": [
             {
               "livetype_code": "2",
@@ -724,7 +724,7 @@
       "feeds": [
         {
           "feed_item_code": "17",
-          "feed_type_code": "43",
+          "crop_code": "43",
           "livestock": [
             {
               "livetype_code": "2",
@@ -738,7 +738,7 @@
         },
         {
           "feed_item_code": "64",
-          "feed_type_code": "36",
+          "crop_code": "36",
           "livestock": [
             {
               "livetype_code": "2",
@@ -752,7 +752,7 @@
         },
         {
           "feed_item_code": "82",
-          "feed_type_code": "40",
+          "crop_code": "40",
           "livestock": [
             {
               "livetype_code": "2",
@@ -766,7 +766,7 @@
         },
         {
           "feed_item_code": "29",
-          "feed_type_code": "17",
+          "crop_code": "17",
           "livestock": [
             {
               "livetype_code": "2",
@@ -780,7 +780,7 @@
         },
         {
           "feed_item_code": "12",
-          "feed_type_code": "6",
+          "crop_code": "6",
           "livestock": [
             {
               "livetype_code": "2",
@@ -794,7 +794,7 @@
         },
         {
           "feed_item_code": "3",
-          "feed_type_code": "34",
+          "crop_code": "34",
           "livestock": [
             {
               "livetype_code": "2",
@@ -808,7 +808,7 @@
         },
         {
           "feed_item_code": "38",
-          "feed_type_code": "26",
+          "crop_code": "26",
           "livestock": [
             {
               "livetype_code": "2",

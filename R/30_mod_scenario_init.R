@@ -192,10 +192,10 @@ livestock_data_initialization <- data.frame(
 )
 
 feedtype_initialization <- data.frame(
-  feed_type_code = numeric(),
+  crop_code = numeric(),
   feed_item_code = numeric(),
   feed_item_name = character(),
-  feed_type_name = character(),
+  crop_name = character(),
   source_type = character(),
   intercrop = numeric(),
   intercrop_fraction = numeric(),

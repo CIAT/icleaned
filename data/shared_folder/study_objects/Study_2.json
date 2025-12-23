@@ -1,4 +1,4 @@
-{
+﻿{
   "seasons": [
     {
       "season_name": "wet",
@@ -160,9 +160,9 @@
   ],
   "feed_items": [
     {
-      "feed_type_code": "22",
+      "crop_code": "22",
       "feed_item_code": "7",
-      "feed_type_name": "Hordeum vulgare (grain)",
+      "crop_name": "Hordeum vulgare (grain)",
       "feed_item_name": "Barley (straw)",
       "source_type": "Residue",
       "intercrop": 0,
@@ -224,9 +224,9 @@
       "ammonia": 0
     },
     {
-      "feed_type_code": "6",
+      "crop_code": "6",
       "feed_item_code": "12",
-      "feed_type_name": "Brachiaria hybrid",
+      "crop_name": "Brachiaria hybrid",
       "feed_item_name": "Brachiaria hybrid (forage)",
       "source_type": "Main",
       "intercrop": 1,
@@ -288,9 +288,9 @@
       "ammonia": 0
     },
     {
-      "feed_type_code": "45",
+      "crop_code": "45",
       "feed_item_code": "99",
-      "feed_type_name": "Rice",
+      "crop_name": "Rice",
       "feed_item_name": "Rice (Oryza sativa) - straw",
       "source_type": "Residue",
       "intercrop": 0,
@@ -365,7 +365,7 @@
       "feeds": [
         {
           "feed_item_code": "7",
-          "feed_type_code": "22",
+          "crop_code": "22",
           "livestock": [
             {
               "livetype_code": "2",
@@ -379,7 +379,7 @@
         },
         {
           "feed_item_code": "12",
-          "feed_type_code": "6",
+          "crop_code": "6",
           "livestock": [
             {
               "livetype_code": "2",
@@ -393,7 +393,7 @@
         },
         {
           "feed_item_code": "99",
-          "feed_type_code": "45",
+          "crop_code": "45",
           "livestock": [
             {
               "livetype_code": "2",
@@ -412,7 +412,7 @@
       "feeds": [
         {
           "feed_item_code": "7",
-          "feed_type_code": "22",
+          "crop_code": "22",
           "livestock": [
             {
               "livetype_code": "2",
@@ -426,7 +426,7 @@
         },
         {
           "feed_item_code": "12",
-          "feed_type_code": "6",
+          "crop_code": "6",
           "livestock": [
             {
               "livetype_code": "2",
@@ -440,7 +440,7 @@
         },
         {
           "feed_item_code": "99",
-          "feed_type_code": "45",
+          "crop_code": "45",
           "livestock": [
             {
               "livetype_code": "2",

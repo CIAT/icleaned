@@ -1366,10 +1366,10 @@ scenario_server <- function(
   
   # Update second select input "crop" depending on the first input "feed"
   observeEvent(input$feed, {
-    feed_type_code <- lkp_feeditem()$feed_type_code[lkp_feeditem()$feed_item_code == input$feed]
+    crop_code <- lkp_feeditem()$crop_code[lkp_feeditem()$feed_item_code == input$feed]
     choices <- setNames(
-      lkp_feedtype()$feed_type_code[lkp_feedtype()$feed_type_code == feed_type_code],
-      lkp_feedtype()$feed_type_name[lkp_feedtype()$feed_type_code == feed_type_code]
+      lkp_feedtype()$crop_code[lkp_feedtype()$crop_code == crop_code],
+      lkp_feedtype()$crop_name[lkp_feedtype()$crop_code == crop_code]
     )
     # remove NA values
     choices <- choices[!is.na(choices)]
@@ -1383,12 +1383,12 @@ scenario_server <- function(
   # Add new crop row from modal
   observeEvent(input$ok_add_crop, {
     req(input$crop, input$feed)
-    if (!((input$crop %in% feedtype()[, "feed_type_code"]) && (input$feed %in% feedtype()[, "feed_item_code"]))) {
+    if (!((input$crop %in% feedtype()[, "crop_code"]) && (input$feed %in% feedtype()[, "feed_item_code"]))) {
       new_row <- data.frame(
-        feed_type_code = input$crop,
+        crop_code = input$crop,
         feed_item_code = input$feed,
         feed_item_name = lkp_feeditem()$feed_item_name[lkp_feeditem()$feed_item_code == input$feed],
-        feed_type_name = lkp_feedtype()$feed_type_name[lkp_feedtype()$feed_type_code == input$crop],
+        crop_name = lkp_feedtype()$crop_name[lkp_feedtype()$crop_code == input$crop],
         source_type = "Main", # Only column that is hard coded like the qt app
         intercrop = 0,
         intercrop_fraction = 0,
@@ -1410,33 +1410,33 @@ scenario_server <- function(
         grassman_change_factor = lkp_grasslandman()$change_factor[1],
         landcover_c_factor = lkp_landcover()$c_factor[1],
         slope_p_factor = lkp_slope()$p_factor[1],
-        dry_yield = lkp_feedtype()$dry_yield[lkp_feedtype()$feed_type_code == input$crop],
-        residue_dry_yield = lkp_feedtype()$residue_dry_yield[lkp_feedtype()$feed_type_code == input$crop],
+        dry_yield = lkp_feedtype()$dry_yield[lkp_feedtype()$crop_code == input$crop],
+        residue_dry_yield = lkp_feedtype()$residue_dry_yield[lkp_feedtype()$crop_code == input$crop],
         n_content = 0,
-        residue_n = lkp_feedtype()$residue_n[lkp_feedtype()$feed_type_code == input$crop],
-        kc_initial = lkp_feedtype()$kc_initial[lkp_feedtype()$feed_type_code == input$crop],
-        kc_midseason = lkp_feedtype()$kc_midseason[lkp_feedtype()$feed_type_code == input$crop],
-        kc_late = lkp_feedtype()$kc_late[lkp_feedtype()$feed_type_code == input$crop],
-        category = lkp_feedtype()$category[lkp_feedtype()$feed_type_code == input$crop],
-        trees_ha = lkp_feedtype()$trees_ha[lkp_feedtype()$feed_type_code == input$crop],
-        trees_dhb = lkp_feedtype()$trees_dhb[lkp_feedtype()$feed_type_code == input$crop],
-        trees_growth = lkp_feedtype()$trees_growth[lkp_feedtype()$feed_type_code == input$crop],
-        trees_removal = lkp_feedtype()$trees_removal[lkp_feedtype()$feed_type_code == input$crop],
-        trees_ha_dbh25 = lkp_feedtype()$trees_ha_dbh25[lkp_feedtype()$feed_type_code == input$crop],
-        average_dbh25 = lkp_feedtype()$average_dbh25[lkp_feedtype()$feed_type_code == input$crop],
-        increase_dbh25 = lkp_feedtype()$increase_dbh25[lkp_feedtype()$feed_type_code == input$crop],
-        trees_ha_dbh2550 = lkp_feedtype()$trees_ha_dbh2550[lkp_feedtype()$feed_type_code == input$crop],
-        average_dbh2550 = lkp_feedtype()$average_dbh2550[lkp_feedtype()$feed_type_code == input$crop],
-        increase_dbh2550 = lkp_feedtype()$increase_dbh2550[lkp_feedtype()$feed_type_code == input$crop],
-        trees_ha_dbh50 = lkp_feedtype()$trees_ha_dbh50[lkp_feedtype()$feed_type_code == input$crop],
-        average_dbh50 = lkp_feedtype()$average_dbh50[lkp_feedtype()$feed_type_code == input$crop],
-        increase_dbh50 = lkp_feedtype()$increase_dbh50[lkp_feedtype()$feed_type_code == input$crop],
-        time_horizon = lkp_feedtype()$time_horizon[lkp_feedtype()$feed_type_code == input$crop],
-        diameter_breast = lkp_feedtype()$diameter_breast[lkp_feedtype()$feed_type_code == input$crop],
+        residue_n = lkp_feedtype()$residue_n[lkp_feedtype()$crop_code == input$crop],
+        kc_initial = lkp_feedtype()$kc_initial[lkp_feedtype()$crop_code == input$crop],
+        kc_midseason = lkp_feedtype()$kc_midseason[lkp_feedtype()$crop_code == input$crop],
+        kc_late = lkp_feedtype()$kc_late[lkp_feedtype()$crop_code == input$crop],
+        category = lkp_feedtype()$category[lkp_feedtype()$crop_code == input$crop],
+        trees_ha = lkp_feedtype()$trees_ha[lkp_feedtype()$crop_code == input$crop],
+        trees_dhb = lkp_feedtype()$trees_dhb[lkp_feedtype()$crop_code == input$crop],
+        trees_growth = lkp_feedtype()$trees_growth[lkp_feedtype()$crop_code == input$crop],
+        trees_removal = lkp_feedtype()$trees_removal[lkp_feedtype()$crop_code == input$crop],
+        trees_ha_dbh25 = lkp_feedtype()$trees_ha_dbh25[lkp_feedtype()$crop_code == input$crop],
+        average_dbh25 = lkp_feedtype()$average_dbh25[lkp_feedtype()$crop_code == input$crop],
+        increase_dbh25 = lkp_feedtype()$increase_dbh25[lkp_feedtype()$crop_code == input$crop],
+        trees_ha_dbh2550 = lkp_feedtype()$trees_ha_dbh2550[lkp_feedtype()$crop_code == input$crop],
+        average_dbh2550 = lkp_feedtype()$average_dbh2550[lkp_feedtype()$crop_code == input$crop],
+        increase_dbh2550 = lkp_feedtype()$increase_dbh2550[lkp_feedtype()$crop_code == input$crop],
+        trees_ha_dbh50 = lkp_feedtype()$trees_ha_dbh50[lkp_feedtype()$crop_code == input$crop],
+        average_dbh50 = lkp_feedtype()$average_dbh50[lkp_feedtype()$crop_code == input$crop],
+        increase_dbh50 = lkp_feedtype()$increase_dbh50[lkp_feedtype()$crop_code == input$crop],
+        time_horizon = lkp_feedtype()$time_horizon[lkp_feedtype()$crop_code == input$crop],
+        diameter_breast = lkp_feedtype()$diameter_breast[lkp_feedtype()$crop_code == input$crop],
         # These ones are available in the json but not in the DT
         fraction_as_manure = "NULL", # We should get null in the json
         n_fertilizer = "NULL", # We should get null in the json
-        main_n = lkp_feedtype()$main_n[lkp_feedtype()$feed_type_code == input$crop],
+        main_n = lkp_feedtype()$main_n[lkp_feedtype()$crop_code == input$crop],
         land_cover = lkp_landcover()$landcover_code[1],
         slope = lkp_slope()$slope_code[1],
         grassman = lkp_grasslandman()$management_code[1],
@@ -1445,7 +1445,7 @@ scenario_server <- function(
       
       new_input_row <- data.frame(
         Feed = lkp_feeditem()$feed_item_name[lkp_feeditem()$feed_item_code == input$feed],
-        Crop = lkp_feedtype()$feed_type_name[lkp_feedtype()$feed_type_code == input$crop],
+        Crop = lkp_feedtype()$crop_name[lkp_feedtype()$crop_code == input$crop],
         fraction_as_fertilizer = 0,
         urea = 0,
         npk = 0,
@@ -1484,7 +1484,7 @@ scenario_server <- function(
     rows_not_contains_grass <- which(feedtype_dt$category != "grass") - 1 # index for js
     
     # Identify indices of non-rice crops
-    rows_not_contains_rice <- which(feedtype_dt$feed_type_name != "Rice") - 1 # index for js
+    rows_not_contains_rice <- which(feedtype_dt$crop_name != "Rice") - 1 # index for js
     
     # Identify indices of rows to disable depending on the source type
     rows_not_residue <- which(feedtype_dt$source_type != "Residue") - 1 # index for js
@@ -1538,7 +1538,7 @@ scenario_server <- function(
     
     feedtype_dt <- feedtype_dt %>%
       select(
-        -feed_type_code, -feed_item_code, -fraction_as_manure, -n_fertilizer,
+        -crop_code, -feed_item_code, -fraction_as_manure, -n_fertilizer,
         -main_n, -slope, -grassman, -land_cover
       )
     
@@ -1597,7 +1597,7 @@ scenario_server <- function(
             targets = get_column_indices(
               feedtype_dt, 
               c("feed_item_name",
-                "feed_type_name",
+                "crop_name",
                 "source_type",
                 "intercrop",
                 "land_cover_desc",
@@ -2025,7 +2025,7 @@ scenario_server <- function(
         
       } else if ((info$col + 2) == which(names(feedtype()) == "water_regime")) {
         
-        if (feedtype()[info$row, "feed_type_name"] == "Rice") {
+        if (feedtype()[info$row, "crop_name"] == "Rice") {
           
           if (modal_open()) return()
           modal_open(TRUE)
@@ -2048,7 +2048,7 @@ scenario_server <- function(
         
       } else if ((info$col + 2) == which(names(feedtype()) == "ecosystem_type")) {
         
-        if (feedtype()[info$row, "feed_type_name"] == "Rice") {
+        if (feedtype()[info$row, "crop_name"] == "Rice") {
           
           if (modal_open()) return()
           modal_open(TRUE)
@@ -2071,7 +2071,7 @@ scenario_server <- function(
         
       } else if ((info$col + 2) == which(names(feedtype()) == "organic_amendment")) {
         
-        if (feedtype()[info$row, "feed_type_name"] == "Rice") {
+        if (feedtype()[info$row, "crop_name"] == "Rice") {
           
           if (modal_open()) return()
           modal_open(TRUE)
@@ -2344,7 +2344,7 @@ scenario_server <- function(
     
     # Generate and Render Dynamic Feed Allocation Table for Each Season
     lapply(seasons()$Season, function(season) {
-      ft <- paste(feedtype()$feed_item_name, "of", feedtype()$feed_type_name)
+      ft <- paste(feedtype()$feed_item_name, "of", feedtype()$crop_name)
       lt <- livestock_data()$livetype_desc
       df <- as.data.frame(matrix(0, nrow = length(ft), ncol = length(lt)))
       colnames(df) <- lt
@@ -2538,7 +2538,7 @@ scenario_server <- function(
           feeds = lapply(seq_len(nrow(feedtype())), function(j) {
             list(
               feed_item_code = feedtype()$feed_item_code[j],
-              feed_type_code = feedtype()$feed_type_code[j],
+              crop_code = feedtype()$crop_code[j],
               livestock = lapply(seq_len(nrow(livestock_data())), function(k) {
                 list(
                   livetype_code = livestock_data()$livetype_code[
@@ -2679,7 +2679,7 @@ scenario_server <- function(
         # Separate crop_inputs_data and add 'Feed' and 'Crop' columns
         crop_df <- item[, crop_columns, drop = FALSE]
         crop_df$Feed <- item$feed_item_name
-        crop_df$Crop <- item$feed_type_name
+        crop_df$Crop <- item$crop_name
         
         # Reorder columns to make 'Feed' the first and 'Crop' the second column
         crop_df <- crop_df[, c("Feed", "Crop", setdiff(names(crop_df), c("Feed", "Crop")))]
@@ -2757,7 +2757,7 @@ scenario_server <- function(
         # Rename the rownames & colnames
         rownames(season_df) <- paste(
           study_object$feed_items$feed_item_name,
-          "of", study_object$feed_items$feed_type_name
+          "of", study_object$feed_items$crop_name
         )
         colnames(season_df) <- study_object$livestock$livetype_desc
         

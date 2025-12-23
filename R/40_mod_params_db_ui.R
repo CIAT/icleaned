@@ -260,8 +260,14 @@ params_db_ui <- function(id) {
               lapply(
                 c("lkp_feeditem", "lkp_feedtype", "lkp_livetype"),
                 function(tab_name) {
+                  # Custom tab titles mapping
+                  tab_titles <- c(
+                    "lkp_feeditem" = "Feeditem",
+                    "lkp_feedtype" = "Crops",
+                    "lkp_livetype" = "Livetype"
+                  )
                   tabPanel(
-                    str_to_title(sub("^lkp_", "", tab_name)),
+                    tab_titles[tab_name],
                     div(
                       class = "p-5 bg-light",
                       fluidRow(

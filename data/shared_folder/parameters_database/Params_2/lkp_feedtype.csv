@@ -1,4 +1,4 @@
-﻿feed_type_code,feed_type_name,dry_yield,residue_dry_yield,main_n,residue_n,c_factor,kc_initial,kc_midseason,kc_late,n_fixation,category,trees_ha,trees_dhb,trees_growth,trees_removal,trees_ha_dbh25,average_dbh25,increase_dbh25,trees_ha_dbh2550,average_dbh2550,increase_dbh2550,trees_ha_dbh50,average_dbh50,increase_dbh50,time_horizon,diameter_breast
+crop_code,crop_name,dry_yield,residue_dry_yield,main_n,residue_n,c_factor,kc_initial,kc_midseason,kc_late,n_fixation,category,trees_ha,trees_dhb,trees_growth,trees_removal,trees_ha_dbh25,average_dbh25,increase_dbh25,trees_ha_dbh2550,average_dbh2550,increase_dbh2550,trees_ha_dbh50,average_dbh50,increase_dbh50,time_horizon,diameter_breast
 1,Andropogon gayanus,8.882191781,0,0.0104,0,0,0.3,0.75,0.75,0,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 2,Avena sativa,0.352,2.64,0.0176,0,0,0.1,1.1,0.55,0,cereal,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 3,Avena sativa-forage,9.1,0,0.016,0,0,0.1,1.1,0.55,0,cereal,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
