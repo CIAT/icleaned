@@ -36,3 +36,62 @@ add_cursor_to_disabled_column_js <- function() {
     $(td).css("cursor", "not-allowed");
   }'
 }
+
+# Initialize column search inputs for DataTables
+init_column_search_js <- function() {
+  'function(settings, json) {
+    var api = this.api();
+
+    // Prevent duplicate search rows on table redraws
+    // Use a flag in settings to track if we already initialized the search row
+    if (settings.oInit.searchRowInitialized) {
+      return;
+    }
+    settings.oInit.searchRowInitialized = true;
+
+    // Create the search row element that will hold all search inputs
+    var searchRow = $("<tr class=\\"search-row\\"></tr>");
+
+    // Loop through each column to create search inputs
+    api.columns().every(function(index) {
+      var column = this;
+      var th = $("<th></th>");
+
+      // First column is the checkbox column - leave it empty
+      if (index === 0) {
+        th.appendTo(searchRow);
+      } else {
+        // Create a text input for filtering this column
+        var input = $(\'<input type="text" placeholder="Search..." />\')
+          .on("keyup change clear", function() {
+            // Only trigger search if the value actually changed
+            if (column.search() !== this.value) {
+              column.search(this.value).draw();
+            }
+          })
+          .on("click", function(e) {
+            // Prevent clicks from bubbling up (e.g., to column sorting)
+            e.stopPropagation();
+          });
+
+        th.append(input);
+        th.appendTo(searchRow);
+      }
+    });
+
+    // Add the completed search row to the table header
+    $(api.table().header()).append(searchRow);
+
+    // Update FixedHeader and FixedColumns to include the new search row in their clones
+    setTimeout(function() {
+      if (api.fixedHeader) {
+        api.fixedHeader.adjust();
+      }
+      if (api.fixedColumns) {
+        api.fixedColumns().update();
+      }
+      // Recalculate column widths and redraw to ensure proper alignment
+      api.columns.adjust().draw(false);
+    }, 30);
+  }'
+}

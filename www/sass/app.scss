@@ -636,6 +636,7 @@ caption {
 table.dataTable thead th, table.dataTable thead td, table.dataTable tfoot th, table.dataTable tfoot td {
     color: #005275;
     font-family: 'Merriweather';
+    background-color: #f5f5f5;
 }
 table.dataTable th.dt-right, table.dataTable td.dt-right{
     text-align: left;
@@ -1555,3 +1556,41 @@ table.dataTable tbody tr>.dtfc-fixed-left{
     padding: calc(2rem + 1vw) calc(2.5rem + 1vw); /* proportional padding */
   }
 }
+
+/* ========================================  */
+/* ======= DATATABLE COLUMN SEARCH =======  */
+/* ========================================  */
+
+/* Styles for the second header row containing column search inputs */
+table.dataTable thead tr:nth-child(2) th {
+  vertical-align: bottom !important;
+  padding: 2px !important;
+  line-height: 1 !important;
+  box-sizing: border-box !important;
+
+  /* Search input field styling */
+  input[type="text"] {
+    width: 100% !important;
+    padding: 4px 8px !important;
+    margin: 0 !important;
+    border: 1px solid #005275 !important;
+    border-radius: 4px !important;
+    font-size: 12px !important;
+    line-height: 1.4 !important;
+    box-sizing: border-box !important;
+    color: #005275 !important;
+
+    /* Focus state styling */
+    &:focus {
+      border: 2px solid #005275 !important;
+      outline: none !important;
+      padding: 3px 7px !important;
+    }
+  }
+}
+
+/* Hide the global DataTables search filter */
+.dataTables_filter {
+  display: none !important;
+}
+

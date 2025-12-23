@@ -584,8 +584,7 @@ params_db_server <- function(
                 "livetype_desc", "ipcc_meth_ef_t1", "ipcc_meth_ef_t2",
                 "ipcc_meth_man", "ipcc_meth_exc")
             ) - 1,
-            createdCell = JS(disable_and_add_cursor_js()),
-            searchable = FALSE
+            createdCell = JS(disable_and_add_cursor_js())
           )
         ))
       }
@@ -602,8 +601,7 @@ params_db_server <- function(
         column_defs <- list(
           list(
             targets = "_all", # Apply to all cells
-            createdCell = JS(add_cursor_to_disabled_column_js()),
-            searchable = FALSE
+            createdCell = JS(add_cursor_to_disabled_column_js())
           )
         )
         
@@ -630,11 +628,9 @@ params_db_server <- function(
         colnames = c("", colnames(data_table)[-1]),  # Hide first column name
         options = list(
           scrollX = TRUE,
-          scrollY = "500px",
-          scrollCollapse = TRUE,
           processing = FALSE,
           paging = FALSE,
-          searching = FALSE,
+          searching = TRUE,
           info = FALSE,
           columnDefs = column_defs,
           drawCallback = JS(
@@ -645,7 +641,8 @@ params_db_server <- function(
             )
           ),
           fixedColumns = list(leftColumns = 1),
-          fixedHeader = TRUE
+          fixedHeader = TRUE,
+          initComplete = JS(init_column_search_js())
         )
       )
       
