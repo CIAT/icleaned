@@ -308,6 +308,14 @@ params_db_ui <- function(id) {
                           )
                         )
                       ),
+                      # Alert for duplicate code warnings
+                      shinyjs::hidden(
+                        div(
+                          id = ns(paste0("alert_duplicate_code_", tab_name)),
+                          class = "alert alert-danger",
+                          style = "display:none;"
+                        )
+                      ),
                       div(DTOutput(ns(paste0("table_", tab_name))), class = "with_checkbox"),
                       # Informational message: edits are auto-saved to CSV
                       tags$div(

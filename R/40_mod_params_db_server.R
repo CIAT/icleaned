@@ -649,6 +649,77 @@ params_db_server <- function(
     }, server = FALSE)
   })
   
+  # ------ Check for duplicates on table load ----------------------------------
+  # Detect and display alert message list of duplicate codes in parameter 
+  # database tables
+  lapply(parameters_db_names, function(name) {
+    observe({
+      # Ensure database is selected and data table is available
+      req(input$database_name)
+      req(session$userData$parameters_db[[name]])
+        
+      # Extract table and identify the code column (always first column)
+      data_table <- session$userData$parameters_db[[name]]
+      code_column <- names(data_table)[1]
+      # Count occurrences of each code to find duplicates
+      code_counts <- table(data_table[[code_column]])
+      duplicate_codes <- names(code_counts[code_counts > 1])
+      
+      # Handle duplicate codes if any exist
+      if (length(duplicate_codes) > 0) {
+          
+        # Sort duplicate codes intelligently:
+        # - Numeric codes: sort numerically (e.g., 2, 10, 100)
+        # - Text codes: sort alphabetically (e.g., A, B, C)
+        numeric_codes <- suppressWarnings(as.numeric(duplicate_codes))
+        if (all(!is.na(numeric_codes))) {
+          duplicate_codes <- as.character(sort(numeric_codes))
+        } else {
+          duplicate_codes <- sort(duplicate_codes)
+        }
+          
+        # Format each duplicate code with bold HTML tags for emphasis
+        bold_codes <- sapply(
+          duplicate_codes, 
+          function(code) sprintf("<strong> %s </strong>", code)
+        )
+          
+        # Build grammatically correct list of codes
+        if (length(bold_codes) == 1) {
+          codes_text <- bold_codes[1]
+        } else if (length(bold_codes) == 2) {
+          codes_text <- paste(bold_codes, collapse = " and ")
+        } else {
+          codes_text <- paste(
+            paste(bold_codes[-length(bold_codes)], collapse = ", "), 
+            "and", 
+            bold_codes[length(bold_codes)]
+          )
+        }
+          
+        # Construct error message with column name and duplicate codes
+        error_message <- sprintf(
+          paste0(
+            "In <strong>'%s'</strong> column, the following codes are duplicated : %s. ",
+            "Please fix these duplications to have a unique code for each row."
+          ),
+          code_column, 
+          codes_text
+        )
+          
+        # Display the alert message to the user
+        shinyjs::html(
+          id = paste0("alert_duplicate_code_", name), 
+          html = error_message
+        )
+        shinyjs::show(id = paste0("alert_duplicate_code_", name))
+          
+      } else {
+        # No duplicates found - hide the alert message
+        shinyjs::hide(id = paste0("alert_duplicate_code_", name))
+      }
+    })
+  })
   # ------ * Observe edits on rendered DT  -------------------------------------
   lapply(parameters_db_names, function(name) {
     observeEvent(input[[paste0("table_", name, "_cell_edit")]], {
