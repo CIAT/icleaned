@@ -17,8 +17,19 @@ scenario_ui <- function(id) {
         span(strong(id = ns("last_update_date")))
       ),
     ),
+    div(
+      class = "container mt-2 mb-2",
+      style = "text-align: right",
+      a(
+        class = "editInformationBtn",
+        icon("edit"),
+        "Edit Parameters",
+        icon("chevron-right", class = "editInfoIcon"),
+        onclick = go_to(target = "params_db")
+      )
+    ),
     fixedPage(
-      class = "bg-light px-4 pt-5 pb-5 mt-5 mb-5",
+      class = "bg-light px-4 pt-5 pb-5 mt-4 mb-5",
       style = "margin-top: 20px;",
       h2("Choose a file option:", class = "mb-3"),
       fluidRow(
@@ -245,17 +256,6 @@ scenario_ui <- function(id) {
           choices = NULL,
           options = list(`live-search` = TRUE)
         )
-      )
-    ),
-    div(
-      class = "container mt-2 mb-2",
-      style = "text-align: right",
-      a(
-        class = "editInformationBtn",
-        icon("edit"),
-        "Edit Parameters",
-        icon("chevron-right", class = "editInfoIcon"),
-        onclick = go_to(target = "params_db")
       )
     ),
     shinyjs::hidden(
