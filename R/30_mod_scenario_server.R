@@ -999,7 +999,6 @@ scenario_server <- function(
         cp_maintenance = selected_livestock$cp_maintenance,
         cp_grazing = selected_livestock$cp_grazing,
         cp_pregnancy = selected_livestock$cp_pregnancy,
-        cp_lactation = selected_livestock$cp_lactation,
         cp_lactmilk = selected_livestock$cp_lactmilk,
         cp_growth = selected_livestock$cp_growth,
         birth_interval = selected_livestock$birth_interval,
@@ -1112,7 +1111,7 @@ scenario_server <- function(
           "body_weight", "body_weight_weaning", "body_weight_year_one",
           "adult_weight", "work_hour", "litter_size", "piglets_relying_on_milk",
           "lactation_length", "proportion_growth", "lw_gain", "grazing_displacement",
-          "cp_maintenance", "cp_grazing", "cp_pregnancy", "cp_lactation",
+          "cp_maintenance", "cp_grazing", "cp_pregnancy",
           "cp_lactmilk", "cp_growth", "birth_interval", "protein_milkcontent",
           "fat_content", "energy_milkcontent", "energy_meatcontent",
           "protein_meatcontent", "carcass_fraction", "energy_eggcontent",
@@ -1412,7 +1411,6 @@ scenario_server <- function(
         slope_p_factor = lkp_slope()$p_factor[1],
         dry_yield = lkp_crops()$dry_yield[lkp_crops()$crop_code == input$crop],
         residue_dry_yield = lkp_crops()$residue_dry_yield[lkp_crops()$crop_code == input$crop],
-        n_content = 0,
         residue_n = lkp_crops()$residue_n[lkp_crops()$crop_code == input$crop],
         kc_initial = lkp_crops()$kc_initial[lkp_crops()$crop_code == input$crop],
         kc_midseason = lkp_crops()$kc_midseason[lkp_crops()$crop_code == input$crop],
@@ -1640,7 +1638,7 @@ scenario_server <- function(
       ) %>%
       formatStyle(
         columns = c(
-          "dry_yield", "residue_dry_yield", "n_content", "residue_n", "kc_initial",
+          "dry_yield", "residue_dry_yield", "residue_n", "kc_initial",
           "kc_midseason", "kc_late", "category", "trees_ha", "trees_dhb",
           "trees_growth", "trees_removal", "trees_ha_dbh25", "average_dbh25",
           "increase_dbh25", "trees_ha_dbh2550", "average_dbh2550",
