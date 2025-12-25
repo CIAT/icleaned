@@ -654,13 +654,29 @@ params_db_server <- function(
   # database tables
   lapply(parameters_db_names, function(name) {
     observe({
+      # Only check duplicates for lkp_feeditem and lkp_crops
+      if (!name %in% c("lkp_feeditem", "lkp_crops")) {
+        return()
+      }
+
       # Ensure database is selected and data table is available
       req(input$database_name)
       req(session$userData$parameters_db[[name]])
         
-      # Extract table and identify the code column (always first column)
+      # Extract table and identify the code column by name
       data_table <- session$userData$parameters_db[[name]]
-      code_column <- names(data_table)[1]
+      # Determine which column to check based on table name
+      code_column <- if (name == "lkp_feeditem") {
+        "feed_item_code"
+      } else if (name == "lkp_crops") {
+        "crop_code"
+      }
+
+      # Verify the column exists in the data table
+      if (!code_column %in% names(data_table)) {
+        return()
+      }
+    
       # Count occurrences of each code to find duplicates
       code_counts <- table(data_table[[code_column]])
       duplicate_codes <- names(code_counts[code_counts > 1])

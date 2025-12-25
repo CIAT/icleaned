@@ -262,7 +262,7 @@ params_db_ui <- function(id) {
                 function(tab_name) {
                   # Custom tab titles mapping
                   tab_titles <- c(
-                    "lkp_feeditem" = "Feeditem",
+                    "lkp_feeditem" = "Feeditems",
                     "lkp_crops" = "Crops",
                     "lkp_livetype" = "Livetype"
                   )

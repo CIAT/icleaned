@@ -50,17 +50,21 @@ add_cursor_to_disabled_column_js <- function() {
   }'
 }
 
-# Initialize column search inputs for DataTables
+# Initialize column search inputs in DataTables header (initComplete callback)
+# Cleans up FixedHeader artifacts, adds search row to original and cloned headers
 init_column_search_js <- function() {
   'function(settings, json) {
     var api = this.api();
 
-    // Prevent duplicate search rows on table redraws
-    // Use a flag in settings to track if we already initialized the search row
-    if (settings.oInit.searchRowInitialized) {
-      return;
+    // CLEANUP: Always remove old FixedHeader artifacts on every table initialization
+    // This prevents memory leaks and progressive slowdown
+    $(".dtfh-floatingparent").remove();
+
+    // Check if search row already exists in the DOM (prevents duplicates)
+    var existingSearchRow = $(api.table().header()).find("tr.search-row");
+    if (existingSearchRow.length > 0) {
+      return; // Search row already exists, skip re-adding
     }
-    settings.oInit.searchRowInitialized = true;
 
     // Create the search row element that will hold all search inputs
     var searchRow = $("<tr class=\\"search-row\\"></tr>");
