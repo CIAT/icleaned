@@ -589,8 +589,8 @@ params_db_server <- function(
           list(
             targets = which(
               names(data_table) %in% c(
-                "livetype_desc", "ipcc_meth_ef_t1", "ipcc_meth_ef_t2",
-                "ipcc_meth_man", "ipcc_meth_exc")
+                "livetype_code", "livetype_desc", "ipcc_meth_ef_t1",
+                "ipcc_meth_ef_t2", "ipcc_meth_man", "ipcc_meth_exc")
             ) - 1,
             createdCell = JS(disable_and_add_cursor_js()),
             searchable = FALSE
@@ -603,6 +603,13 @@ params_db_server <- function(
       shinyjs::enable(id = paste0("delete_rows_", name))
       shinyjs::enable(id = paste0("clone_rows_", name))
       
+      # Disable buttons specifically for lkp_livetype
+      if (name == "lkp_livetype") {
+        shinyjs::disable(id = paste0("add_rows_", name))
+        shinyjs::disable(id = paste0("delete_rows_", name))
+        shinyjs::disable(id = paste0("clone_rows_", name))
+      }
+
       # Check if the database is the default one
       if (input$database_name == "Params DB - Default") {
         editablity <- FALSE
