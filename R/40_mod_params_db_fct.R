@@ -1,4 +1,3 @@
-
 checkbox_link_multi <- function(id, ns, table_name) {
   JS(
     paste0(
@@ -74,9 +73,16 @@ init_column_search_js <- function() {
       var column = this;
       var th = $("<th></th>");
 
+      // Check if this column is visible
+      var isVisible = column.visible();
+
       // First column is the checkbox column - leave it empty
       if (index === 0) {
         th.appendTo(searchRow);
+      } else if (!isVisible) {
+        // Skip creating search input for hidden columns (but they remain searchable)
+        // This prevents empty search boxes from appearing for hidden columns like crop_code
+        // Note: We don\'t append anything, so this column won\'t have a search input
       } else {
         // Create a text input for filtering this column
         var input = $(\'<input type="text" placeholder="Search..." />\')
@@ -140,4 +146,113 @@ generate_next_code <- function(data, code_column) {
 
   next_code <- max(existing_codes) + 1
   return(next_code)
+}
+
+#' Hide Column JavaScript
+#'
+#' JavaScript function to hide a column's cells and header.
+#'
+#' @return JS code for DataTables createdCell callback
+hide_column_js <- function() {
+  JS(
+    "function(td, cellData, rowData, row, col) {
+      $(td).css('display', 'none');
+      // Also hide the header for this column
+      var table = $(td).closest('table');
+      var thIndex = $(td).index();
+      table.find('thead th').eq(thIndex).css('display', 'none');
+    }"
+  )
+}
+
+#' Reorder FeedItem Columns
+#'
+#' Dynamically inserts `crop_name` column at the position of `crop_code`,
+#' and moves `crop_code` to the end of the data frame.
+#'
+#' @param data A data frame containing the feed item data
+#'
+#' @return A data frame with reordered columns
+reorder_feeditem_columns <- function(data) {
+  col_order <- names(data)
+  crop_code_idx <- which(col_order == "crop_code")
+  
+  if (length(crop_code_idx) > 0) {
+    # Construct new order: cols_before, crop_name, cols_after, crop_code
+    
+    # Safely get columns before
+    if (crop_code_idx > 1) {
+      cols_before <- col_order[1:(crop_code_idx - 1)]
+    } else {
+      cols_before <- character(0)
+    }
+    
+    # Safely get columns after
+    if (crop_code_idx < length(col_order)) {
+      cols_after <- col_order[(crop_code_idx + 1):length(col_order)]
+    } else {
+      cols_after <- character(0)
+    }
+    
+    # Remove 'crop_name' and 'crop_code' from cols_after if they got in there
+    # This acts as a sanity check against duplicates
+    cols_after <- setdiff(cols_after, c("crop_name", "crop_code"))
+    
+    new_col_order <- c(cols_before, "crop_name", cols_after, "crop_code")
+    
+    # Return reordered data
+    return(data[, new_col_order, drop = FALSE])
+  }
+  
+  return(data)
+}
+
+#' Get Valid Crop Choices for Picker
+#'
+#' Prepares the list of unique crop choices for the input picker,
+#' ensuring the current selection is valid and included.
+#'
+#' @param crops_table Data frame, the lookup table for crops
+#' @param current_crop_code Numeric/Integer, currently selected crop code (can be NA)
+#'
+#' @return A list with two elements: choices (named vector) and selected (numeric)
+get_valid_crop_choices <- function(crops_table, current_crop_code) {
+  # Prepare unique choices for the picker
+  # Ensure crop names are unique to avoid duplicates in the dropdown
+  unique_crops <- crops_table[!duplicated(crops_table$crop_name), ]
+  
+  # Remove cases where crop_name is empty or NA
+  unique_crops <- unique_crops[
+    !is.na(unique_crops$crop_name) & unique_crops$crop_name != "",
+  ]
+  
+  # Update current_crop_code if necessary to match the unique list
+  # Handles cases where valid duplicates existed in source but were filtered out
+  if (!is.na(current_crop_code) && !current_crop_code %in% unique_crops$crop_code) {
+    
+    # Find name associated with current code in full table
+    current_name_matches <- crops_table$crop_name[
+      crops_table$crop_code == current_crop_code
+    ]
+    
+    if (length(current_name_matches) > 0 && !is.na(current_name_matches[1])) {
+      current_name <- current_name_matches[1]
+      
+      # If that name exists in our filtered unique list
+      if (current_name %in% unique_crops$crop_name) {
+        # Return the code from the unique list that corresponds to this name
+        # This ensures the picker sees it as a valid "selected" value
+        # We do not change the data here, just logic to help the UI state
+        # (The UI update logic elsewhere handles the actual save)
+        current_crop_code <- unique_crops$crop_code[
+          unique_crops$crop_name == current_name
+        ]
+      }
+    }
+  }
+  
+  # Create named vector
+  choices <- setNames(unique_crops$crop_code, unique_crops$crop_name)
+  
+  return(list(choices = choices, selected = current_crop_code))
 }

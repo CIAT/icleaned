@@ -4,6 +4,9 @@ params_db_server <- function(
   
   ns <- session$ns
   jns <- function(x) paste0("#", ns(x))
+
+  # Reactive value to track if modal is open (prevents multiple modals)
+  modal_open <- reactiveVal(FALSE)
   
   # ------ * Initialize the parameters database inputs -------------------------
   observe({
@@ -555,6 +558,23 @@ params_db_server <- function(
       req(input$database_name)
       data_table <- session$userData$parameters_db[[name]]
       
+      # For feeditem table, add crop_name from crops table
+      if (name == "lkp_feeditem") {
+        crops_table <- session$userData$parameters_db[["lkp_crops"]]
+        if (!is.null(crops_table)) {
+          # Ensure data_table is a data.frame
+          data_table <- as.data.frame(data_table)
+          
+          # Add crop_name by matching crop_code
+          data_table$crop_name <- crops_table$crop_name[
+            match(data_table$crop_code, crops_table$crop_code)
+          ]
+          
+          # Reorder columns: Insert crop_name at crop_code's position, move crop_code to end
+          data_table <- reorder_feeditem_columns(data_table)
+        }
+      }
+      
       # Checkboxes for selecting rows (to be deleted)
       data_table$selected_row <- generate_shiny_inputs(
         FUN = checkboxInput,
@@ -574,6 +594,32 @@ params_db_server <- function(
         # Set the width of the checkbox column to be small
         list(width = "2px", targets = 0)
       )
+      
+      # Add specific column definitions for the "lkp_feeditem" table
+      if (name == "lkp_feeditem") {
+        # Find crop_code column index using the NEW column order
+        # The data_table has already been reordered above, so names(data_table) reflects the new order
+        # Note: We subtract 1 because DataTables uses 0-based indexing for targets
+        col_names <- names(data_table)
+        crop_code_col_idx <- which(col_names == "crop_code") - 1
+        crop_name_col_idx <- which(col_names == "crop_name") - 1
+        
+        column_defs <- append(column_defs, list(
+          # Hide crop_code column (keep in data but don't display)
+          # Using visible=FALSE, width=0px, and CSS to hide both header and cells
+          list(
+            targets = crop_code_col_idx,
+            visible = FALSE,
+            width = "0px",
+            createdCell = hide_column_js()
+          ),
+          # Make crop_name clickable with pointer cursor
+          list(
+            targets = crop_name_col_idx,
+            className = "crop-name-cell dt-body-left"
+          )
+        ))
+      }
       
       # Add specific column definition for the "lkp_livetype" table
       if (name == "lkp_livetype") {
@@ -610,11 +656,22 @@ params_db_server <- function(
         shinyjs::disable(id = paste0("delete_rows_", name))
         shinyjs::disable(id = paste0("clone_rows_", name))
       } else {
-        editablity <- list(
-          target = "cell",
-          # Prevent editing of the first column (check boxes for delete rows)
-          disable = list(columns = 0)
-        )
+        # For feeditem table, disable crop_name editing (click only)
+        if (name == "lkp_feeditem") {
+          editablity <- list(
+            target = "cell",
+            # Prevent editing of checkbox and crop_name columns
+            disable = list(
+              columns = c(0, which(names(data_table) == "crop_name") - 1)
+            )
+          )
+        } else {
+          editablity <- list(
+            target = "cell",
+            # Prevent editing of the first column (check boxes for delete rows)
+            disable = list(columns = 0)
+          )
+        }
       }
       
       # Render datatable with all rows and frozen headers
@@ -760,6 +817,130 @@ params_db_server <- function(
                   input$database_name, paste0(name, ".csv"))
       )
     })
+  })
+  
+  # ------ * Handle crop_name click for feeditem table ------------------------
+  # Show modal dialog to select a crop when clicking crop_name cell
+  observeEvent(input$table_lkp_feeditem_cell_clicked, {
+    info <- input$table_lkp_feeditem_cell_clicked
+    req(length(info) > 0)
+    # Don't allow editing default DB
+    req(input$database_name != "Params DB - Default")
+    
+    # Get data tables
+    feeditem_data <- session$userData$parameters_db[["lkp_feeditem"]]
+    crops_table <- session$userData$parameters_db[["lkp_crops"]]
+    
+    if (is.null(crops_table) || is.null(feeditem_data)) {
+      return()
+    }
+    
+    # Reconstruct the display table structure to get correct column names
+    temp_data <- as.data.frame(feeditem_data)
+    temp_data$crop_name <- crops_table$crop_name[
+      match(temp_data$crop_code, crops_table$crop_code)
+    ]
+    
+    # Reorder same as display
+    temp_data <- reorder_feeditem_columns(temp_data)
+    
+    # Add checkbox column (first column in display)
+    temp_data <- data.frame(
+      selected_row = rep(FALSE, nrow(temp_data)),
+      temp_data,
+      stringsAsFactors = FALSE
+    )
+    
+    # Check if clicked column is crop_name
+    clicked_col_name <- names(temp_data)[info$col + 1]
+    
+    if (!is.null(info$col) && clicked_col_name == "crop_name") {
+      if (modal_open()) {
+        return()
+      }
+      modal_open(TRUE)
+      
+      # Use row index directly as the unique identifier
+      # DataTables sends 1-based indices for this table config
+      clicked_row_idx <- info$row
+      
+      # Verify row index is valid
+      if (clicked_row_idx < 1 || clicked_row_idx > nrow(feeditem_data)) {
+        return()
+      }
+      
+      current_crop_code <- feeditem_data$crop_code[clicked_row_idx]
+      
+      # Get valid choices using helper function
+      crop_data <- get_valid_crop_choices(crops_table, current_crop_code)
+      
+      showModal(modalDialog(
+        title = "Select a Crop Name",
+        shinyWidgets::pickerInput(
+          inputId = ns("crop_selector"),
+          label = NULL,
+          choices = crop_data$choices,
+          selected = crop_data$selected,
+          options = list(`live-search` = TRUE)
+        ),
+        easyClose = FALSE,
+        footer = tagList(
+          actionButton(ns("ok_update_crop"), "OK"),
+          actionButton(ns("cancel_crop_selector"), "Cancel")
+        )
+      ))
+      
+      # Store the row index (unique identifier) instead of code
+      session$userData$feeditem_clicked_row_idx <- clicked_row_idx
+    }
+  })
+  
+  # ------ * Update crop_code when crop selection confirmed --------------------
+  observeEvent(input$ok_update_crop, {
+    req(input$crop_selector)
+    clicked_row_idx <- session$userData$feeditem_clicked_row_idx
+    
+    if (!is.null(clicked_row_idx)) {
+      new_data <- session$userData$parameters_db[["lkp_feeditem"]]
+      
+      if (clicked_row_idx < 1 || clicked_row_idx > nrow(new_data)) {
+        modal_open(FALSE)
+        removeModal()
+        return()
+      }
+      
+      # Update crop_code for the specific row index
+      new_data$crop_code[clicked_row_idx] <- as.integer(input$crop_selector)
+      
+      # Update in session - reassign entire parameters_db to trigger reactivity
+      temp_params_db <- session$userData$parameters_db
+      temp_params_db[["lkp_feeditem"]] <- new_data
+      session$userData$parameters_db <- temp_params_db
+      
+      # Write updated table back to CSV
+      fwrite(
+        new_data,
+        file.path(
+          session$userData$user_folder, "parameters_database",
+          input$database_name, "lkp_feeditem.csv"
+        )
+      )
+      
+      # Freeze and restore scroll position after the table re-renders
+      freeze_and_unfreeze_scroll(session, ns("table_lkp_feeditem"))
+    }
+    
+    # Clear stored identifier
+    session$userData$feeditem_clicked_code <- NULL
+    modal_open(FALSE)
+    removeModal()
+  })
+  
+  # Handle cancel button click
+  observeEvent(input$cancel_crop_selector, {
+    modal_open(FALSE)
+    session$userData$feeditem_clicked_code <- NULL
+    removeModal()
   })
   
   # ------ DELETE ROW BUTTON ---------------------------------------------------

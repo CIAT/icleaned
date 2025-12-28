@@ -1594,3 +1594,14 @@ table.dataTable thead tr:nth-child(2) th {
   display: none !important;
 }
 
+/* =====================  */ 
+/* ==== CROP NAME =====  */ 
+/* =====================  */ 
+.crop-name-cell {
+    cursor: pointer;
+    color: #005275;
+    text-align: left !important;
+    &:hover {
+        text-decoration: underline;
+    }
+}
