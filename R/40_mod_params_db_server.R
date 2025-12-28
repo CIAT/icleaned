@@ -644,12 +644,14 @@ params_db_server <- function(
       if (input$database_name == "Params DB - Default") {
         editablity <- FALSE
         
-        column_defs <- list(
+        # Append disabled cursor to existing column_defs
+        # This preserves table-specific column definitions like crop_code hiding
+        column_defs <- append(column_defs, list(
           list(
             targets = "_all", # Apply to all cells
             createdCell = JS(add_cursor_to_disabled_column_js())
           )
-        )
+        ))
         
         # Disable all modification buttons
         shinyjs::disable(id = paste0("add_rows_", name))
