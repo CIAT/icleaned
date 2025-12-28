@@ -2785,19 +2785,9 @@ scenario_server <- function(
     
     #Reconstruct the select inputs
     shinyWidgets::updatePickerInput(
-      session, "climate_zone",
-      choices = sort(
-        lkp_climate()$climate_desc
-      ),
-      selected = session$userData$study_object()$climate_zone
-    )
-    
-    shinyWidgets::updatePickerInput(
       session, "climate_zone_2", 
       choices = sort(
-        lkp_climate2() %>%
-          filter(climate_code == "Temperate") %>%
-          pull(climate2_desc)
+        session$userData$parameters_db[["lkp_climate"]]$climate_desc
       ),
       selected = session$userData$study_object()$climate_zone_2
     )

@@ -293,23 +293,13 @@ scenario_ui <- function(id) {
                           ),
                           h2("Climate:", class = "mb-3"),
                           tags$div(
-                            class = "mb-4",
-                            shinyWidgets::pickerInput(
-                              inputId = ns("climate_zone"),
-                              label = NULL,
-                              choices = NULL,
-                              options = list(`live-search` = TRUE)
-                            ),
-                          ),
-                          h2("Sub-climate:", class = "mb-3"),
-                          tags$div(
-                            class = "mb-4",
+                            class = "mb-4 climate-picker",
                             shinyWidgets::pickerInput(
                               inputId = ns("climate_zone_2"),
                               label = NULL,
                               choices = NULL,
                               options = list(`live-search` = TRUE)
-                            ),
+                            )
                           ),
                           h2("Farm name:", class = "mb-3"),
                           tags$div(
