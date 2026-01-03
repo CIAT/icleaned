@@ -1811,7 +1811,6 @@ scenario_server <- function(
   
   # Render the crop inputs table
   output$crop_inputs_table <- renderDT({
-    req(fertilizers())
 
     # Observe fertilizers to show/hide the warning message
     if (nrow(fertilizers()) == 0) {
