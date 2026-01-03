@@ -598,18 +598,18 @@ params_db_server <- function(
         ))
       }
       
-      # reset the buttons
-      shinyjs::enable(id = paste0("add_rows_", name))
-      shinyjs::enable(id = paste0("delete_rows_", name))
-      shinyjs::enable(id = paste0("clone_rows_", name))
-      
       # Disable buttons specifically for lkp_livetype
       if (name == "lkp_livetype") {
         shinyjs::disable(id = paste0("add_rows_", name))
         shinyjs::disable(id = paste0("delete_rows_", name))
         shinyjs::disable(id = paste0("clone_rows_", name))
+      } else {
+        # reset the buttons
+        shinyjs::enable(id = paste0("add_rows_", name))
+        shinyjs::enable(id = paste0("delete_rows_", name))
+        shinyjs::enable(id = paste0("clone_rows_", name))
       }
-
+      
       # Check if the database is the default one
       if (input$database_name == "Params DB - Default") {
         editablity <- FALSE
@@ -810,7 +810,7 @@ params_db_server <- function(
       # Get the info of the edited cell
       info <- input[[paste0("table_", name, "_cell_edit")]]
       new_data <- session$userData$parameters_db[[name]]
-
+      
       page_var <- paste0(name, "_page")
       current_page <- pagination_state[[page_var]]
       if (is.null(current_page) || !is.finite(current_page)) {
