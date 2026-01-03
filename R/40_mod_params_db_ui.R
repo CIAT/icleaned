@@ -7,13 +7,23 @@ params_db_ui <- function(id) {
       class = "container",
       # ------ Last Update -----------------------------------------------------
       p(
-        class = "pt-3 pb-5 text-end text-primary text-small",
+        class = "pt-3 pb-4 text-end text-primary text-small",
         span("Last update: "),
         span(strong(id = ns("last_update_date")))
       ),
     ),
+    div(
+      class = "container mt-2 mb-2",
+      style = "text-align: left",
+      a(
+        class = "editInformationBtn",
+        icon("chevron-left", class = "editInfoIcon"),
+        "Scenario - Enterprise Description",
+        onclick = go_to(target = "scenario")
+      ) 
+    ),
     fixedPage(
-      class = "bg-light px-4 pt-5 pb-5  mt-5 mb-5",
+      class = "bg-light px-4 pt-5 pb-5  mt-4 mb-4",
       style = "margin-top: 20px;",
       h2("Choose a parameters database option:", class = "mb-3"),
       fluidRow(
@@ -235,21 +245,10 @@ params_db_ui <- function(id) {
         )
       )
     ),
-    div(
-      class = "container mt-2 mb-2",
-      style = "text-align: left",
-      a(
-        class = "editInformationBtn",
-        icon("chevron-left", class = "editInfoIcon"),
-        "Scenario - Enterprise Description",
-        onclick = go_to(target = "scenario")
-      ) 
-    ),
     fixedPage(
-      style = "margin-top: 50px;",
       fluidRow(
         class = "bg-light",
-        style = "margin-top: 50px;",
+        style = "margin-top: 40px;",
         div(
           class = "custom-tab-width",
           # Use lapply to loop over each tab name and generate the tabPanels
