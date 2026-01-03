@@ -1813,7 +1813,7 @@ scenario_server <- function(
   output$crop_inputs_table <- renderDT({
 
     # Observe fertilizers to show/hide the warning message
-    if (nrow(fertilizers()) == 0) {
+    if (nrow(fertilizers()) == 0 & nrow(crop_inputs_data()) != 0) {
       shinyjs::show("alert_no_fertilizers")
     } else {
       shinyjs::hide("alert_no_fertilizers")
