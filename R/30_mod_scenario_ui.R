@@ -12,13 +12,24 @@ scenario_ui <- function(id) {
       class = "container",
       # ------ Dernière mise à jour ------------------------------------------
       p(
-        class = "pt-3 pb-5 text-end text-primary text-small",
+        class = "pt-3 pb-4 text-end text-primary text-small",
         span("Last update: "),
         span(strong(id = ns("last_update_date")))
       ),
     ),
+    div(
+      class = "container mt-2 mb-2",
+      style = "text-align: right",
+      a(
+        class = "editInformationBtn",
+        icon("edit"),
+        "Edit Parameters",
+        icon("chevron-right", class = "editInfoIcon"),
+        onclick = go_to(target = "params_db")
+      )
+    ),
     fixedPage(
-      class = "bg-light px-4 pt-5 pb-5 mt-5 mb-5",
+      class = "bg-light px-4 pt-5 pb-5 mt-4 mb-4",
       style = "margin-top: 20px;",
       h2("Choose a file option:", class = "mb-3"),
       fluidRow(
@@ -247,17 +258,6 @@ scenario_ui <- function(id) {
         )
       )
     ),
-    div(
-      class = "container mt-2 mb-2",
-      style = "text-align: right",
-      a(
-        class = "editInformationBtn",
-        icon("edit"),
-        "Edit Parameters",
-        icon("chevron-right", class = "editInfoIcon"),
-        onclick = go_to(target = "params_db")
-      )
-    ),
     shinyjs::hidden(
       div(
         id = ns("scenario_editor_section"),
@@ -335,7 +335,7 @@ scenario_ui <- function(id) {
                                 class = "d-flex align-items-center px-1",
                                 actionButton(
                                   inputId = ns("delete_season"),
-                                  label = "Delete",
+                                  label = "Remove",
                                   class = "btn btn-primary filters-btn",
                                   icon = icon("trash")
                                 )
@@ -358,10 +358,16 @@ scenario_ui <- function(id) {
                       div(class = "p-5 bg-light",
                           h2("Manure/Fertilizer bought", class = "tabsH2"),
                           h2("Manure", class = "mb-4"),
+                          shinyjs::hidden(
+                             div(
+                               id = ns("alert_message_manure_inputs"),
+                               class = "alert alert-danger"
+                             )
+                          ),
                           h2("Annual purchase of manure (kg N):", class = "mb-3"),
                           tags$div(
                             class = "mb-4",
-                            textInput(
+                            numericInput(
                               inputId = ns("purchased_manure"),
                               label = NULL,
                               value = 0
@@ -370,7 +376,7 @@ scenario_ui <- function(id) {
                           h2("Annual purchase of compost (kg N):", class = "mb-3"),
                           tags$div(
                             class = "mb-4",
-                            textInput(
+                            numericInput(
                               inputId = ns("purchased_compost"),
                               label = NULL,
                               value = 0
@@ -379,7 +385,7 @@ scenario_ui <- function(id) {
                           h2("Annual purchase of other organic N additions (kg N):", class = "mb-3"),
                           tags$div(
                             class = "mb-4",
-                            textInput(
+                            numericInput(
                               inputId = ns("purchased_organic_n"),
                               label = NULL,
                               value = 0
@@ -388,7 +394,7 @@ scenario_ui <- function(id) {
                           h2("Annual purchase of bedding materials (kg N):", class = "mb-3"),
                           tags$div(
                             class = "mb-5",
-                            textInput(
+                            numericInput(
                               inputId = ns("purchased_bedding"),
                               label = NULL,
                               value = 0
@@ -428,6 +434,12 @@ scenario_ui <- function(id) {
                       class = "carousel-item",
                       div(class = "p-5 bg-light",
                           h2("Waste of milk and meat", class = "tabsH2"),
+                        shinyjs::hidden(
+                          div(
+                            id = ns("alert_message_waste_inputs"),
+                            class = "alert alert-danger"
+                          )
+                        ),
                           fluidRow(
                             column(
                               width = 6,
@@ -576,6 +588,12 @@ scenario_ui <- function(id) {
                       class = "carousel-item",
                       div(class = "p-5 bg-light",
                           h2("Area", class = "tabsH2"),
+                          shinyjs::hidden(
+                          div(
+                            id = ns("alert_message_area_inputs"),
+                            class = "alert alert-danger"
+                          )
+                        ),
                           h2("Annual precipitation (mm/yr)", class = "mb-3"),
                           tags$div(
                             class = "mb-4",
@@ -660,7 +678,7 @@ scenario_ui <- function(id) {
                               value = 0
                             )
                           ),
-                          h2("ETO (mm/year)", class = "mb-3"),
+                          h2("ET₀ (mm/year)", class = "mb-3"),
                           tags$div(
                             class = "mb-5",
                             numericInput(
@@ -1082,9 +1100,16 @@ scenario_ui <- function(id) {
               tabPanel(
                 "Livestock Feeding",
                 div(class = "p-5 bg-light",
-                    uiOutput(ns("livestock_feeding_ui")),
-                    h2("Allocation in percentage of a feed to livestock by season", class = "mb-5"),
-                    uiOutput(ns("livestock_feeding_table"))
+                  uiOutput(ns("livestock_feeding_ui")),
+                  h2("Allocation in percentage of a feed to livestock by season", class = "mb-5"),
+                  shinyjs::hidden(
+                   div(
+                    id = ns("alert_livestock_feeding_global"),
+                    class = "alert alert-danger",
+                    style = "margin-bottom: 20px;"
+                    )
+                  ),
+                  uiOutput(ns("livestock_feeding_table"))
                 )
               )
             )

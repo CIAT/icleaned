@@ -69,6 +69,9 @@ scenario_server <- function(
     shinyjs::html(id = "last_update_date", html = last_modification_date)
   })
   
+  # ----- Validation Module ----------------------------------------------------
+  farm_validation_server("validation", input = input, parent_session = session)
+
   # -----  * Show Scenario Editor Section after selection ----------------------
   observeEvent(input$json_file_name, {
     shinyjs::show(id = "scenario_editor_section")
@@ -2307,6 +2310,14 @@ scenario_server <- function(
   # ----------- Livestock feeding tab ------------------------------------------
   # Reactive value to store the data frames for each season
   basket_data <- reactiveValues()
+  
+  # Initialize livestock feeding validation
+  livestock_feeding_validation_server(
+    id = "validation",
+    basket_data = basket_data,
+    seasons = seasons,
+    parent_session = session
+  )
   
   # UI output for the Season/Feed Allocation tab
   output$livestock_feeding_ui <- renderUI({
