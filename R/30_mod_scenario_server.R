@@ -1006,7 +1006,7 @@ scenario_server <- function(
         cp_lys_growth = selected_livestock$cp_lys_growth,
         birth_interval = selected_livestock$birth_interval,
         protein_milkcontent = selected_livestock$protein_milkcontent,
-        milk_fat_content = selected_livestock$milk_fat_content,
+        fat_milkcontent = selected_livestock$fat_milkcontent,
         energy_milkcontent = selected_livestock$energy_milkcontent,
         energy_meatcontent = selected_livestock$energy_meatcontent,
         protein_meatcontent = selected_livestock$protein_meatcontent,
@@ -1116,7 +1116,7 @@ scenario_server <- function(
           "lactation_length", "proportion_growth_piglets_milk", "lw_gain_piglets", "grazing_displacement_energy",
           "cp_maintenance", "cp_grazing", "cp_lys_pregnancy",
           "cp_lactmilk", "cp_lys_growth", "birth_interval", "protein_milkcontent",
-          "milk_fat_content", "energy_milkcontent", "energy_meatcontent",
+          "fat_milkcontent", "energy_milkcontent", "energy_meatcontent",
           "protein_meatcontent", "carcass_fraction", "energy_eggcontent",
           "n_manure_content", "meat_product", "milk_product", "ipcc_ef_category_t1",
           "ipcc_ef_category_t2", "ipcc_meth_man_category", "ipcc_n_exc_category"

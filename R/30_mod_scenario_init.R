@@ -172,7 +172,7 @@ livestock_data_initialization <- data.frame(
   cp_lys_growth = numeric(),
   birth_interval = numeric(),
   protein_milkcontent = numeric(),
-  milk_fat_content = numeric(),
+  fat_milkcontent = numeric(),
   energy_milkcontent = numeric(),
   energy_meatcontent = numeric(),
   protein_meatcontent = numeric(),

@@ -1,4 +1,4 @@
-﻿{
+{
   "seasons": [
     {
       "season_name": "wet",
@@ -87,7 +87,7 @@
       "cp_lys_growth": 0,
       "birth_interval": 1.2,
       "protein_milkcontent": 3.7,
-      "milk_fat_content": 4.3,
+      "fat_milkcontent": 4.3,
       "energy_milkcontent": 970,
       "energy_meatcontent": 2200,
       "protein_meatcontent": 26,
@@ -140,7 +140,7 @@
       "cp_lys_growth": 0.4,
       "birth_interval": 0,
       "protein_milkcontent": 0,
-      "milk_fat_content": 0,
+      "fat_milkcontent": 0,
       "energy_milkcontent": 0,
       "energy_meatcontent": 2200,
       "protein_meatcontent": 26,
