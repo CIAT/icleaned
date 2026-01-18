@@ -50,14 +50,9 @@ add_cursor_to_disabled_column_js <- function() {
 }
 
 # Initialize column search inputs in DataTables header (initComplete callback)
-# Cleans up FixedHeader artifacts, adds search row to original and cloned headers
 init_column_search_js <- function() {
   'function(settings, json) {
     var api = this.api();
-
-    // CLEANUP: Always remove old FixedHeader artifacts on every table initialization
-    // This prevents memory leaks and progressive slowdown
-    $(".dtfh-floatingparent").remove();
 
     // Check if search row already exists in the DOM (prevents duplicates)
     var existingSearchRow = $(api.table().header()).find("tr.search-row");
@@ -82,7 +77,6 @@ init_column_search_js <- function() {
       } else if (!isVisible) {
         // Skip creating search input for hidden columns (but they remain searchable)
         // This prevents empty search boxes from appearing for hidden columns like crop_code
-        // Note: We don\'t append anything, so this column won\'t have a search input
       } else {
         // Create a text input for filtering this column
         var input = $(\'<input type="text" placeholder="Search..." />\')
@@ -104,18 +98,24 @@ init_column_search_js <- function() {
 
     // Add the completed search row to the table header
     $(api.table().header()).append(searchRow);
-
-    // Update FixedHeader and FixedColumns to include the new search row in their clones
+    
+    // Force header to match body width including scrollbar space
     setTimeout(function() {
-      if (api.fixedHeader) {
-        api.fixedHeader.adjust();
+      var wrapper = $(api.table().container());
+      var scrollHead = wrapper.find(".dataTables_scrollHead");
+      var scrollBody = wrapper.find(".dataTables_scrollBody");
+      
+      if (scrollBody.length && scrollHead.length) {
+        // Make header scrollable and match body overflow behavior
+        scrollHead.css({
+          "overflow-y": "scroll",
+          "overflow-x": "hidden"
+        });
       }
-      if (api.fixedColumns) {
-        api.fixedColumns().update();
-      }
-      // Recalculate column widths and redraw to ensure proper alignment
-      api.columns.adjust().draw(false);
-    }, 30);
+      
+      // Recalculate column widths to ensure proper alignment
+      api.columns.adjust();
+    }, 50);
   }'
 }
 

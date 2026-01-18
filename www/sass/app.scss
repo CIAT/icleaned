@@ -704,11 +704,44 @@ table tbody tr{
 .dataTables_wrapper {
     overflow-x: auto;
 }
+
+/* Style the header scrollbar to match header background */
+.dataTables_scrollHead {
+    overflow-y: scroll !important;
+    overflow-x: hidden !important;
+    
+    /* Chrome, Safari, Opera */
+    &::-webkit-scrollbar {
+        width: 17px;
+    }
+    
+    &::-webkit-scrollbar-track,
+    &::-webkit-scrollbar-thumb {
+        background-color: #f5f5f5;
+        border: none;
+    }
+    
+    &::-webkit-scrollbar-button {
+        display: none;
+    }
+}
+
+/* Hide the FixedColumns top-right blocker */
+.dtfc-right-top-blocker {
+    display: none !important;
+}
+
 table.dataTable thead tr>.dtfc-fixed-left {
     background-color: #f5f5f5;
 }
 table.dataTable tbody tr>.dtfc-fixed-left{
     background-color: #ebeff1;
+}
+
+/* Ensure search row in fixed column matches main header */
+.dtfc-fixed-left thead tr.search-row th {
+    background-color: #f5f5f5 !important;
+    padding: 2px !important;
 }
 .modal-dialog:not(.modal-lg) {
     max-width: 60%; 
@@ -1502,6 +1535,10 @@ table.dataTable thead tr:nth-child(2) th {
   padding: 2px !important;
   line-height: 1 !important;
   box-sizing: border-box !important;
+  background-color: #f5f5f5 !important;
+  overflow: hidden !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
 
   /* Search input field styling */
   input[type="text"] {
@@ -1522,6 +1559,14 @@ table.dataTable thead tr:nth-child(2) th {
       padding: 3px 7px !important;
     }
   }
+}
+
+/* Fix first column search cell to stay with fixed column */
+table.dataTable thead tr.search-row th:first-child {
+  position: sticky !important;
+  left: 0 !important;
+  z-index: 3 !important;
+  background-color: #f5f5f5 !important;
 }
 
 /* Hide the global DataTables search filter */

@@ -683,17 +683,18 @@ params_db_server <- function(
         }
       }
       
-      # Render datatable with all rows and frozen headers
+      # Render datatable with all rows and frozen columns
       datatable(
         data = data_table,
         editable = editablity,
         rownames = FALSE,
         escape = FALSE,
-        extensions = c("FixedColumns", "FixedHeader"),
+        extensions = c("FixedColumns"),
         selection = "none",
         colnames = c("", colnames(data_table)[-1]),  # Hide first column name
         options = list(
           scrollX = TRUE,
+          scrollY = "480px",
           processing = FALSE,
           paging = FALSE,
           searching = TRUE,
@@ -707,7 +708,6 @@ params_db_server <- function(
             )
           ),
           fixedColumns = list(leftColumns = 1),
-          fixedHeader = TRUE,
           initComplete = JS(init_column_search_js())
         )
       )
