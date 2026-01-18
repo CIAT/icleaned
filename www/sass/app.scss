@@ -669,6 +669,15 @@ table.dataTable {
     > tbody > tr > td:not(:first-child) {
       min-width: $common-width;
     }
+    
+    /* Reduce width for code column (second column after checkbox) */
+    > thead > tr > th:nth-child(2),
+    > thead > tr > td:nth-child(2),
+    > tbody > tr > td:nth-child(2) {
+      width: 120px;
+      min-width: 120px;
+      max-width: 120px;
+    }
   }
 }
 
