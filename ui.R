@@ -22,6 +22,8 @@ ui <- fluidPage(
   includeScript("www/js/bg-modal.js"), # Change backdrop modal
   # Add JS code to freeze the horizontal scroll on table edit
   includeScript("www/js/horizontal-scroll.js"),
+  # Add JS handler for vertical scroll (auto-jump to new rows)
+  includeScript("www/js/vertical-scroll.js"),
   includeScript("www/js/auth-url-cleanup.js"), # Clean the URL after login
   #   # ------ Header ----------------------------------------------------------
   tags$header(

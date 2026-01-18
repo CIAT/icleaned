@@ -1025,6 +1025,11 @@ params_db_server <- function(
       
       # Keep table scroll position to prevent UI jump
       freeze_and_unfreeze_scroll(session, ns(paste0("table_", table_name)))
+      
+      # Auto-jump to the bottom to show newly added row
+      session$onFlushed(function() {
+        scroll_to_bottom(session, ns(paste0("table_", table_name)))
+      }, once = TRUE)
     })
   })
   

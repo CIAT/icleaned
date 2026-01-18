@@ -256,3 +256,13 @@ get_valid_crop_choices <- function(crops_table, current_crop_code) {
   
   return(list(choices = choices, selected = current_crop_code))
 }
+
+#' Scroll DataTable to Bottom
+#'
+#' Scrolls a DataTable to the bottom and highlights the last row.
+#'
+#' @param session Shiny session object
+#' @param table_id Namespaced table ID
+scroll_to_bottom <- function(session, table_id) {
+  session$sendCustomMessage("scrollToBottom", list(tableId = table_id))
+}
