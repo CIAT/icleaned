@@ -66,7 +66,17 @@ init_column_search_js <- function() {
     // Loop through each column to create search inputs
     api.columns().every(function(index) {
       var column = this;
+      var $originalTh = $(column.header());
       var th = $("<th></th>");
+
+      // copy sticky styles from the original header
+      var position = $originalTh.css("position");
+      if (position === "sticky") {
+        th.css({
+          "position": "sticky",
+          "left": $originalTh.css("left")
+        });
+      }
 
       // Check if this column is visible
       var isVisible = column.visible();

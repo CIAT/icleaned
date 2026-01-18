@@ -683,6 +683,13 @@ params_db_server <- function(
         }
       }
       
+      # Determine number of fixed columns based on table type
+      fixed_columns_count <- if (name %in% c("lkp_crops", "lkp_livetype")) {
+        3  # Freeze checkbox + code + name columns
+      } else {
+        1  # Only freeze checkbox column
+      }
+      
       # Render datatable with all rows and frozen columns
       datatable(
         data = data_table,
@@ -707,7 +714,7 @@ params_db_server <- function(
               table_name = name
             )
           ),
-          fixedColumns = list(leftColumns = 1),
+          fixedColumns = list(leftColumns = fixed_columns_count),
           initComplete = JS(init_column_search_js())
         )
       )
