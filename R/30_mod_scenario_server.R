@@ -262,8 +262,8 @@ scenario_server <- function(
     if (file.exists(source_file_path)) {
       file.copy(source_file_path, share_file_path, overwrite = TRUE)
       
-      # Share the related database if it's not the default database
-      if (input$database_code != "Params DB - Default") {
+      # Share the related database if it's not a default (read-only) database
+      if (!(input$database_code %in% primary_database_names())) {
         # Define the source and destination paths for the database directory
         db_path <- file.path(
           session$userData$user_folder, "parameters_database", input$database_code
@@ -566,9 +566,9 @@ scenario_server <- function(
       json_data <- fromJSON(source_file_path)
       db_name <- json_data$database_code
       
-      # If the database is not the default database and is available on
+      # If the database is not a default (read-only) database and is available on
       # the shared_pool folder, clone the database as well
-      if (db_name != "Params DB - Default" &&
+      if (!(db_name %in% primary_database_names()) &&
           db_name %in% list.files(
             file.path(Sys.getenv("DATA_DIR"), "shared_pool", "parameters_database")
           )) {
@@ -2616,14 +2616,20 @@ scenario_server <- function(
       
     } else {
       
-      # Set the default database as the selected one
-      selected_database <- "Params DB - Default"
+      # Use first available default, or first available database
+      default_available <- intersect(primary_database_names(), available_databases)
+      selected_database <- if (length(default_available) > 0) {
+        sort(default_available)[1]
+      } else if (length(available_databases) > 0) {
+        sort(available_databases)[1]
+      } else {
+        character(0)
+      }
       
-      if (related_database != "Params DB - Default") {
-        # Show a warning message to the user
+      if (!is.null(related_database) && length(selected_database) > 0 && related_database != selected_database) {
         showNotification(
-          "The specified parameters database is not available. 
-        'Params DB - Default' will be used instead.",
+          paste0("The specified parameters database is not available. '",
+            selected_database, "' will be used instead."),
           duration = 5,
           type = "warning"
         )

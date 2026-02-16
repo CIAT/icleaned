@@ -1,0 +1,29 @@
+crop_code ,crop_name,dry_yield,residue_dry_yield,main_n,residue_n,c_factor,kc_initial,kc_midseason,kc_late,category,trees_ha,trees_dhb,trees_growth,trees_removal,trees_ha_dbh25,average_dbh25,increase_dbh25,trees_ha_dbh2550,average_dbh2550,increase_dbh2550,trees_ha_dbh50,average_dbh50,increase_dbh50,time_horizon,diameter_breast
+1,Andropogon gayanus,7.8,,0.0104,,,0.3,0.75,0.75,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2,Arachis pintoi,5,,0.032,,,0.15,1.1,0.25,legume,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+3,Axonopus scoparius,15,,0.013,,,0.3,0.75,0.75,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+4,Brachiaria brizantha ,11.7,,0.0176,,,0.6,1.1,1.05,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+5,Brachiaria decumbens,10,,0.014,,,0.6,1.1,1.05,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+6,Brachiaria hybrid,15,,0.0224,,,0.6,1.1,1.05,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+7,Cenchrus clandestinus,12,,0.024,,,0.3,0.75,0.75,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+8,Dactylis glomerata,6,,0.026,,,0.3,0.75,0.75,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+9,Echinochloa polystachya,10,,0.0184,,,0.3,0.75,0.75,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+10,Gliricidia,10,,0.0356,,,1.05,1.1,1.1,shrub legume,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+11,Leucaena,14,,0.034,,,1.05,1.1,1.1,shrub legume,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+12,Lolium multiflorum,11.4,,0.012,,,0.3,0.75,0.75,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+13,Maize,3,4,0.017,0.007,,0.15,1.15,0.3,cereal,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+14,Maize-silage,18,,0.007,,,0.15,1.15,0.3,cereal,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+15,Medicago sativa,8.4,,0.032,,,0.15,1.1,0.25,legume,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+16,Mulberry,2,,0.031,,,0.15,1.1,0.25,tree crop,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+17,Musa spp.,5,1.6,0.008,0.0152,,0.15,1.2,0.7,tree crop,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+18,Natural pasture,10,,0.007,,,0.3,0.75,0.75,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+19,Panicum maximum,12.4,,0.0192,,,0.6,1.1,1.05,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+20,Paspalum notatum,5.2,,0.016,,,0.3,0.75,0.75,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+21,Pennisetum purpureum,19,,0.023,,,0.6,1.1,1.05,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+22,Pennisetum purpureum-silage,19,,0.01,,,1,1,1,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+23,Plantago spp,10,,0.032,,,1.05,1.1,1.1,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+24,Purchased,0,0,0,0,0,0,0,0,cereal,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+25,Samanea saman,1,,0.027,,,1.05,1.1,1.1,shrub legume,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+26,Sambucus peruviana,3.5,,0.023,,,1.05,1.1,1.1,tree crop,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+27,Trichantera gigantea,10,,0.028,,,1.05,1.1,1.1,tree crop,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+28,Trifolium repens,3,,0.04,,,0.15,1.1,0.25,legume,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0

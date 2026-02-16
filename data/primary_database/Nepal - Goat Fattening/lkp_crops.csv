@@ -1,0 +1,20 @@
+crop_code,crop_name,dry_yield,residue_dry_yield,main_n,residue_n,c_factor,kc_initial,kc_midseason,kc_late,category,trees_ha,trees_dhb,trees_growth,trees_removal,trees_ha_dbh25,average_dbh25,increase_dbh25,trees_ha_dbh2550,average_dbh2550,increase_dbh2550,trees_ha_dbh50,average_dbh50,increase_dbh50,time_horizon,diameter_breast
+1,Amaranthus caudatus,6.44,0,0.02,0,0.15,0.15,0.95,0.85,legume,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2,Avena sativa,16,0,0.02,0,0.15,0.15,1.15,0.3,cereal,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+3,Bauhinia purpurea,1.98,0,0.03,0,0.15,0.575,1.125,0.475,legume,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+4,Brassica spp,1.22,0,0.03,0,0.05,0.2625,1.1375,0.95,oilseed crop,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+5,Cicer arietinum,1.13,0,0.04,0,0.15,0.575,1.125,0.475,legume,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+6,Eleusine coracana,1.22,0,0.01,0,0.15,0.15,1.15,0.3,cereal,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+7,Fagopyrum esculentum,3.09,1.79,0.02,0.01,0.05,0.1,1.1,0.55,pseudocereal,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+8,Ficus semicordata,2.3,0,0.02,0,0.05,0.2625,1.1375,0.95,tree crop,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+9,Garuga pinnata,2,0,0.03,0,0.05,0.2625,1.1375,0.95,tree crop,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+10,Lens culinaris,1.23,0,0.04,0,0.15,0.575,1.125,0.475,legume,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+11,Leucena leucocephala,15,0,0.04,0,0.15,1.05,1.1,1.1,legume,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+12,Melia azedarach,2.5,0,0.03,0,0.05,0.2625,1.1375,0.95,tree crop,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+13,Morus alba,1.35,0,0.02,0,0.05,0.2625,1.1375,0.95,tree crop,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+14,Natural pasture,27,0,0.01,0,0.05,0.3,0.7,0.7,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+15,Oryza sativa,3.8,2.44,0.01,0.01,0.05,1.05,1.2,0.75,cereal,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+16,Pennisetum purpureum,20,0,0.02,0,0.01,0.6,1.1,1.05,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+17,Purchased,0,0,0,0,0,0,0,0,cereal,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+18,Vigna mungo,0.89,0,0.02,0,0.15,0.575,1.125,0.475,legume,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+19,Zea mays,4.02,2.33,0.02,0.01,0.1,0.15,1.15,0.3,cereal,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0

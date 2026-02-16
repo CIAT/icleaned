@@ -93,10 +93,10 @@ params_db_server <- function(
   # on renaming a database
   observeEvent(input$rename_database, {
     
-    # If the selected database is the Default database, show an error message
-    if (input$database_name == "Params DB - Default") {
+    # If the selected database is a default (read-only) database, show an error message
+    if (input$database_name %in% primary_database_names()) {
       showNotification(
-        "The Default database cannot be renamed.",
+        "Default parameters databases cannot be renamed. Clone one to create an editable copy.",
         duration = 3,
         type = "error"
       )
@@ -125,10 +125,10 @@ params_db_server <- function(
   # on deleting a database
   observeEvent(input$delete_database, {
     
-    # If the selected database is the Default database, show an error message
-    if (input$database_name == "Params DB - Default") {
+    # If the selected database is a default (read-only) database, show an error message
+    if (input$database_name %in% primary_database_names()) {
       showNotification(
-        "The Default database cannot be deleted.",
+        "Default parameters databases cannot be deleted. Clone one to create an editable copy.",
         duration = 3,
         type = "error"
       )
@@ -185,29 +185,22 @@ params_db_server <- function(
   
   # ----------- Database Management Tab ----------------------------------------
   
-  # Create Database
+  # Create Database: clone Params DB - Default into user folder
   observeEvent(input$create_database, {
     cat(file = stderr(), "40 - Creating a new database...\n")
-    # Define source and destination paths
-    source_path <- file.path("data", "primary_database")
+    source_path <- file.path("data", "primary_database", "Params DB - Default")
     destination_dir <- file.path(session$userData$user_folder, "parameters_database")
-    
-    # Copy the directory with versioning
     clone_file_path <- versioned_copy(
       source_path = source_path,
       destination_dir = destination_dir,
       base_name = "Params DB - Default",
       versioning = TRUE
     )
-    
-    # Update the session with the new list of databases
     session$userData$databases(
       list.files(
         file.path(session$userData$user_folder, "parameters_database"), full.names = FALSE
       )
     )
-    
-    # Update the selectInput with the new database
     shinyWidgets::updatePickerInput(
       session = session,
       inputId = "database_name",
@@ -218,8 +211,6 @@ params_db_server <- function(
       ),
       selected = basename(clone_file_path)
     )
-    
-    # Database creation success
     showNotification(
       ui = "The parameters database has been created successfully!",
       duration = 3,
@@ -336,8 +327,8 @@ params_db_server <- function(
   observeEvent(input$share_to_pool_confirmation, {
     req(input$share_to_pool_confirmation)
     
-    # Share the related database if it's not the default database
-    if (input$database_name != "Params DB - Default") {
+    # Share the related database if it's not a default (read-only) database
+    if (!(input$database_name %in% primary_database_names())) {
       db_path <- file.path(
         session$userData$user_folder, "parameters_database", input$database_name
       )
@@ -519,7 +510,12 @@ params_db_server <- function(
     req(input$database_name)
     selected_db <- input$database_name
     
-    db_path <- file.path(session$userData$user_folder, "parameters_database", selected_db)
+    # Load from canonical primary_database for defaults, else from user's folder
+    db_path <- if (selected_db %in% primary_database_names()) {
+      file.path("data", "primary_database", selected_db)
+    } else {
+      file.path(session$userData$user_folder, "parameters_database", selected_db)
+    }
     db_files <- list.files(db_path, full.names = TRUE)
     
     lapply(seq_along(db_files), function(i) {
@@ -647,8 +643,8 @@ params_db_server <- function(
         shinyjs::enable(id = paste0("clone_rows_", name))
       }
       
-      # Check if the database is the default one
-      if (input$database_name == "Params DB - Default") {
+      # Check if the database is a default (read-only) one
+      if (input$database_name %in% primary_database_names()) {
         editablity <- FALSE
         
         # Append disabled cursor to existing column_defs
@@ -813,6 +809,7 @@ params_db_server <- function(
   lapply(parameters_db_names, function(name) {
     observeEvent(input[[paste0("table_", name, "_cell_edit")]], {
       req(input$database_name)
+      req(!(input$database_name %in% primary_database_names()))
       # Get the info of the edited cell
       info <- input[[paste0("table_", name, "_cell_edit")]]
       new_data <- session$userData$parameters_db[[name]]
@@ -840,8 +837,8 @@ params_db_server <- function(
   observeEvent(input$table_lkp_feeditem_cell_clicked, {
     info <- input$table_lkp_feeditem_cell_clicked
     req(length(info) > 0)
-    # Don't allow editing default DB
-    req(input$database_name != "Params DB - Default")
+    # Don't allow editing default (read-only) DBs
+    req(!(input$database_name %in% primary_database_names()))
     
     # Get data tables
     feeditem_data <- session$userData$parameters_db[["lkp_feeditem"]]
@@ -914,6 +911,7 @@ params_db_server <- function(
   # ------ * Update crop_code when crop selection confirmed --------------------
   observeEvent(input$ok_update_crop, {
     req(input$crop_selector)
+    req(!(input$database_name %in% primary_database_names()))
     clicked_row_idx <- session$userData$feeditem_clicked_row_idx
     
     if (!is.null(clicked_row_idx)) {
@@ -964,6 +962,7 @@ params_db_server <- function(
   lapply(parameters_db_names, function(table_name) {
     observeEvent(input[[paste0("delete_rows_", table_name)]], {
       req(input$database_name)
+      req(!(input$database_name %in% primary_database_names()))
       
       parameter_table <- session$userData$parameters_db[[table_name]]
       if (nrow(parameter_table) == 0) return()
@@ -1003,6 +1002,7 @@ params_db_server <- function(
   lapply(parameters_db_names, function(table_name) {
     observeEvent(input[[paste0("add_rows_", table_name)]], {
       req(input$database_name)
+      req(!(input$database_name %in% primary_database_names()))
       
       # Retrieve current table from memory
       parameter_table <- session$userData$parameters_db[[table_name]]
@@ -1046,6 +1046,7 @@ params_db_server <- function(
   lapply(parameters_db_names, function(table_name) {
     observeEvent(input[[paste0("clone_rows_", table_name)]], {
       req(input$database_name)
+      req(!(input$database_name %in% primary_database_names()))
       
       parameter_table <- session$userData$parameters_db[[table_name]]
       if (nrow(parameter_table) == 0) return()

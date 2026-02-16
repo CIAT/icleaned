@@ -1,0 +1,10 @@
+feed_item_code,crop_code ,feed_item_name,dm_content,me_content,cp_content
+1,1,Cotton seed cake OFC,91,13.2,30
+2,1,Cotton straw OFR,76,5.1,6.4
+3,2,Naturally occuring pasture - grazing OFR,60,5,6
+4,4,Rice (Oryza sativa) - bran (with germs) OFC,91,10.43,14
+5,3,Rice (Oryza sativa) - straw,91.88,5.64,3.85
+6,5,Sorghum (Sorghum bicolor) - forage,27,8.57,3.7
+7,6,Sugarcane (Saccharum officinarum) - crop residue OFR,96.27,7.44,3.69
+8,8,Wheat (bran) OFC,87,11,17.3
+9,7,Wheat (straw) OFR,88,5.63,4.2

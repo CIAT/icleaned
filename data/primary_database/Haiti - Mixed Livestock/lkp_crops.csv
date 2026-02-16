@@ -1,0 +1,10 @@
+crop_code,crop_name,dry_yield,residue_dry_yield,main_n,residue_n,c_factor,kc_initial,kc_midseason,kc_late,category,trees_ha,trees_dhb,trees_growth,trees_removal,trees_ha_dbh25,average_dbh25,increase_dbh25,trees_ha_dbh2550,average_dbh2550,increase_dbh2550,trees_ha_dbh50,average_dbh50,increase_dbh50,time_horizon,diameter_breast
+1,Cowpea,0.85,2.97,0.04,0.02,0.12,0.15,1.05,0.6,legume,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2,Gliricidia,5,0,0.04,0,0,1.05,1.1,1.1,legume,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+3,Leucaena,14,0,0.03,0.03,0,1.05,1.1,1.1,legume,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+4,Maize,8.6,3,0.02,0.01,0.05,0.15,1.15,0.3,cereal,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+5,Moringa oleifera,20,0,0.04,0.04,0,1.05,1.1,1.1,legume,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+6,Natural pasture,10,0,0.01,0.01,0.03,0.3,0.75,0.75,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+7,Phaseolus vulgaris,0.5,1,0.04,0.01,0,0.15,1.05,0.6,legume,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+8,Sugarcane,11,1.38,0,0,0.17,0.15,1.2,0.7,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+9,Sweet potato,1.93,1.58,0.01,0,0.05,0.15,1.1,0.55,legume,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0

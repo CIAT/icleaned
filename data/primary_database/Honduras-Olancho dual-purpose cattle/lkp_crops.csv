@@ -1,0 +1,24 @@
+crop_code,crop_name,dry_yield,residue_dry_yield,main_n,residue_n,c_factor,kc_initial,kc_midseason,kc_late,category,trees_ha,trees_dhb,trees_growth,trees_removal,trees_ha_dbh25,average_dbh25,increase_dbh25,trees_ha_dbh2550,average_dbh2550,increase_dbh2550,trees_ha_dbh50,average_dbh50,increase_dbh50,time_horizon,diameter_breast
+1,Andropogon gayanus,7.8,,0.0104,,0.01,0.3,0.75,0.75,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2,Brachiaria brizantha ,11.4,,0.032,,0.01,0.6,1.1,1.05,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+3,Brachiaria decumbens,10,,0.013,,0.01,0.6,1.1,1.05,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+4,Brachiaria decumbens (hay),10,,0.0176,,0.01,0.6,1.1,1.05,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+5,Brachiaria hybrid,15,,0.014,,0.01,0.6,1.1,1.05,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+6,Canavalia brasiliensis,5,,0.0224,,0.15,0.15,1.1,0.25,legume,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+7,Cratylia,12,,0.024,,0.15,1.05,1.1,1.1,shrub legume,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+8,Cynodon nlemfuensis,10,,0.026,,0.05,0.3,0.75,0.75,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+9,Dichanthium aristatum,6.5,,0.0184,,0.05,0.3,0.75,0.75,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+10,Gliricidia,10,,0.0356,,0.15,1.05,1.1,1.1,shrub legume,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+11,Guazuma ulmifolia,17,,0.034,,0.15,1.05,1.1,1.1,shrub legume,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+12,Hyparrhenia rufa,5.9,,0.012,,0.05,0.3,0.75,0.75,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+13,Leucaena,14,,0.017,0.007,0.15,1.05,1.1,1.1,shrub legume,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+14,Maize,3,3,0.007,,0.15,0.15,1.15,0.3,cereal,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+15,Maize-silage,9.5,,0.032,,0.15,0.15,1.15,0.3,cereal,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+16,Mulberry,2,,0.031,,0.05,1.05,1.1,1.1,tree crop,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+17,Natural pasture,6.5,,0.008,0.0152,0.05,0.3,0.75,0.75,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+18,Panicum maximum,12.4,,0.007,,0.01,0.6,1.1,1.05,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+19,Paspalum notatum,6.5,,0.0192,,0.01,0.3,0.75,0.75,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+20,Pennisetum purpureum,10,,0.023,,0.01,0.6,1.1,1.05,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+21,Pennisetum purpureum-silage,19,,0.027,,0.01,1,1,1,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+22,Purchased,0,0,0,0,0,0,0,0,cereal,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+23,Tithonia diversifolia,10,,0.04,,0.05,1.05,1.1,1.1,tree crop,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0

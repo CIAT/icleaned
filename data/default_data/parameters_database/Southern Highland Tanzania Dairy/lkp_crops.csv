@@ -1,0 +1,12 @@
+crop_code,crop_name,dry_yield,residue_dry_yield,main_n,residue_n,c_factor,kc_initial,kc_midseason,kc_late,category,trees_ha,trees_dhb,trees_growth,trees_removal,trees_ha_dbh25,average_dbh25,increase_dbh25,trees_ha_dbh2550,average_dbh2550,increase_dbh2550,trees_ha_dbh50,average_dbh50,increase_dbh50,time_horizon,diameter_breast
+1,Banana,16.07,23.33,0.015,0.014,0.6,0.5,1.1,1,tree crop,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2,Brachiaria hybrid,14.38,10.21,0.022,0,0.01,0.6,1.1,1.05,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+3,Desmodium,12.24,5.67,0.025,0,0.15,0.4,1.15,0.55,legume,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+4,Groundnut,0.56,2.65,0.01,0.013,0.15,0,1.05,0.6,legume,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+5,Guatemala,3.43,0,0.01408,0,0.01,0.6,1.1,1.05,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+6,Lablab,12,0.89,0.037,0,0.15,0.4,1.15,0.55,legume,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+7,Maize,1.3,3.58,0.013,0.006,0.1,0.15,1.15,0.3,cereal,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+8,Natural pasture,12.75,2.39,0.01,0,0.05,0.3,0.75,0.75,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+9,Pennisetum purpureum,11.26,7.07,0.014,0,0.01,0.6,1.1,1.05,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+10,Purchased,0,0,0,0,0,0,0,0,cereal,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+11,Rhodes,14.07,14.22,0.0142,0,0.01,0.6,1.1,1.05,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0

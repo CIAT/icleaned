@@ -1,0 +1,15 @@
+crop_code,crop_name,dry_yield,residue_dry_yield,main_n,residue_n,c_factor,kc_initial,kc_midseason,kc_late,category,trees_ha,trees_dhb,trees_growth,trees_removal,trees_ha_dbh25,average_dbh25,increase_dbh25,trees_ha_dbh2550,average_dbh2550,increase_dbh2550,trees_ha_dbh50,average_dbh50,increase_dbh50,time_horizon,diameter_breast
+1,Aftermath,0.5,0,0.03,0,0,0,0,0,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2,Banana,8.8,4.58,0.02,0.03,0.15,0.5,1.1,1,tree crop,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+3,Barley,2.55,3.83,0.62,0,0.15,0.6,1.1,1,cereal,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+4,Cowpea,6,6.86,0.03,0.01,0.15,0.15,1.15,0.6,legume,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+5,Enset,8.8,17.6,0.56,0.03,0.15,0.5,1.1,1,legume,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+6,faba bean (vicia faba),2.34,1.99,1.18,1.18,0.15,0.15,1.15,0.6,legume,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+7,Kocho,8.8,0,0,0.03,0,0,0,0,tree crop,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+8,Lentils (Lens esculenta),1.5,4.51,1.12,1.12,0.15,0.15,1.15,0.6,legume,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+9,Natural pasture,2.5,1.67,0.01,0,0.05,0.4,0.75,0.75,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+10,Natural pasture hay,1.98,0,0,0,0.05,0.3,0.75,0.75,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+11,Oats,2.88,4.32,0.02,0.01,0.15,0.6,1.1,1,cereal,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+12,Purchased,0,0,0,0,0,0,0,0,cereal,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+13,Sorghum,4,8.79,0.02,0.01,0.05,0.1,1.1,0.55,cereal,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+14,Wheat,3.4,7.6,0.35,0.01,0.15,0.6,1.1,1,cereal,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0

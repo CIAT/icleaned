@@ -1,0 +1,9 @@
+crop_code ,crop_name,dry_yield,residue_dry_yield,main_n,residue_n,c_factor,kc_initial,kc_midseason,kc_late,category,trees_ha,trees_dhb,trees_growth,trees_removal,trees_ha_dbh25,average_dbh25,increase_dbh25,trees_ha_dbh2550,average_dbh2550,increase_dbh2550,trees_ha_dbh50,average_dbh50,increase_dbh50,time_horizon,diameter_breast
+1,Avena sativa-forage,9.1,0,0.02,0,0.15,0.1,1.1,0.55,cereal,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2,Hordeum vulgare (forage),6.8,0,0.01,0,0.15,0.1,1.1,0.55,cereal,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+3,Lolium multiflorum,11.4,0,0.01,0,0.01,0.3,0.75,0.75,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+4,Natural pasture - Desert & Desert Steppe,0.34,0,0.01,0,0.05,0.3,0.75,0.75,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+5,Natural pasture - Forest & Forest Steppe,0.87,0,0.01,0,0.05,0.3,0.75,0.75,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+6,Natural pasture - High Mountain,0.56,0,0.01,0,0.05,0.3,0.75,0.75,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+7,Red clover,17,0,0.01,0,0.15,0.1,1.1,0.55,legume,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+8,Triticum OF,0.71,0.85,0.02,0.03,0.15,0.1,1.1,0.55,cereal,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
