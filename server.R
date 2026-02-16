@@ -190,8 +190,101 @@ server <- function(input, output, session) {
   
   # ------ ONBOARDING Questions ------------------------------------------------
   observeEvent(input$ok_onboarding, {
+    
+    cat(file = stderr(), "Submitting onboarding responses...\n")
+    
+    # Load onboarding questions from the YAML configuration file
+    onboarding_questions <- yaml::read_yaml("onboarding_questions.yaml")
+    
+    # Capture new user responses from the form inputs
+    user_responses <- sapply(onboarding_questions$questions, function(question) {
+      input[[question$id]]
+    })
+    
+    # Retrieve the current user's email from the session data
+    user_email <- session$userData$auth0_info$name
+    
+    # Extract the current question texts (to be used as column names)
+    question_texts <- sapply(onboarding_questions$questions, function(question) {
+      question$question
+    })
+    
+    # Create a new data frame with the user's email and their responses
+    response_data <- data.frame(
+      Email = user_email,
+      t(user_responses),  # Transpose the responses to align as columns
+      stringsAsFactors = FALSE
+    )
+    
+    # Set the column names: "Email" followed by the actual question texts
+    colnames(response_data) <- c("Email", question_texts)
+    
+    # Define the file path for storing the onboarding responses
+    onboarding_file_path <- file.path(
+      Sys.getenv("DATA_DIR"), "Onboarding", "onboarding.csv"
+    )
+    
+    # Check if the onboarding CSV file already exists
+    if (file.exists(onboarding_file_path)) {
+      
+      # Read the existing data, preserving special characters in the column names
+      existing_data <- read.csv(
+        onboarding_file_path, stringsAsFactors = FALSE, check.names = FALSE
+      )
+      
+      # Extract the existing question column names (excluding the "Email" column)
+      existing_question_texts <- colnames(existing_data)[-1]  # Remove "Email"
+      
+      # If the question texts have changed, rename the old file and start fresh
+      if (!identical(existing_question_texts, question_texts)) {
+        timestamp <- format(Sys.time(), "%Y-%m-%d_%H-%M-%S")
+        file.rename(
+          onboarding_file_path,
+          file.path(
+            Sys.getenv("DATA_DIR"),
+            "Onboarding",
+            paste0("onboarding_", timestamp, ".csv")
+          )
+        )
+        
+        # Initialize a new data set with the user's responses
+        updated_data <- response_data
+      } else {
+        # If the question texts match, append the new responses to the existing data
+        updated_data <- rbind(existing_data, response_data)
+      }
+    } else {
+      # If the CSV file doesn't exist, create a new one with the user's responses
+      updated_data <- response_data
+    }
+    
+    # Save the updated data to the onboarding CSV file
+    write.csv(updated_data, onboarding_file_path, row.names = FALSE, quote = TRUE)
+    
     # Close the modal and show a success alert to the user
     removeModal()
+    
+    shinyWidgets::show_alert(
+      title = "Success",
+      text = "Thank you for answering the questions!",
+      type = "success",
+      btn_labels = "Get Started",
+      btn_class = "#009adb"
+    )
+    # ask user consent for data interaction collection
+    if (!is.null(session$userData$auth0_info$name)) {
+      shinyWidgets::ask_confirmation(
+        inputId = "confirm_share_navigation_data",
+        type = "question",
+        title = paste(
+          "To help us improve this tool, may we collect your navigation data?",
+          "Your data will support ongoing enhancements."
+        ),
+        btn_colors = c("grey", "#009ADB"),
+        btn_labels = c("No", "Yes"),
+        width = "55%"
+      )
+    }
   })
   
   observeEvent(input$confirm_share_navigation_data, {
@@ -217,56 +310,56 @@ server <- function(input, output, session) {
   # ------ Observe data browsing and show confirmation modal --------------------
   
   # ------ Show confirmation modal when user selects data -----------------------
-
+  
   # Reactive values to store selected file paths
   selected_data_path <- reactiveVal(NULL)
   relative_path <- reactiveVal(NULL)
-
+  
   # Browse and handle user data file selection
   observeEvent(input$browse_users_data, {
     cat(file = stderr(), "Cloning data confirmation modal\n")
-
+    
     files <- shinyFiles::parseFilePaths(roots, input$browse_users_data)
     req(files$datapath)
-
+    
     path <- files$datapath[[1]]
     selected_data_path(path)
     relative_path(str_remove(path, "^.*/Users/"))
-
-      showModal(
-        modalDialog(
-          div(
-            paste0("Do you want to clone or download ", relative_path(), "?"),
-            style = "font-size: 25px; margin-bottom: 20px; text-align: center; word-wrap: break-word; overflow-wrap: break-word; max-width: 100%;"
-          )
-          ,
-          footer = tagList(
-            actionButton("confirm_clone_super_user", label = tagList(icon("copy"), "Clone"),, class = "btn-primary"),
-            downloadButton("download_super_user", "Download", class = "btn-primary"),
-            modalButton("Cancel")
-          ),
-          size = "s",
-          easyClose = TRUE
+    
+    showModal(
+      modalDialog(
+        div(
+          paste0("Do you want to clone or download ", relative_path(), "?"),
+          style = "font-size: 25px; margin-bottom: 20px; text-align: center; word-wrap: break-word; overflow-wrap: break-word; max-width: 100%;"
         )
+        ,
+        footer = tagList(
+          actionButton("confirm_clone_super_user", label = tagList(icon("copy"), "Clone"),, class = "btn-primary"),
+          downloadButton("download_super_user", "Download", class = "btn-primary"),
+          modalButton("Cancel")
+        ),
+        size = "s",
+        easyClose = TRUE
       )
+    )
   })
-
+  
   # Handle download of selected user data
   output$download_super_user <- downloadHandler(
     filename = function() {
       rp <- relative_path()
       safe_name <- gsub("/", "_", rp)
       paste(safe_name)
-      },
+    },
     content = function(file) {
       sp <- selected_data_path()
       rp <- relative_path()
-
+      
       full_file_path <- file.path(roots["Users"], rp)
       success <- file.copy(full_file_path, file)
-
+      
       removeModal()
-
+      
       if (success) {
         showNotification("Data is ready for download!", duration = 3, type = "message")
       } else {
@@ -280,11 +373,11 @@ server <- function(input, output, session) {
     removeModal()
     # Check if the user confirmed or cancelled the cloning
     if (input$confirm_clone_super_user) {
-
+      
       # Get the selected file or directory path
       files <- shinyFiles::parseFilePaths(roots, input$browse_users_data)
       selected_path <- files$datapath
-
+      
       # Check if the user is attempting to clone from their own folder
       if (grepl(session$userData$user_folder, selected_path)) {
         showNotification(
