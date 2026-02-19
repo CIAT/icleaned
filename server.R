@@ -334,7 +334,7 @@ server <- function(input, output, session) {
         )
         ,
         footer = tagList(
-          actionButton("confirm_clone_super_user", label = tagList(icon("copy"), "Clone"),, class = "btn-primary"),
+          actionButton("confirm_clone_super_user", label = tagList(icon("copy"), "Clone"), class = "btn-primary"),
           downloadButton("download_super_user", "Download", class = "btn-primary"),
           modalButton("Cancel")
         ),
