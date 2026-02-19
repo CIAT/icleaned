@@ -139,20 +139,19 @@ board_simulation_server <- function(
   observeEvent(list(input$run_scenario, input$scenario_name), {
     cat(file = stderr(), "10 - Display warning text\n")
     shinyjs::hide(selector = jns("warning_scenario_text"))
+    req(input$scenario_name)
     # according to the scenario data
-    if (!is.null(input$scenario_name)) {
-      warning_msg <- readRDS(
+    warning_msg <- readRDS(
         file.path(
           session$userData$user_folder, "scenarios",
           input$scenario_name, "scenario_data.rds"
         )
       )$warning_msg
-      if (!is.null(warning_msg$warning_text)) {
-        shinyjs::show(id = "warning_scenario_text")
-        shinyjs::html(
-          id = "warning_scenario_text", html = warning_msg$warning_text
-        )
-      }
+    if (!is.null(warning_msg$warning_text)) {
+      shinyjs::show(id = "warning_scenario_text")
+      shinyjs::html(
+        id = "warning_scenario_text", html = warning_msg$warning_text
+      )
     }
   }, ignoreInit = FALSE)
   
@@ -477,67 +476,46 @@ board_simulation_server <- function(
     )
   })
   
-  # ------ PLOT GHG emission ---------------------------------------------------
-  output$plot_ghg_emission <- renderGirafe({
-    
+  # ------ Cached scenario data (read RDS once, shared by all 4 plots) ----------
+  scenario_plot_data <- reactive({
     req(input$scenario_name)
     req(session$userData$run_scenario_counter())
-    cat(file = stderr(), "10 - Plot GHG emission\n")
-    
-    # Read the data
-    on_farm_table <- readRDS(
+    readRDS(
       file.path(
         session$userData$user_folder, "scenarios",
-        input$scenario_name,
-        "scenario_data.rds"
+        input$scenario_name, "scenario_data.rds"
       )
-    )[["on_farm_table"]]
-    
+    )
+  })
+  
+  # ------ PLOT GHG emission ---------------------------------------------------
+  output$plot_ghg_emission <- renderGirafe({
+    cat(file = stderr(), "10 - Plot GHG emission\n")
+    scenario_data <- scenario_plot_data()
+    on_farm_table <- scenario_data[["on_farm_table"]]
     unit <- graphs_desc[graphs_desc$indicator == "ghg_emission", ]$unit
     plot_ghg_emissions(on_farm_table, unit)
   })
   
   # ------ PLOT N BALANCE ------------------------------------------------------
   output$plot_n_balance <- renderGirafe({
-    
-    req(input$scenario_name)
-    req(session$userData$run_scenario_counter())
     cat(file = stderr(), "10 - Plot N Balance\n")
-    
-    # Read the data
-    nitrogen_balance <- readRDS(
-      file.path(
-        session$userData$user_folder,
-        "scenarios",
-        input$scenario_name,
-        "scenario_data.rds"
-      )
-    )[["nitrogen_balance"]]
-    
+    scenario_data <- scenario_plot_data()
+    nitrogen_balance <- scenario_data[["nitrogen_balance"]]
     unit <- graphs_desc[graphs_desc$indicator == "n_balance", ]$unit
     plot_n_balance(nitrogen_balance, unit)
   })
   
   # ------ PLOT LAND REQUIRED --------------------------------------------------
   output$plot_land_req <- renderGirafe({
-    
-    req(session$userData$run_scenario_counter())
-    req(input$scenario_name)
     cat(file = stderr(), "10 - Plot Land Required\n")
-    
     # hide all the seasons legend items
     lapply(1:max_seasons, function(i) {
       shinyjs::hide(id = paste0("Seasons_LegendItemtxt_", i))
     })
     
-    # Read the data
-    land_required <- readRDS(
-      file.path(
-        session$userData$user_folder,
-        "scenarios", input$scenario_name,
-        "scenario_data.rds"
-      )
-    )[["land_required"]]
+    scenario_data <- scenario_plot_data()
+    land_required <- scenario_data[["land_required"]]
     
     # unique seasons
     seasons <- unique(land_required$season_name)
@@ -555,23 +533,14 @@ board_simulation_server <- function(
   
   # ----- PLOT WATER USE PER FEED ----------------------------------------------
   output$plot_water_feed <- renderGirafe({
-    
-    req(session$userData$run_scenario_counter())
-    req(input$scenario_name)
     cat(file = stderr(), "10 - Plot Water Use per Feed\n")
-    
     # hide all the feeds legend items
     lapply(1:max_feed_items, function(i) {
       shinyjs::hide(id = paste0("Feeds_LegendItemtxt_", i))
     })
     
-    # Read the data
-    water_use_per_feed_item <- readRDS(
-      file.path(
-        session$userData$user_folder, "scenarios",
-        input$scenario_name, "scenario_data.rds"
-      )
-    )[["water_use_per_feed_item"]]
+    scenario_data <- scenario_plot_data()
+    water_use_per_feed_item <- scenario_data[["water_use_per_feed_item"]]
     
     # unique feeds
     feeds <- unique(water_use_per_feed_item$feed)

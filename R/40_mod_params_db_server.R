@@ -70,25 +70,10 @@ params_db_server <- function(
   
   # ----- UX Interaction logic -------------------------------------------------
   
-  # Observe the selection from the radio buttons
+  # Observe the selection from the radio buttons (uses shared helper)
   observeEvent(input$parameters_folder, {
     cat(file = stderr(), "40 - Observe the selection from the radio buttons...\n")
-    if (input$parameters_folder == "user") {
-      # Show User Folder UI and hide the others
-      shinyjs::show(id = "user_folder_ui")
-      shinyjs::hide(id = "shared_examples_ui")
-      shinyjs::hide(id = "shared_pool_ui")
-    } else if (input$parameters_folder == "shared") {
-      # Show Shared Examples UI and hide the others
-      shinyjs::show(id = "shared_examples_ui")
-      shinyjs::hide(id = "user_folder_ui")
-      shinyjs::hide(id = "shared_pool_ui")
-    } else if (input$parameters_folder == "pool") {
-      # Show Shared Pool UI and hide the others
-      shinyjs::show(id = "shared_pool_ui")
-      shinyjs::hide(id = "user_folder_ui")
-      shinyjs::hide(id = "shared_examples_ui")
-    }
+    show_hide_folder_ui(input$parameters_folder, ns)
   })
   # on renaming a database
   observeEvent(input$rename_database, {

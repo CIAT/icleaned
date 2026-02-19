@@ -386,6 +386,17 @@ board_comparison_server <- function(
   )
   
   
+  # ------ Cached comparison results (read RDS once, shared by all 44 plots) ----
+  comparison_results <- reactive({
+    req(input$comp_name, input$comp_category, input$base_scenario)
+    readRDS(
+      file.path(
+        session$userData$user_folder, "comparisons",
+        input$comp_name, "results_list.rds"
+      )
+    )[[input$base_scenario]]
+  })
+  
   # ------ PLOT comparisons graphs ---------------------------------------------
   lapply(
     graphs_desc$indicator[5:48], #1st 4 plots removed, belong to the 1st section
@@ -394,18 +405,8 @@ board_comparison_server <- function(
         
         cat(file = stderr(), "20 - Plot comparison - ", indicator, "\n")
         
-        # Check if the inputs are available
-        req(input$comp_name)
-        req(input$comp_category)
-        req(input$base_scenario)
-        
-        # Read comparison results
-        results_list <- readRDS(
-          file.path(
-            session$userData$user_folder, "comparisons",
-            input$comp_name, "results_list.rds"
-          )
-        )[[input$base_scenario]]
+        # Use cached comparison results (single readRDS for all 44 plots)
+        results_list <- comparison_results()
         
         # Get the data for each indicator
         datos <- results_list[[indicator]]$datos

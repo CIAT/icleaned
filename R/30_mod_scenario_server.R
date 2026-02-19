@@ -157,26 +157,9 @@ scenario_server <- function(
   })
   
   # ----- UX Interaction logic --------------------------------------------
-  # Observe the selection from the radio buttons
+  # Show/hide folder UIs based on radio selection (uses shared helper)
   observeEvent(input$scenario_folder, {
-    if (input$scenario_folder == "user") {
-      # Show User Folder UI and hide the others
-      shinyjs::show(id = "user_folder_ui")
-      shinyjs::hide(id = "shared_examples_ui")
-      shinyjs::hide(id = "shared_pool_ui")
-      
-    } else if (input$scenario_folder == "shared") {
-      # Show Shared Examples UI and hide the others
-      shinyjs::show(id = "shared_examples_ui")
-      shinyjs::hide(id = "user_folder_ui")
-      shinyjs::hide(id = "shared_pool_ui")
-      
-    } else if (input$scenario_folder == "pool") {
-      # Show Shared Pool UI and hide the others
-      shinyjs::show(id = "shared_pool_ui")
-      shinyjs::hide(id = "user_folder_ui")
-      shinyjs::hide(id = "shared_examples_ui")
-    }
+    show_hide_folder_ui(input$scenario_folder, ns)
   })
   # on renaming a scenario
   observeEvent(input$rename_json, {
@@ -622,130 +605,22 @@ scenario_server <- function(
     }
   })
   
-  # ----------- Seasons Tab ----------------------------------------------------
-  # Reactive value to store the seasons data
-  seasons <- reactiveVal(seasons_initialization)
+  # ----------- Seasons Tab (sourced sub-module) --------------------------------
+  source("R/scenario/32_scenario_seasons.R", local = TRUE)
   
-  # Add season button click
-  observeEvent(input$add_season, {
-    req(input$json_file_name)
-    if (modal_open()) return()
-    modal_open(TRUE)
-    showModal(modalDialog(
-      title = "Add season",
-      h2("Season name:", class = "mb-3"),
-      textInput(ns("season_name"), label = NULL),
-      easyClose = TRUE,
-      footer = tagList(
-        actionButton(ns("ok_add_season"), "OK"),
-        modalButton("Cancel")
-      )
-    ))
-  })
+  # ----------- Manure/Fertilizer Tab (sourced sub-module) ---------------------
+  source("R/scenario/33_scenario_fertilizer.R", local = TRUE)
   
-  # OK button in modal dialog for adding season
-  observeEvent(input$ok_add_season, {
-    req(input$season_name)
-    current_seasons <- seasons()
-    if (!input$season_name %in% current_seasons$Season) {
-      days_left <- max(365 - sum(current_seasons$Days), 0)
-      new_row <- data.frame(Season = input$season_name, Days = days_left)
-      updated_seasons <- rbind(current_seasons, new_row)
-      seasons(updated_seasons)
-    }
-    updateTextInput(session, "season_name", value = "")
-    removeModal()
-  })
+  # ----------- Area tab (sourced sub-module) ----------------------------------
+  source("R/scenario/34_scenario_area.R", local = TRUE)
   
-  # Render the table
-  output$season_table <- renderDT({
-    
-    # Re-initialize the season data if the columns are missing (show empty table on start)
-    if (ncol(seasons()) == 0) {
-      seasons(seasons_initialization)
-    }
-    
-    season_dt <- seasons()
-    
-    # Checkboxes for selecting rows (to be deleted)
-    season_dt$selected_season <- generate_shiny_inputs(
-      FUN = checkboxInput,
-      len = nrow(season_dt),
-      id = ns("selected_season"),
-      value = rep(FALSE, nrow(season_dt)),
-      width = "2px"
-    )
-    # Move the 'selected_season' column to the first position
-    season_dt <- season_dt[, c("selected_season", setdiff(names(season_dt), "selected_season"))]
-    
-    datatable(
-      season_dt, 
-      editable = list(
-        target = "cell",
-        # Prevent editing of the first column (check boxes for delete rows)
-        disable = list(columns = 0)
-      ), 
-      escape = FALSE,
-      selection = "none",
-      rownames = FALSE,
-      # Set the first column (selected) name to an empty string
-      colnames = c("", colnames(season_dt)[-1]),
-      options = list(
-        dom = "t", 
-        paging = FALSE,
-        columnDefs = list(
-          # 2 px width for the first column (checkboxes)
-          list(width = "50px", targets = 0)  
-        ),
-        # Link renderDT's checkbox to the shiny input (not automatic)
-        drawCallback = JS(checkbox_link(id = "selected_season", ns = ns))
-      )
-    )
-  }, server = FALSE)
+  # ----------- Livestock tab (sourced sub-module) -----------------------------
+  source("R/scenario/35_scenario_livestock.R", local = TRUE)
   
-  # Delete season button click
-  observeEvent(input$delete_season, {
-    req(nrow(seasons()) > 0)     # Ensure there are rows to process
-    selected <- which(
-      sapply(
-        seq_len(nrow(seasons())),
-        function(i) input[[paste0("selected_season", i)]]
-      )
-    )
-    if (length(selected)) {
-      current_seasons <- seasons()
-      updated_seasons <- current_seasons[-selected, ]
-      seasons(updated_seasons)
-    }
-  })
-  
-  # Update season table data with edited values
-  observeEvent(input$season_table_cell_edit, {
-    info <- input$season_table_cell_edit
-    new_data <- seasons()
-    
-    # Update the specific cell while preserving the column's data type
-    new_data <- update_cell(new_data, info, offset = 0)
-    
-    seasons(new_data)
-  })
-  
-  # Observe the season data and show/hide the error message
-  observeEvent(seasons(), {
-    # if the sum of days is 365, hide the error message
-    if (nrow(seasons()) == 0 || sum(seasons()$Days) == 365) {
-      shinyjs::hide(id = "alert_message_season")
-    } else {
-      shinyjs::show(id = "alert_message_season")
-    }
-  })
-  
-  # ----------- Manure/Fertilizer Tab ------------------------------------------
-  # Reactive value to store the fertilizer data
-  fertilizers <- reactiveVal(fertilizers_initialization)
-  
-  # Add fertilizer button click
-  observeEvent(input$add_fertilizer, {
+  # ----------- Feed production tab --------------------------------------------
+  # (Kept inline; seasons/fertilizer/area/livestock are sourced from R/scenario/32-35)
+  if (FALSE) {  # Duplicate of 33-35 - kept for reference, never runs
+  observeEvent(input$.removed, {
     req(input$json_file_name)
     if (modal_open()) return()
     modal_open(TRUE)
@@ -1320,6 +1195,7 @@ scenario_server <- function(
     # Freeze and restore scroll position for livestock table
     freeze_and_unfreeze_scroll(session, ns("livestock_table"))
   })
+  }  # End if(FALSE) - duplicate fertilizer/area/livestock removed (content in sourced files 33-35)
   
   # ----------- Feed production tab --------------------------------------------
   # Initial data frame for crops
@@ -2430,31 +2306,42 @@ scenario_server <- function(
   })
   
   # Observe changes and update the "Total" row
-  observe({
+  # (Single observeEvent to avoid handler accumulation when seasons change;
+  # previously nested observe + lapply created duplicate handlers)
+  basket_cell_edits <- reactive({
+    req(seasons())
     lapply(seasons()$Season, function(season) {
-      observeEvent(input[[paste0("table_", season, "_cell_edit")]], {
-        info <- input[[paste0("table_", season, "_cell_edit")]]
-        df <- basket_data[[season]]
-        
-        if (!is.null(df) && nrow(df) > 0 && ncol(df) > 0) {
-          df[info$row, info$col] <- ifelse(info$value == "", 0, as.numeric(info$value))
-          
-          # Reset and recalculate the Total row
-          df["Total", ] <- colSums(df[1:(nrow(df) - 1), , drop = FALSE], na.rm = TRUE)
-          basket_data[[season]] <- df
-        }
-      })
+      input[[paste0("table_", season, "_cell_edit")]]
     })
   })
+  last_processed_basket_edit <- reactiveValues()
+  observeEvent(basket_cell_edits(), {
+    req(seasons())
+    for (season in seasons()$Season) {
+      info <- input[[paste0("table_", season, "_cell_edit")]]
+      if (!is.null(info) && is.list(info) && "row" %in% names(info)) {
+        key <- paste(season, info$row, info$col, info$value)
+        if (is.null(last_processed_basket_edit[[season]]) ||
+            last_processed_basket_edit[[season]] != key) {
+          last_processed_basket_edit[[season]] <- key
+          df <- basket_data[[season]]
+          if (!is.null(df) && nrow(df) > 0 && ncol(df) > 0) {
+            df[info$row, info$col] <- ifelse(info$value == "", 0, as.numeric(info$value))
+            # Reset and recalculate the Total row
+            df["Total", ] <- colSums(df[1:(nrow(df) - 1), , drop = FALSE], na.rm = TRUE)
+            basket_data[[season]] <- df
+          }
+        }
+      }
+    }
+  }, ignoreNULL = TRUE)
   
-  # ----------- Automatically Save Data as JSON --------------------------------
-  observe({
+  # ----------- Automatically Save Data as JSON (debounced to reduce write freq) -
+  study_object_to_save <- reactive({
     req(input$json_file_name)
     req(input$database_code)
     req(lkp_region())
     req(session$userData$study_object())
-    
-    cat(file = stderr(), "20 - Saving data as JSON\n")
     
     study_object <- list()
     
@@ -2564,13 +2451,21 @@ scenario_server <- function(
       list()
     }
     
-    # Generate the filename based on the input
-    file_name <- file.path(session$userData$user_folder, "study_objects", input$json_file_name)
-    
-    write(
-      toJSON(study_object, pretty = TRUE, auto_unbox = TRUE), file = file_name
+    list(study_object = study_object, json_file_name = input$json_file_name)
+  })
+  
+  study_object_debounced <- debounce(study_object_to_save, 1500)
+  
+  observe({
+    data <- study_object_debounced()
+    req(data)
+    cat(file = stderr(), "20 - Saving data as JSON\n")
+    file_name <- file.path(
+      session$userData$user_folder, "study_objects", data$json_file_name
     )
-    
+    write(
+      toJSON(data$study_object, pretty = TRUE, auto_unbox = TRUE), file = file_name
+    )
     # Update the list of study objects
     session$userData$study_objects(
       list.files(
