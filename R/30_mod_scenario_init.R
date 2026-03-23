@@ -27,7 +27,7 @@ feedtype_colnames <- c(
   "Slope P Factor",
   "Main product dry yield (t DM/ha)",
   "Residue dry yield (t DM/ha)",
-  "Reside N content (kg N/kg DM)",
+  "Residue N content (kg N/kg DM)",
   "Kc: Initial",
   "Kc: MidSeason",
   "Kc: Late",
