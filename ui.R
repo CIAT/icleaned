@@ -136,8 +136,7 @@ ui <- fluidPage(
             id = "maj_helper_btn",
             tags$a(
               href = paste0(
-                "https://docs.google.com/document/d/1MmQ1r_IK6mEi4pbBVXJ0pZqKRsvdGTv4/",
-                "edit?usp=sharing&ouid=102650625222330231063&rtpof=true&sd=true"
+                "https://hdl.handle.net/10568/180489"
               ),
               target = "_blank",  # Opens in a new tab
               class = "btn btn-blue",  # Use Bootstrap classes if needed
