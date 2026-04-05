@@ -27,6 +27,7 @@ feedtype_colnames <- c(
   "Slope P Factor",
   "Main product dry yield (t DM/ha)",
   "Residue dry yield (t DM/ha)",
+  "Main product N content (kg N/kg DM)",
   "Residue N content (kg N/kg DM)",
   "Kc: Initial",
   "Kc: MidSeason",
@@ -210,6 +211,7 @@ feedtype_initialization <- data.frame(
   slope_p_factor = numeric(),
   dry_yield = numeric(),
   residue_dry_yield = numeric(),
+  main_n = numeric(),
   residue_n = numeric(),
   kc_initial = numeric(),
   kc_midseason = numeric(),
@@ -234,7 +236,6 @@ feedtype_initialization <- data.frame(
   # These ones are available in the json but not in the DT
   fraction_as_manure = character(),
   n_fertilizer = character(),
-  main_n = numeric(),
   land_cover = character(),
   slope = character(),
   grassman = character(),

@@ -1411,6 +1411,7 @@ scenario_server <- function(
         slope_p_factor = lkp_slope()$p_factor[1],
         dry_yield = lkp_crops()$dry_yield[lkp_crops()$crop_code == input$crop],
         residue_dry_yield = lkp_crops()$residue_dry_yield[lkp_crops()$crop_code == input$crop],
+        main_n = lkp_crops()$main_n[lkp_crops()$crop_code == input$crop],
         residue_n = lkp_crops()$residue_n[lkp_crops()$crop_code == input$crop],
         kc_initial = lkp_crops()$kc_initial[lkp_crops()$crop_code == input$crop],
         kc_midseason = lkp_crops()$kc_midseason[lkp_crops()$crop_code == input$crop],
@@ -1434,7 +1435,6 @@ scenario_server <- function(
         # These ones are available in the json but not in the DT
         fraction_as_manure = "NULL", # We should get null in the json
         n_fertilizer = "NULL", # We should get null in the json
-        main_n = lkp_crops()$main_n[lkp_crops()$crop_code == input$crop],
         land_cover = lkp_landcover()$landcover_code[1],
         slope = lkp_slope()$slope_code[1],
         grassman = lkp_grasslandman()$management_code[1],
@@ -1537,7 +1537,7 @@ scenario_server <- function(
     feedtype_dt <- feedtype_dt %>%
       select(
         -crop_code, -feed_item_code, -fraction_as_manure, -n_fertilizer,
-        -main_n, -slope, -grassman, -land_cover
+        -slope, -grassman, -land_cover
       )
     
     datatable(
@@ -1638,7 +1638,7 @@ scenario_server <- function(
       ) %>%
       formatStyle(
         columns = c(
-          "dry_yield", "residue_dry_yield", "residue_n", "kc_initial",
+          "dry_yield", "residue_dry_yield", "main_n", "residue_n", "kc_initial",
           "kc_midseason", "kc_late", "category", "trees_ha", "trees_dhb",
           "trees_growth", "trees_removal", "trees_ha_dbh25", "average_dbh25",
           "increase_dbh25", "trees_ha_dbh2550", "average_dbh2550",
