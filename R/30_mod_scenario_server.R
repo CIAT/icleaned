@@ -948,6 +948,8 @@ scenario_server <- function(
     )
     if (!identical(current, updated)) {
       livestock_data(updated)
+      # Preserve scroll position when the sync re-renders the table
+      freeze_and_unfreeze_scroll(session, ns("livestock_table"))
     }
   }, ignoreNULL = TRUE)
 
@@ -1370,12 +1372,15 @@ scenario_server <- function(
     )
     if (!identical(current, updated)) {
       feedtype(updated)
+      # Preserve scroll position when the sync re-renders the crop table
+      freeze_and_unfreeze_scroll(session, ns("crop_table"))
       # Keep crop_inputs_data display labels aligned with feedtype rows.
       inputs <- isolate(crop_inputs_data())
       if (nrow(inputs) == nrow(updated)) {
         inputs$Feed <- updated$feed_item_name
         inputs$Crop <- updated$crop_name
         crop_inputs_data(inputs)
+        freeze_and_unfreeze_scroll(session, ns("crop_inputs_table"))
       }
     }
   }, ignoreNULL = TRUE)
