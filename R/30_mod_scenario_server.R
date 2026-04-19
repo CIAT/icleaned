@@ -932,7 +932,25 @@ scenario_server <- function(
   # ----------- Livestock tab --------------------------------------------------
   # Initial data frame
   livestock_data <- reactiveVal(livestock_data_initialization)
-  
+
+  # ------ Sync livestock_data with parameters DB ----------------------------
+  # Whenever the parameters database (lkp_livetype) changes, refresh the
+  # DB-owned columns on every existing livestock row, matched by livetype_code.
+  # Rows whose livetype_code no longer exists in the DB are left untouched.
+  observeEvent(lkp_livetype(), {
+    cat(file = stderr(), "30 - Syncing livestock_data with lkp_livetype\n")
+    current <- isolate(livestock_data())
+    updated <- sync_columns_by_key(
+      target = current,
+      source = lkp_livetype(),
+      key = "livetype_code",
+      columns = livestock_sync_cols_lkp_livetype
+    )
+    if (!identical(current, updated)) {
+      livestock_data(updated)
+    }
+  }, ignoreNULL = TRUE)
+
   # Add reactive for the selected cell
   selected_cell <- reactiveVal()
   
@@ -1326,9 +1344,41 @@ scenario_server <- function(
   feedtype <- reactiveVal(feedtype_initialization)
   # Add reactive for the selected cell
   selected_cell <- reactiveVal()
-  
+
   # Initial data frame for crop inputs
   crop_inputs_data <- reactiveVal(crop_inputs_data_initialization)
+
+  # ------ Sync feedtype with parameters DB ----------------------------------
+  # Whenever lkp_crops or lkp_feeditem changes, refresh the DB-owned columns
+  # on every existing feedtype row (matched by crop_code / feed_item_code) and
+  # mirror the refreshed Feed / Crop display labels into crop_inputs_data.
+  # Rows whose code no longer exists in the DB are left untouched.
+  observeEvent(list(lkp_crops(), lkp_feeditem()), {
+    cat(file = stderr(), "30 - Syncing feedtype with lkp_crops & lkp_feeditem\n")
+    current <- isolate(feedtype())
+    updated <- sync_columns_by_key(
+      target = current,
+      source = lkp_crops(),
+      key = "crop_code",
+      columns = feedtype_sync_cols_lkp_crops
+    )
+    updated <- sync_columns_by_key(
+      target = updated,
+      source = lkp_feeditem(),
+      key = "feed_item_code",
+      columns = feedtype_sync_cols_lkp_feeditem
+    )
+    if (!identical(current, updated)) {
+      feedtype(updated)
+      # Keep crop_inputs_data display labels aligned with feedtype rows.
+      inputs <- isolate(crop_inputs_data())
+      if (nrow(inputs) == nrow(updated)) {
+        inputs$Feed <- updated$feed_item_name
+        inputs$Crop <- updated$crop_name
+        crop_inputs_data(inputs)
+      }
+    }
+  }, ignoreNULL = TRUE)
   
   # Add crop button click
   observeEvent(input$add_crop, {
@@ -2659,11 +2709,20 @@ scenario_server <- function(
     if (is.data.frame(study_object$livestock)) {
       # Define the desired column order for the feedtype
       desired_order <- colnames(livestock_data_initialization)
-      
+
       # Reorder the columns of feed_data
       livestock_data_load <- study_object$livestock %>%
         select(all_of(desired_order))
-      
+
+      # Refresh DB-owned columns from the currently selected parameters DB so
+      # a scenario reloaded against an unchanged DB still picks up DB edits
+      livestock_data_load <- sync_columns_by_key(
+        target = livestock_data_load,
+        source = lkp_livetype(),
+        key = "livetype_code",
+        columns = livestock_sync_cols_lkp_livetype
+      )
+
       livestock_data(livestock_data_load)
     } else {
       livestock_data(livestock_data_initialization)
@@ -2703,10 +2762,31 @@ scenario_server <- function(
       # Reorder the columns of feed_data
       feed_data <- feed_data %>%
         select(all_of(desired_order))
-      
+
+      # Refresh DB-owned columns from the currently selected parameters DB so
+      # a scenario reloaded against an unchanged DB still picks up DB edits
+      feed_data <- sync_columns_by_key(
+        target = feed_data,
+        source = lkp_crops(),
+        key = "crop_code",
+        columns = feedtype_sync_cols_lkp_crops
+      )
+      feed_data <- sync_columns_by_key(
+        target = feed_data,
+        source = lkp_feeditem(),
+        key = "feed_item_code",
+        columns = feedtype_sync_cols_lkp_feeditem
+      )
+
+      # Mirror refreshed names into crop_inputs_data display columns
+      if (nrow(crop_data) == nrow(feed_data)) {
+        crop_data$Feed <- feed_data$feed_item_name
+        crop_data$Crop <- feed_data$crop_name
+      }
+
       feedtype(feed_data)
       crop_inputs_data(crop_data)
-      
+
       # Update the crop table's column : intercrop checkbox
       checked_boxes$intercrop_checked <- as.logical(feedtype()$intercrop)
     } else {

@@ -257,6 +257,53 @@ crop_inputs_data_initialization <- data.frame(
   stringsAsFactors = FALSE
 )
 
+# Columns synced from the parameters database into the scenario state ---------
+# When the parameters database changes (or a scenario is loaded), these columns
+# are refreshed from the matching row in the parameters DB (matched by code).
+# User-edited columns that are NOT listed here are preserved as-is.
+
+feedtype_sync_cols_lkp_crops <- c(
+  "crop_name", "dry_yield", "residue_dry_yield", "main_n", "residue_n",
+  "kc_initial", "kc_midseason", "kc_late", "category",
+  "trees_ha", "trees_dhb", "trees_growth", "trees_removal",
+  "trees_ha_dbh25", "average_dbh25", "increase_dbh25",
+  "trees_ha_dbh2550", "average_dbh2550", "increase_dbh2550",
+  "trees_ha_dbh50", "average_dbh50", "increase_dbh50",
+  "time_horizon", "diameter_breast"
+)
+
+feedtype_sync_cols_lkp_feeditem <- c(
+  "feed_item_name", "dm_content", "me_content", "cp_content"
+)
+
+# Named vector: target column name = source column name (enables renaming).
+livestock_sync_cols_lkp_livetype <- c(
+  "livetype_desc"                  = "livetype_desc",
+  "body_weight"                    = "body_weight",
+  "litter_size"                    = "litter_size",
+  "lactation_length"               = "lactation_length",
+  "proportion_growth_piglets_milk" = "proportion_growth_piglets_milk",
+  "lw_gain_piglets"                = "lw_gain_piglets",
+  "cp_maintenance"                 = "cp_maintenance",
+  "cp_lys_pregnancy"               = "cp_lys_pregnancy",
+  "cp_lactmilk"                    = "cp_lactmilk",
+  "cp_lys_growth"                  = "cp_lys_growth",
+  "birth_interval"                 = "birth_interval",
+  "protein_milkcontent"            = "protein_milkcontent",
+  "fat_milkcontent"                = "fat_milkcontent",
+  "energy_milkcontent"             = "energy_milkcontent",
+  "energy_meatcontent"             = "energy_meatcontent",
+  "protein_meatcontent"            = "protein_meatcontent",
+  "carcass_fraction"               = "carcass_fraction",
+  "n_manure_content"               = "n_manure_content",
+  "meat_product"                   = "meat_product",
+  "milk_product"                   = "milk_product",
+  "ipcc_ef_category_t1"            = "ipcc_meth_ef_t1",
+  "ipcc_ef_category_t2"            = "ipcc_meth_ef_t2",
+  "ipcc_meth_man_category"         = "ipcc_meth_man",
+  "ipcc_n_exc_category"            = "ipcc_meth_exc"
+)
+
 # Define the list of inputs for saving & loading -------------------------------
 
 numeric_inputs <- c(
