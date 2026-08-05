@@ -1,0 +1,9 @@
+"management_code","management_desc","change_factor"
+"1","Nominally managed",1
+"2","Moderately degraded grassland, temperate/boreal",0.95
+"3","Moderately degraded grassland, tropical",0.97
+"4","Moderately degraded grassland, tropical montane",0.96
+"5","Severely degraded",0.7
+"6","Improved grassland, temperate/boreal",1.14
+"7","Improved grassland, tropical",1.17
+"8","Improved grassland, tropical montane",1.16

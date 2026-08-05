@@ -155,7 +155,16 @@ server <- function(input, output, session) {
     
     # Helps to manage the reactivity from update params to scenario inputs
     # only used database should update the scenario inputs
-    session$userData$parameters_db_name <- reactiveVal("Params DB - Default")
+    user_dbs <- list.files(file.path(user_folder, "parameters_database"), full.names = FALSE)
+    session$userData$parameters_db_name <- reactiveVal(
+      if (default_parameters_database %in% user_dbs) {
+        default_parameters_database
+      } else if (length(user_dbs) > 0) {
+        sort(user_dbs)[1]
+      } else {
+        character(0)
+      }
+    )
     
     # Helps to trigger the update_params_modal from other modules
     session$userData$observe_update_params_button_click <- reactiveVal(0)
@@ -307,56 +316,56 @@ server <- function(input, output, session) {
   # ------ Observe data browsing and show confirmation modal --------------------
   
   # ------ Show confirmation modal when user selects data -----------------------
-
+  
   # Reactive values to store selected file paths
   selected_data_path <- reactiveVal(NULL)
   relative_path <- reactiveVal(NULL)
-
+  
   # Browse and handle user data file selection
   observeEvent(input$browse_users_data, {
     cat(file = stderr(), "Cloning data confirmation modal\n")
-
+    
     files <- shinyFiles::parseFilePaths(roots, input$browse_users_data)
     req(files$datapath)
-
+    
     path <- files$datapath[[1]]
     selected_data_path(path)
     relative_path(str_remove(path, "^.*/Users/"))
-
-      showModal(
-        modalDialog(
-          div(
-            paste0("Do you want to clone or download ", relative_path(), "?"),
-            style = "font-size: 25px; margin-bottom: 20px; text-align: center; word-wrap: break-word; overflow-wrap: break-word; max-width: 100%;"
-          )
-          ,
-          footer = tagList(
-            actionButton("confirm_clone_super_user", label = tagList(icon("copy"), "Clone"),, class = "btn-primary"),
-            downloadButton("download_super_user", "Download", class = "btn-primary"),
-            modalButton("Cancel")
-          ),
-          size = "s",
-          easyClose = TRUE
+    
+    showModal(
+      modalDialog(
+        div(
+          paste0("Do you want to clone or download ", relative_path(), "?"),
+          style = "font-size: 25px; margin-bottom: 20px; text-align: center; word-wrap: break-word; overflow-wrap: break-word; max-width: 100%;"
         )
+        ,
+        footer = tagList(
+          actionButton("confirm_clone_super_user", label = tagList(icon("copy"), "Clone"), class = "btn-primary"),
+          downloadButton("download_super_user", "Download", class = "btn-primary"),
+          modalButton("Cancel")
+        ),
+        size = "s",
+        easyClose = TRUE
       )
+    )
   })
-
+  
   # Handle download of selected user data
   output$download_super_user <- downloadHandler(
     filename = function() {
       rp <- relative_path()
       safe_name <- gsub("/", "_", rp)
       paste(safe_name)
-      },
+    },
     content = function(file) {
       sp <- selected_data_path()
       rp <- relative_path()
-
+      
       full_file_path <- file.path(roots["Users"], rp)
       success <- file.copy(full_file_path, file)
-
+      
       removeModal()
-
+      
       if (success) {
         showNotification("Data is ready for download!", duration = 3, type = "message")
       } else {
@@ -370,11 +379,11 @@ server <- function(input, output, session) {
     removeModal()
     # Check if the user confirmed or cancelled the cloning
     if (input$confirm_clone_super_user) {
-
+      
       # Get the selected file or directory path
       files <- shinyFiles::parseFilePaths(roots, input$browse_users_data)
       selected_path <- files$datapath
-
+      
       # Check if the user is attempting to clone from their own folder
       if (grepl(session$userData$user_folder, selected_path)) {
         showNotification(

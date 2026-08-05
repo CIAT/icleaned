@@ -1,0 +1,12 @@
+"tillage_code","tillage_desc","change_factor"
+"1","Full",1
+"2","Reduced, temperate/boreal, dry",1.02
+"3","Reduced, temperate/boreal, moist",1.08
+"4","Reduced, tropical, dry",1.09
+"5","Reduced, tropical, moist",1.15
+"6","Reduced, tropical montane, all",1.09
+"7","No-till, temperate/boreal, dry",1.1
+"8","No-till, temperate/boreal, moist",1.15
+"9","No-till, tropical, dry",1.17
+"10","No-till, tropical, moist/wet",1.22
+"11","No-till, tropical montane, all",1.16

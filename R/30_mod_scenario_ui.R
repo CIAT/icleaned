@@ -249,7 +249,24 @@ scenario_ui <- function(id) {
         )
       ),
       fluidRow(
-        h2("Select Parameter Database:", class = "mb-3 mt-5"),
+        class = "mb-3 mt-5",
+        div(
+          style = "display: flex; align-items: center;",
+          h2("Select Parameter Database:", style = "margin: 0; margin-right: 8px;"),
+          span(
+            "?",
+            class = "help",
+            style = "display: inline-block; margin-right: 10px;",
+            span(
+              "Default parameter databases are read-only: you cannot edit their contents. ",
+              "To customize parameters (e.g., add crops, modify livestock types), ",
+              "create a new database or clone an existing one. ",
+              "Cloned databases are saved to your folder and become fully editable."
+            )
+          )
+        )
+      ),
+      fluidRow(
         shinyWidgets::pickerInput(
           inputId = ns("database_code"),
           label = NULL,
@@ -293,23 +310,13 @@ scenario_ui <- function(id) {
                           ),
                           h2("Climate:", class = "mb-3"),
                           tags$div(
-                            class = "mb-4",
-                            shinyWidgets::pickerInput(
-                              inputId = ns("climate_zone"),
-                              label = NULL,
-                              choices = NULL,
-                              options = list(`live-search` = TRUE)
-                            ),
-                          ),
-                          h2("Sub-climate:", class = "mb-3"),
-                          tags$div(
-                            class = "mb-4",
+                            class = "mb-4 climate-picker",
                             shinyWidgets::pickerInput(
                               inputId = ns("climate_zone_2"),
                               label = NULL,
                               choices = NULL,
                               options = list(`live-search` = TRUE)
-                            ),
+                            )
                           ),
                           h2("Farm name:", class = "mb-3"),
                           tags$div(
@@ -369,10 +376,10 @@ scenario_ui <- function(id) {
                           h2("Manure/Fertilizer bought", class = "tabsH2"),
                           h2("Manure", class = "mb-4"),
                           shinyjs::hidden(
-                             div(
-                               id = ns("alert_message_manure_inputs"),
-                               class = "alert alert-danger"
-                             )
+                            div(
+                              id = ns("alert_message_manure_inputs"),
+                              class = "alert alert-danger"
+                            )
                           ),
                           h2("Annual purchase of manure (kg N):", class = "mb-3"),
                           tags$div(
@@ -444,12 +451,12 @@ scenario_ui <- function(id) {
                       class = "carousel-item",
                       div(class = "p-5 bg-light",
                           h2("Waste of milk and meat", class = "tabsH2"),
-                        shinyjs::hidden(
-                          div(
-                            id = ns("alert_message_waste_inputs"),
-                            class = "alert alert-danger"
-                          )
-                        ),
+                          shinyjs::hidden(
+                            div(
+                              id = ns("alert_message_waste_inputs"),
+                              class = "alert alert-danger"
+                            )
+                          ),
                           fluidRow(
                             column(
                               width = 6,
@@ -599,11 +606,11 @@ scenario_ui <- function(id) {
                       div(class = "p-5 bg-light",
                           h2("Area", class = "tabsH2"),
                           shinyjs::hidden(
-                          div(
-                            id = ns("alert_message_area_inputs"),
-                            class = "alert alert-danger"
-                          )
-                        ),
+                            div(
+                              id = ns("alert_message_area_inputs"),
+                              class = "alert alert-danger"
+                            )
+                          ),
                           h2("Annual precipitation (mm/yr)", class = "mb-3"),
                           tags$div(
                             class = "mb-4",
@@ -1091,6 +1098,18 @@ scenario_ui <- function(id) {
                         )
                       )
                     ),
+                    # Displays a warning if no fertilizers are selected
+                    # controlled via shinyjs in the server
+                    shinyjs::hidden(
+                      div(
+                        id = ns("alert_no_fertilizers"),
+                        class = "alert alert-danger",
+                        HTML(
+                          "No fertilizers have been selected in the <strong> 'Farm > Fertilizer' </strong> tab. 
+                          Please add at least one fertilizer to enable editing."
+                        )
+                      )
+                    ),
                     div(DTOutput(ns("crop_inputs_table")), class = "without_checkbox"),
                     br()
                 )
@@ -1098,16 +1117,16 @@ scenario_ui <- function(id) {
               tabPanel(
                 "Livestock Feeding",
                 div(class = "p-5 bg-light",
-                  uiOutput(ns("livestock_feeding_ui")),
-                  h2("Allocation in percentage of a feed to livestock by season", class = "mb-5"),
-                  shinyjs::hidden(
-                   div(
-                    id = ns("alert_livestock_feeding_global"),
-                    class = "alert alert-danger",
-                    style = "margin-bottom: 20px;"
-                    )
-                  ),
-                  uiOutput(ns("livestock_feeding_table"))
+                    uiOutput(ns("livestock_feeding_ui")),
+                    h2("Allocation in percentage of a feed to livestock by season", class = "mb-5"),
+                    shinyjs::hidden(
+                      div(
+                        id = ns("alert_livestock_feeding_global"),
+                        class = "alert alert-danger",
+                        style = "margin-bottom: 20px;"
+                      )
+                    ),
+                    uiOutput(ns("livestock_feeding_table"))
                 )
               )
             )

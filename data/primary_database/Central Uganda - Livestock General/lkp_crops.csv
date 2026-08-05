@@ -1,0 +1,18 @@
+﻿crop_code,crop_name,dry_yield,residue_dry_yield,main_n,residue_n,c_factor,kc_initial,kc_midseason,kc_late,category,trees_ha,trees_dhb,trees_growth,trees_removal,trees_ha_dbh25,average_dbh25,increase_dbh25,trees_ha_dbh2550,average_dbh2550,increase_dbh2550,trees_ha_dbh50,average_dbh50,increase_dbh50,time_horizon,diameter_breast
+1,Amaranthus – local ,5.6,0,0.04,0.04,0.01,0.3,0.8,0.9,cereal,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2,Avena sativa,7.5,2.64,0,0.04,0.6,0.35,1.1,0.45,cereal,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+3,Brachiaria hybrid,7,0,0.02,0,0.05,0.35,1.1,0.45,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+4,Cassava ,4.27,2.89,0.03,0,0.46,0.15,1.2,0.6,tree crop,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+5,Centrosema,10,0,0.03,0,0.6,0.35,1.1,0.45,legume,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+6,Cocoyam,0.72,1.12,0.039,0.03,0.32,0.3,1.1,0.5,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+7,Groundnut,0,2.79,0,0.01,0.12,0.15,1.15,0.6,legume,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+8,Hordeum vulgare,4.35,1.58,0.02,0,0,0.1,1.1,0.55,cereal,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+9,Lablab,1.62,0,0.04,0,0,0.48,0.67,0.65,legume,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+10,Maize,1.3,3.58,0.013,0.006,0.1,0.15,1.15,0.3,cereal,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+11,Medicago sativa,12,35.6,0.03,0.03,0.37,0.15,1.1,0.25,legume,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+12,Musa spp.,22.86,70,0,0.02,0.6,0.5,1.2,0.7,tree crop,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+13,"Natural pasture - Mpigi, Mukono, and Masaka areas",13.05,5,0.01,0,0.05,0.3,0.75,0.75,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+14,Natural pasture - Nakasongola area,10,7.14,0.01,0,0.05,0.3,0.75,0.75,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+15,Pennisetum purpureum,15,8.39,0.02,0,0.01,0.6,1.1,1.05,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+16,Purchased,0,0,0,0,0,0,0,0,cereal,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+17,Sweet potato,4.11,0.97,0,0.003,0.01,0.3,0.75,0.75,tuber,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0

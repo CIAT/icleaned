@@ -20,4 +20,22 @@ $(function () {
           if (!isActive) $menu.addClass('active');
         }
       });
+
+    // Fix DataTables column alignment when switching tabs
+    $(document).on('shown.bs.tab', 'a[data-bs-toggle="tab"]', function (e) {
+      var target = $(e.target).attr("href");
+      
+      setTimeout(function() {
+        $(target).find('.dataTable').each(function() {
+          try {
+            var table = $(this).DataTable();
+            if (table) {
+              table.columns.adjust().draw(false);
+            }
+          } catch (error) {
+            console.log('Could not adjust table:', error);
+          }
+        });
+      }, 10);
+    });
 });

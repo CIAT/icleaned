@@ -262,8 +262,8 @@ scenario_server <- function(
     if (file.exists(source_file_path)) {
       file.copy(source_file_path, share_file_path, overwrite = TRUE)
       
-      # Share the related database if it's not the default database
-      if (input$database_code != "Params DB - Default") {
+      # Share the related database if it's not a default (read-only) database
+      if (!(input$database_code %in% primary_database_names())) {
         # Define the source and destination paths for the database directory
         db_path <- file.path(
           session$userData$user_folder, "parameters_database", input$database_code
@@ -566,9 +566,9 @@ scenario_server <- function(
       json_data <- fromJSON(source_file_path)
       db_name <- json_data$database_code
       
-      # If the database is not the default database and is available on
+      # If the database is not a default (read-only) database and is available on
       # the shared_pool folder, clone the database as well
-      if (db_name != "Params DB - Default" &&
+      if (!(db_name %in% primary_database_names()) &&
           db_name %in% list.files(
             file.path(Sys.getenv("DATA_DIR"), "shared_pool", "parameters_database")
           )) {
@@ -932,7 +932,25 @@ scenario_server <- function(
   # ----------- Livestock tab --------------------------------------------------
   # Initial data frame
   livestock_data <- reactiveVal(livestock_data_initialization)
-  
+
+  # ------ Sync livestock_data with parameters DB ----------------------------
+  # Whenever the parameters database (lkp_livetype) changes, refresh the
+  # DB-owned columns on every existing livestock row, matched by livetype_code.
+  # Rows whose livetype_code no longer exists in the DB are left untouched.
+  observeEvent(lkp_livetype(), {
+    cat(file = stderr(), "30 - Syncing livestock_data with lkp_livetype\n")
+    current <- isolate(livestock_data())
+    updated <- sync_columns_by_key(
+      target = current,
+      source = lkp_livetype(),
+      key = "livetype_code",
+      columns = livestock_sync_cols_lkp_livetype
+    )
+    if (!identical(current, updated)) {
+      livestock_data(updated)
+    }
+  }, ignoreNULL = TRUE)
+
   # Add reactive for the selected cell
   selected_cell <- reactiveVal()
   
@@ -996,24 +1014,20 @@ scenario_server <- function(
         litter_size = selected_livestock$litter_size,
         piglets_relying_on_milk = 0,
         lactation_length = selected_livestock$lactation_length,
-        proportion_growth = selected_livestock$proportion_growth,
-        lw_gain = selected_livestock$lw_gain,
-        grazing_displacement = selected_livestock$grazing_displacement,
+        proportion_growth_piglets_milk = selected_livestock$proportion_growth_piglets_milk,
+        lw_gain_piglets = selected_livestock$lw_gain_piglets,
         cp_maintenance = selected_livestock$cp_maintenance,
-        cp_grazing = selected_livestock$cp_grazing,
-        cp_pregnancy = selected_livestock$cp_pregnancy,
-        cp_lactation = selected_livestock$cp_lactation,
+        cp_lys_pregnancy = selected_livestock$cp_lys_pregnancy,
         cp_lactmilk = selected_livestock$cp_lactmilk,
-        cp_growth = selected_livestock$cp_growth,
+        cp_lys_growth = selected_livestock$cp_lys_growth,
         birth_interval = selected_livestock$birth_interval,
         protein_milkcontent = selected_livestock$protein_milkcontent,
-        fat_content = selected_livestock$fat_content,
+        fat_milkcontent = selected_livestock$fat_milkcontent,
         energy_milkcontent = selected_livestock$energy_milkcontent,
         energy_meatcontent = selected_livestock$energy_meatcontent,
         protein_meatcontent = selected_livestock$protein_meatcontent,
         carcass_fraction = selected_livestock$carcass_fraction,
-        energy_eggcontent = selected_livestock$energy_eggcontent,
-        n_content = selected_livestock$n_content,
+        n_manure_content = selected_livestock$n_manure_content,
         meat_product = selected_livestock$meat_product,
         milk_product = selected_livestock$milk_product,
         ipcc_ef_category_t1 = selected_livestock$ipcc_meth_ef_t1,
@@ -1114,12 +1128,12 @@ scenario_server <- function(
         columns = c(
           "body_weight", "body_weight_weaning", "body_weight_year_one",
           "adult_weight", "work_hour", "litter_size", "piglets_relying_on_milk",
-          "lactation_length", "proportion_growth", "lw_gain", "grazing_displacement",
-          "cp_maintenance", "cp_grazing", "cp_pregnancy", "cp_lactation",
-          "cp_lactmilk", "cp_growth", "birth_interval", "protein_milkcontent",
-          "fat_content", "energy_milkcontent", "energy_meatcontent",
-          "protein_meatcontent", "carcass_fraction", "energy_eggcontent",
-          "n_content", "meat_product", "milk_product", "ipcc_ef_category_t1",
+          "lactation_length", "proportion_growth_piglets_milk", "lw_gain_piglets",
+          "cp_maintenance", "cp_lys_pregnancy", "cp_lactmilk",
+           "cp_lys_growth", "birth_interval", "protein_milkcontent",
+          "fat_milkcontent", "energy_milkcontent", "energy_meatcontent",
+          "protein_meatcontent", "carcass_fraction", "n_manure_content",
+           "meat_product", "milk_product", "ipcc_ef_category_t1",
           "ipcc_ef_category_t2", "ipcc_meth_man_category", "ipcc_n_exc_category"
         ),
         backgroundColor = "#f4b183"
@@ -1330,9 +1344,41 @@ scenario_server <- function(
   feedtype <- reactiveVal(feedtype_initialization)
   # Add reactive for the selected cell
   selected_cell <- reactiveVal()
-  
+
   # Initial data frame for crop inputs
   crop_inputs_data <- reactiveVal(crop_inputs_data_initialization)
+
+  # ------ Sync feedtype with parameters DB ----------------------------------
+  # Whenever lkp_crops or lkp_feeditem changes, refresh the DB-owned columns
+  # on every existing feedtype row (matched by crop_code / feed_item_code) and
+  # mirror the refreshed Feed / Crop display labels into crop_inputs_data.
+  # Rows whose code no longer exists in the DB are left untouched.
+  observeEvent(list(lkp_crops(), lkp_feeditem()), {
+    cat(file = stderr(), "30 - Syncing feedtype with lkp_crops & lkp_feeditem\n")
+    current <- isolate(feedtype())
+    updated <- sync_columns_by_key(
+      target = current,
+      source = lkp_crops(),
+      key = "crop_code",
+      columns = feedtype_sync_cols_lkp_crops
+    )
+    updated <- sync_columns_by_key(
+      target = updated,
+      source = lkp_feeditem(),
+      key = "feed_item_code",
+      columns = feedtype_sync_cols_lkp_feeditem
+    )
+    if (!identical(current, updated)) {
+      feedtype(updated)
+      # Keep crop_inputs_data display labels aligned with feedtype rows.
+      inputs <- isolate(crop_inputs_data())
+      if (nrow(inputs) == nrow(updated)) {
+        inputs$Feed <- updated$feed_item_name
+        inputs$Crop <- updated$crop_name
+        crop_inputs_data(inputs)
+      }
+    }
+  }, ignoreNULL = TRUE)
   
   # Add crop button click
   observeEvent(input$add_crop, {
@@ -1369,10 +1415,10 @@ scenario_server <- function(
   
   # Update second select input "crop" depending on the first input "feed"
   observeEvent(input$feed, {
-    feed_type_code <- lkp_feeditem()$feed_type_code[lkp_feeditem()$feed_item_code == input$feed]
+    crop_code <- lkp_feeditem()$crop_code[lkp_feeditem()$feed_item_code == input$feed]
     choices <- setNames(
-      lkp_feedtype()$feed_type_code[lkp_feedtype()$feed_type_code == feed_type_code],
-      lkp_feedtype()$feed_type_name[lkp_feedtype()$feed_type_code == feed_type_code]
+      lkp_crops()$crop_code[lkp_crops()$crop_code == crop_code],
+      lkp_crops()$crop_name[lkp_crops()$crop_code == crop_code]
     )
     # remove NA values
     choices <- choices[!is.na(choices)]
@@ -1386,12 +1432,12 @@ scenario_server <- function(
   # Add new crop row from modal
   observeEvent(input$ok_add_crop, {
     req(input$crop, input$feed)
-    if (!((input$crop %in% feedtype()[, "feed_type_code"]) && (input$feed %in% feedtype()[, "feed_item_code"]))) {
+    if (!((input$crop %in% feedtype()[, "crop_code"]) && (input$feed %in% feedtype()[, "feed_item_code"]))) {
       new_row <- data.frame(
-        feed_type_code = input$crop,
+        crop_code = input$crop,
         feed_item_code = input$feed,
         feed_item_name = lkp_feeditem()$feed_item_name[lkp_feeditem()$feed_item_code == input$feed],
-        feed_type_name = lkp_feedtype()$feed_type_name[lkp_feedtype()$feed_type_code == input$crop],
+        crop_name = lkp_crops()$crop_name[lkp_crops()$crop_code == input$crop],
         source_type = "Main", # Only column that is hard coded like the qt app
         intercrop = 0,
         intercrop_fraction = 0,
@@ -1413,33 +1459,32 @@ scenario_server <- function(
         grassman_change_factor = lkp_grasslandman()$change_factor[1],
         landcover_c_factor = lkp_landcover()$c_factor[1],
         slope_p_factor = lkp_slope()$p_factor[1],
-        dry_yield = lkp_feedtype()$dry_yield[lkp_feedtype()$feed_type_code == input$crop],
-        residue_dry_yield = lkp_feedtype()$residue_dry_yield[lkp_feedtype()$feed_type_code == input$crop],
-        n_content = 0,
-        residue_n = lkp_feedtype()$residue_n[lkp_feedtype()$feed_type_code == input$crop],
-        kc_initial = lkp_feedtype()$kc_initial[lkp_feedtype()$feed_type_code == input$crop],
-        kc_midseason = lkp_feedtype()$kc_midseason[lkp_feedtype()$feed_type_code == input$crop],
-        kc_late = lkp_feedtype()$kc_late[lkp_feedtype()$feed_type_code == input$crop],
-        category = lkp_feedtype()$category[lkp_feedtype()$feed_type_code == input$crop],
-        trees_ha = lkp_feedtype()$trees_ha[lkp_feedtype()$feed_type_code == input$crop],
-        trees_dhb = lkp_feedtype()$trees_dhb[lkp_feedtype()$feed_type_code == input$crop],
-        trees_growth = lkp_feedtype()$trees_growth[lkp_feedtype()$feed_type_code == input$crop],
-        trees_removal = lkp_feedtype()$trees_removal[lkp_feedtype()$feed_type_code == input$crop],
-        trees_ha_dbh25 = lkp_feedtype()$trees_ha_dbh25[lkp_feedtype()$feed_type_code == input$crop],
-        average_dbh25 = lkp_feedtype()$average_dbh25[lkp_feedtype()$feed_type_code == input$crop],
-        increase_dbh25 = lkp_feedtype()$increase_dbh25[lkp_feedtype()$feed_type_code == input$crop],
-        trees_ha_dbh2550 = lkp_feedtype()$trees_ha_dbh2550[lkp_feedtype()$feed_type_code == input$crop],
-        average_dbh2550 = lkp_feedtype()$average_dbh2550[lkp_feedtype()$feed_type_code == input$crop],
-        increase_dbh2550 = lkp_feedtype()$increase_dbh2550[lkp_feedtype()$feed_type_code == input$crop],
-        trees_ha_dbh50 = lkp_feedtype()$trees_ha_dbh50[lkp_feedtype()$feed_type_code == input$crop],
-        average_dbh50 = lkp_feedtype()$average_dbh50[lkp_feedtype()$feed_type_code == input$crop],
-        increase_dbh50 = lkp_feedtype()$increase_dbh50[lkp_feedtype()$feed_type_code == input$crop],
-        time_horizon = lkp_feedtype()$time_horizon[lkp_feedtype()$feed_type_code == input$crop],
-        diameter_breast = lkp_feedtype()$diameter_breast[lkp_feedtype()$feed_type_code == input$crop],
+        dry_yield = lkp_crops()$dry_yield[lkp_crops()$crop_code == input$crop],
+        residue_dry_yield = lkp_crops()$residue_dry_yield[lkp_crops()$crop_code == input$crop],
+        main_n = lkp_crops()$main_n[lkp_crops()$crop_code == input$crop],
+        residue_n = lkp_crops()$residue_n[lkp_crops()$crop_code == input$crop],
+        kc_initial = lkp_crops()$kc_initial[lkp_crops()$crop_code == input$crop],
+        kc_midseason = lkp_crops()$kc_midseason[lkp_crops()$crop_code == input$crop],
+        kc_late = lkp_crops()$kc_late[lkp_crops()$crop_code == input$crop],
+        category = lkp_crops()$category[lkp_crops()$crop_code == input$crop],
+        trees_ha = lkp_crops()$trees_ha[lkp_crops()$crop_code == input$crop],
+        trees_dhb = lkp_crops()$trees_dhb[lkp_crops()$crop_code == input$crop],
+        trees_growth = lkp_crops()$trees_growth[lkp_crops()$crop_code == input$crop],
+        trees_removal = lkp_crops()$trees_removal[lkp_crops()$crop_code == input$crop],
+        trees_ha_dbh25 = lkp_crops()$trees_ha_dbh25[lkp_crops()$crop_code == input$crop],
+        average_dbh25 = lkp_crops()$average_dbh25[lkp_crops()$crop_code == input$crop],
+        increase_dbh25 = lkp_crops()$increase_dbh25[lkp_crops()$crop_code == input$crop],
+        trees_ha_dbh2550 = lkp_crops()$trees_ha_dbh2550[lkp_crops()$crop_code == input$crop],
+        average_dbh2550 = lkp_crops()$average_dbh2550[lkp_crops()$crop_code == input$crop],
+        increase_dbh2550 = lkp_crops()$increase_dbh2550[lkp_crops()$crop_code == input$crop],
+        trees_ha_dbh50 = lkp_crops()$trees_ha_dbh50[lkp_crops()$crop_code == input$crop],
+        average_dbh50 = lkp_crops()$average_dbh50[lkp_crops()$crop_code == input$crop],
+        increase_dbh50 = lkp_crops()$increase_dbh50[lkp_crops()$crop_code == input$crop],
+        time_horizon = lkp_crops()$time_horizon[lkp_crops()$crop_code == input$crop],
+        diameter_breast = lkp_crops()$diameter_breast[lkp_crops()$crop_code == input$crop],
         # These ones are available in the json but not in the DT
         fraction_as_manure = "NULL", # We should get null in the json
         n_fertilizer = "NULL", # We should get null in the json
-        main_n = lkp_feedtype()$main_n[lkp_feedtype()$feed_type_code == input$crop],
         land_cover = lkp_landcover()$landcover_code[1],
         slope = lkp_slope()$slope_code[1],
         grassman = lkp_grasslandman()$management_code[1],
@@ -1448,7 +1493,7 @@ scenario_server <- function(
       
       new_input_row <- data.frame(
         Feed = lkp_feeditem()$feed_item_name[lkp_feeditem()$feed_item_code == input$feed],
-        Crop = lkp_feedtype()$feed_type_name[lkp_feedtype()$feed_type_code == input$crop],
+        Crop = lkp_crops()$crop_name[lkp_crops()$crop_code == input$crop],
         fraction_as_fertilizer = 0,
         urea = 0,
         npk = 0,
@@ -1487,7 +1532,7 @@ scenario_server <- function(
     rows_not_contains_grass <- which(feedtype_dt$category != "grass") - 1 # index for js
     
     # Identify indices of non-rice crops
-    rows_not_contains_rice <- which(feedtype_dt$feed_type_name != "Rice") - 1 # index for js
+    rows_not_contains_rice <- which(feedtype_dt$crop_name != "Rice") - 1 # index for js
     
     # Identify indices of rows to disable depending on the source type
     rows_not_residue <- which(feedtype_dt$source_type != "Residue") - 1 # index for js
@@ -1541,8 +1586,8 @@ scenario_server <- function(
     
     feedtype_dt <- feedtype_dt %>%
       select(
-        -feed_type_code, -feed_item_code, -fraction_as_manure, -n_fertilizer,
-        -main_n, -slope, -grassman, -land_cover
+        -crop_code, -feed_item_code, -fraction_as_manure, -n_fertilizer,
+        -slope, -grassman, -land_cover
       )
     
     datatable(
@@ -1600,7 +1645,7 @@ scenario_server <- function(
             targets = get_column_indices(
               feedtype_dt, 
               c("feed_item_name",
-                "feed_type_name",
+                "crop_name",
                 "source_type",
                 "intercrop",
                 "land_cover_desc",
@@ -1643,7 +1688,7 @@ scenario_server <- function(
       ) %>%
       formatStyle(
         columns = c(
-          "dry_yield", "residue_dry_yield", "n_content", "residue_n", "kc_initial",
+          "dry_yield", "residue_dry_yield", "main_n", "residue_n", "kc_initial",
           "kc_midseason", "kc_late", "category", "trees_ha", "trees_dhb",
           "trees_growth", "trees_removal", "trees_ha_dbh25", "average_dbh25",
           "increase_dbh25", "trees_ha_dbh2550", "average_dbh2550",
@@ -1816,13 +1861,34 @@ scenario_server <- function(
   
   # Render the crop inputs table
   output$crop_inputs_table <- renderDT({
+
+    # Observe fertilizers to show/hide the warning message
+    if (nrow(fertilizers()) == 0 & nrow(crop_inputs_data()) != 0) {
+      shinyjs::show("alert_no_fertilizers")
+    } else {
+      shinyjs::hide("alert_no_fertilizers")
+    }
+
+    # Identifies all available fertilizer columns based on the mapping
+    all_fertilizer_cols <- unname(fertilizer_column_mapping)
+    all_col_names <- colnames(crop_inputs_data())
+    fertilizer_col_indices <- which(all_col_names %in% all_fertilizer_cols)
+
+    # Identifies currently active fertilizer columns based on user selection
+    active_col_names <- fertilizer_column_mapping[fertilizers()$fertilizer_desc]
+    active_col_indices <- which(all_col_names %in% active_col_names)
+
+    # Calculates indices of inactive fertilizer columns to disable
+    blocked_col_indices <- setdiff(fertilizer_col_indices, active_col_indices)
+
+    # Adjusts indices to 0-based for DataTables (JavaScript) compatibility
+    blocked_js_indices <- blocked_col_indices - 1
+
     datatable(
       crop_inputs_data(),
       colnames = crop_inputs_table_colnames,
       editable = list(
-        target = "cell",
-        # Prevent editing of the first column (check boxes for delete rows)
-        disable = list(columns = 0)
+        target = "cell"
       ),
       selection = "none",
       rownames = FALSE,
@@ -1834,14 +1900,21 @@ scenario_server <- function(
         paging = FALSE,
         fixedColumns = list(leftColumns = 1),
         columnDefs = list(
+          # Visually block Feed (0) and Crop (1) columns from double-click interaction
           list(
             targets = get_column_indices(crop_inputs_data(), c("Feed", "Crop")) - 1,
             createdCell = JS(disable_all_rows_edit_js()),
             searchable = FALSE
+          ),
+          # Applies visual 'not-allowed' cursor to inactive fertilizer columns
+          list(
+            targets = blocked_js_indices,
+            createdCell = JS(disable_and_add_cursor_js()),
+            searchable = FALSE
           )
         )
       )
-    ) %>% 
+    ) %>%
       formatStyle(
         columns = 3:ncol(crop_inputs_data()),
         backgroundColor = "#a9d18e"
@@ -1999,7 +2072,7 @@ scenario_server <- function(
         
       } else if ((info$col + 2) == which(names(feedtype()) == "water_regime")) {
         
-        if (feedtype()[info$row, "feed_type_name"] == "Rice") {
+        if (feedtype()[info$row, "crop_name"] == "Rice") {
           
           if (modal_open()) return()
           modal_open(TRUE)
@@ -2022,7 +2095,7 @@ scenario_server <- function(
         
       } else if ((info$col + 2) == which(names(feedtype()) == "ecosystem_type")) {
         
-        if (feedtype()[info$row, "feed_type_name"] == "Rice") {
+        if (feedtype()[info$row, "crop_name"] == "Rice") {
           
           if (modal_open()) return()
           modal_open(TRUE)
@@ -2045,7 +2118,7 @@ scenario_server <- function(
         
       } else if ((info$col + 2) == which(names(feedtype()) == "organic_amendment")) {
         
-        if (feedtype()[info$row, "feed_type_name"] == "Rice") {
+        if (feedtype()[info$row, "crop_name"] == "Rice") {
           
           if (modal_open()) return()
           modal_open(TRUE)
@@ -2076,7 +2149,7 @@ scenario_server <- function(
             inputId = ns("feed_category"),
             label = NULL,
             choices = sort(
-              unique(lkp_feedtype()$category[lkp_feedtype()$category != ""])
+              unique(lkp_crops()$category[lkp_crops()$category != ""])
             ),
             options = list(`live-search` = TRUE)
           ),
@@ -2263,7 +2336,7 @@ scenario_server <- function(
     shinyWidgets::updatePickerInput(
       session,
       "feed_category",
-      selected = lkp_feedtype()$category[1]
+      selected = lkp_crops()$category[1]
     )
     removeModal()
     
@@ -2326,7 +2399,7 @@ scenario_server <- function(
     
     # Generate and Render Dynamic Feed Allocation Table for Each Season
     lapply(seasons()$Season, function(season) {
-      ft <- paste(feedtype()$feed_item_name, "of", feedtype()$feed_type_name)
+      ft <- paste(feedtype()$feed_item_name, "of", feedtype()$crop_name)
       lt <- livestock_data()$livetype_desc
       df <- as.data.frame(matrix(0, nrow = length(ft), ncol = length(lt)))
       colnames(df) <- lt
@@ -2520,7 +2593,7 @@ scenario_server <- function(
           feeds = lapply(seq_len(nrow(feedtype())), function(j) {
             list(
               feed_item_code = feedtype()$feed_item_code[j],
-              feed_type_code = feedtype()$feed_type_code[j],
+              crop_code = feedtype()$crop_code[j],
               livestock = lapply(seq_len(nrow(livestock_data())), function(k) {
                 list(
                   livetype_code = livestock_data()$livetype_code[
@@ -2593,14 +2666,22 @@ scenario_server <- function(
       
     } else {
       
-      # Set the default database as the selected one
-      selected_database <- "Params DB - Default"
+      # Use app default, first available primary DB, or first available database
+      default_available <- intersect(primary_database_names(), available_databases)
+      selected_database <- if (default_parameters_database %in% available_databases) {
+        default_parameters_database
+      } else if (length(default_available) > 0) {
+        sort(default_available)[1]
+      } else if (length(available_databases) > 0) {
+        sort(available_databases)[1]
+      } else {
+        character(0)
+      }
       
-      if (related_database != "Params DB - Default") {
-        # Show a warning message to the user
+      if (!is.null(related_database) && length(selected_database) > 0 && related_database != selected_database) {
         showNotification(
-          "The specified parameters database is not available. 
-        'Params DB - Default' will be used instead.",
+          paste0("The specified parameters database is not available. '",
+            selected_database, "' will be used instead."),
           duration = 5,
           type = "warning"
         )
@@ -2630,11 +2711,20 @@ scenario_server <- function(
     if (is.data.frame(study_object$livestock)) {
       # Define the desired column order for the feedtype
       desired_order <- colnames(livestock_data_initialization)
-      
+
       # Reorder the columns of feed_data
       livestock_data_load <- study_object$livestock %>%
         select(all_of(desired_order))
-      
+
+      # Refresh DB-owned columns from the currently selected parameters DB so
+      # a scenario reloaded against an unchanged DB still picks up DB edits
+      livestock_data_load <- sync_columns_by_key(
+        target = livestock_data_load,
+        source = lkp_livetype(),
+        key = "livetype_code",
+        columns = livestock_sync_cols_lkp_livetype
+      )
+
       livestock_data(livestock_data_load)
     } else {
       livestock_data(livestock_data_initialization)
@@ -2661,7 +2751,7 @@ scenario_server <- function(
         # Separate crop_inputs_data and add 'Feed' and 'Crop' columns
         crop_df <- item[, crop_columns, drop = FALSE]
         crop_df$Feed <- item$feed_item_name
-        crop_df$Crop <- item$feed_type_name
+        crop_df$Crop <- item$crop_name
         
         # Reorder columns to make 'Feed' the first and 'Crop' the second column
         crop_df <- crop_df[, c("Feed", "Crop", setdiff(names(crop_df), c("Feed", "Crop")))]
@@ -2674,10 +2764,31 @@ scenario_server <- function(
       # Reorder the columns of feed_data
       feed_data <- feed_data %>%
         select(all_of(desired_order))
-      
+
+      # Refresh DB-owned columns from the currently selected parameters DB so
+      # a scenario reloaded against an unchanged DB still picks up DB edits
+      feed_data <- sync_columns_by_key(
+        target = feed_data,
+        source = lkp_crops(),
+        key = "crop_code",
+        columns = feedtype_sync_cols_lkp_crops
+      )
+      feed_data <- sync_columns_by_key(
+        target = feed_data,
+        source = lkp_feeditem(),
+        key = "feed_item_code",
+        columns = feedtype_sync_cols_lkp_feeditem
+      )
+
+      # Mirror refreshed names into crop_inputs_data display columns
+      if (nrow(crop_data) == nrow(feed_data)) {
+        crop_data$Feed <- feed_data$feed_item_name
+        crop_data$Crop <- feed_data$crop_name
+      }
+
       feedtype(feed_data)
       crop_inputs_data(crop_data)
-      
+
       # Update the crop table's column : intercrop checkbox
       checked_boxes$intercrop_checked <- as.logical(feedtype()$intercrop)
     } else {
@@ -2739,7 +2850,7 @@ scenario_server <- function(
         # Rename the rownames & colnames
         rownames(season_df) <- paste(
           study_object$feed_items$feed_item_name,
-          "of", study_object$feed_items$feed_type_name
+          "of", study_object$feed_items$crop_name
         )
         colnames(season_df) <- study_object$livestock$livetype_desc
         
@@ -2769,19 +2880,9 @@ scenario_server <- function(
     
     #Reconstruct the select inputs
     shinyWidgets::updatePickerInput(
-      session, "climate_zone",
-      choices = sort(
-        lkp_climate()$climate_desc
-      ),
-      selected = session$userData$study_object()$climate_zone
-    )
-    
-    shinyWidgets::updatePickerInput(
       session, "climate_zone_2", 
       choices = sort(
-        lkp_climate2() %>%
-          filter(climate_code == "Temperate") %>%
-          pull(climate2_desc)
+        session$userData$parameters_db[["lkp_climate"]]$climate_desc
       ),
       selected = session$userData$study_object()$climate_zone_2
     )

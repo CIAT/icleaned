@@ -39,10 +39,22 @@ Sys.setlocale("LC_TIME", "C")  # Set to C locale for English
 # Ideally, user {renv} package to manage the package versions
 
 
+# Names of default (read-only) parameters databases - subfolders of data/primary_database.
+# Users can only clone these, not edit or delete them.
+primary_database_names <- function() {
+  list.files(file.path("data", "primary_database"), full.names = FALSE)
+}
+
+# Default parameters database: clone source for new DBs and template scenarios.
+default_parameters_database <- "Southern Highland Tanzania Dairy"
+
+# Display name for user-created parameter databases (versioned on duplicate).
+new_parameters_database_name <- "New Parameters Database"
+
 # List of all parameter tables
 parameters_db_names <- c(
   "lkp_climate", "lkp_climate2", "lkp_croplandsystem", "lkp_feeditem",
-  "lkp_feedtype", "lkp_grassinputlevel", "lkp_grasslandman", "lkp_landcover",
+  "lkp_crops", "lkp_grassinputlevel", "lkp_grasslandman", "lkp_landcover",
   "lkp_livetype", "lkp_manureman", "lkp_organicmatter", "lkp_orgfertilizer",
   "lkp_region", "lkp_slope", "lkp_soil", "lkp_tillageregime"
 )

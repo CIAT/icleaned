@@ -1,0 +1,14 @@
+﻿crop_code,crop_name,dry_yield,residue_dry_yield,main_n,residue_n,c_factor,kc_initial,kc_midseason,kc_late,category,trees_ha,trees_dhb,trees_growth,trees_removal,trees_ha_dbh25,average_dbh25,increase_dbh25,trees_ha_dbh2550,average_dbh2550,increase_dbh2550,trees_ha_dbh50,average_dbh50,increase_dbh50,time_horizon,diameter_breast
+1,Beans,0.79,2.64,0.041,0.03,0.1,0.35,1.1,0.9,cereal,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2,Brachiaria hybrid,9.5,0,0.022,0,0.01,0.6,1.1,1.05,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+3,Calliandra,8,2.5,0.035,0.015,0.45,0.3,0.6,0.9,legume,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+4,Green leaf desmodium,4,0.05,0.041,0.025,0.1,0.4,1.05,0.8,legume,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+5,Leucaena,7,7,0.034,0.034,0.05,1.05,1.2,0.75,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+6,Local mixed grasses,3.25,0.06,0.014,0.014,0.1,0.3,0.75,0.75,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+7,Maize,1.06,2.69,0.017,0.007,0.05,0.15,1.15,0.3,cereal,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+8,Pennisetum purpureum,6.3,3.31,0.023,0.023,0.027,0.6,1.1,1.05,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+9,Purchased,0,0,0,0,0,0,0,0,cereal,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+10,Sesbania,6,4.5,0.035,0.02,0.47,0.45,0.95,0.75,legume,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+11,Sugarcane,3.46,1.38,0.001,0.001,0.171,0.15,1.2,0.7,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+12,Sweet potato,1.93,1.58,0.005,0.002,0.05,0.3,0.75,0.75,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+13,Wild desmodium,6,5.67,0.025,0,0.15,0.4,1.05,0.8,legume,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0

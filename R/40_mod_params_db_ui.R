@@ -257,10 +257,16 @@ params_db_ui <- function(id) {
             c(
               id = "tabs",
               lapply(
-                c("lkp_feeditem", "lkp_feedtype", "lkp_livetype"),
+                c("lkp_feeditem", "lkp_crops", "lkp_livetype"),
                 function(tab_name) {
+                  # Custom tab titles mapping
+                  tab_titles <- c(
+                    "lkp_feeditem" = "Feeditems",
+                    "lkp_crops" = "Crops",
+                    "lkp_livetype" = "Livetype"
+                  )
                   tabPanel(
-                    str_to_title(sub("^lkp_", "", tab_name)),
+                    tab_titles[tab_name],
                     div(
                       class = "p-5 bg-light",
                       fluidRow(
@@ -301,20 +307,16 @@ params_db_ui <- function(id) {
                           )
                         )
                       ),
-                      div(DTOutput(ns(paste0("table_", tab_name))), class = "with_checkbox"),
-                      # Unified table footer (entries info + pagination)
-                      div(
-                        class = "table-footer d-flex justify-content-between align-items-center mt-2 px-3 py-1",
-                        span(
-                          textOutput(ns(paste0("entries_info_", tab_name))),
-                          class = "text-muted small"
-                        ),
+                      # Alert for duplicate code warnings
+                      shinyjs::hidden(
                         div(
-                          class = "pagination-bar-container ms-auto",
-                          uiOutput(ns(paste0("page_buttons_", tab_name)))
+                          id = ns(paste0("alert_duplicate_code_", tab_name)),
+                          class = "alert alert-danger",
+                          style = "display:none;"
                         )
                       ),
-                      # --- Pagination controls (below table, right-aligned) ---
+                      div(DTOutput(ns(paste0("table_", tab_name))), class = "with_checkbox"),
+                      # Informational message: edits are auto-saved to CSV
                       tags$div(
                         "The data is immediately saved to the corresponding CSV
                       file, no confirmation is required!", 

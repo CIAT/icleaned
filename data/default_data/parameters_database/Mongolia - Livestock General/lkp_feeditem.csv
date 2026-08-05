@@ -1,0 +1,10 @@
+feed_item_code,crop_code ,feed_item_name,dm_content,me_content,cp_content
+1,2,Barley (forage),25,9.2,11
+2,3,Italian ryegrass - hay,85,8.36,6.01
+3,4,Naturally occuring pasture hay - Desert & Desert Steppe,83,5,3.6
+4,5,Naturally occuring pasture hay - Forest & Forest Steppe,83,5,3.6
+5,6,Naturally occuring pasture hay - High Mountain,83,5,3.6
+6,1,Oats (Avena sativa) - green fodder,31,8.36,4
+7,1,Oats (Avena sativa) - silage,36.4,8.92,12.7
+8,7,Red clover (Trifolium pratense) - green fodder,19.6,10.43,20.8
+9,8,Wheat (bran) OFC,87,11,17.9

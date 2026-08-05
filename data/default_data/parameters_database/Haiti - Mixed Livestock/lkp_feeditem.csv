@@ -1,0 +1,11 @@
+feed_item_code,crop_code,feed_item_name,dm_content,me_content,cp_content
+1,7,Bean (crop residue),88,7.4,7.1
+2,1,Cowpea (Vigna unguiculata) - crop residue,90,9.88,18.4
+3,2,Gliricidia sepium (forage),30,11.5,22.3
+4,3,Lucerne (Medicago sativa) - forage,21,10.08,19.7
+5,4,Maize (Zea mays) - stover,87,9.13,5.9
+6,5,Moringa oleifera (forage),26.2,10.6,24.3
+7,6,Naturally occuring pasture - grazing,60,5,6
+8,6,Naturally occuring pasture - grazing OFR,60,5,6
+9,8,Sugarcane (Saccharum officinarum) - tops (forage),29,6.9,5.9
+10,9,Sweet potato (Ipomoea batatas) - leaves,10.8,10.01,19.4
