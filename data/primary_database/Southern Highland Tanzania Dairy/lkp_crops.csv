@@ -1,4 +1,4 @@
-crop_code,crop_name,dry_yield,residue_dry_yield,main_n,residue_n,c_factor,kc_initial,kc_midseason,kc_late,category,trees_ha,trees_dhb,trees_growth,trees_removal,trees_ha_dbh25,average_dbh25,increase_dbh25,trees_ha_dbh2550,average_dbh2550,increase_dbh2550,trees_ha_dbh50,average_dbh50,increase_dbh50,time_horizon,diameter_breast
+﻿crop_code,crop_name,dry_yield,residue_dry_yield,main_n,residue_n,c_factor,kc_initial,kc_midseason,kc_late,category,trees_ha,trees_dhb,trees_growth,trees_removal,trees_ha_dbh25,average_dbh25,increase_dbh25,trees_ha_dbh2550,average_dbh2550,increase_dbh2550,trees_ha_dbh50,average_dbh50,increase_dbh50,time_horizon,diameter_breast
 1,Banana,16.07,23.33,0.015,0.014,0.6,0.5,1.1,1,tree crop,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 2,Brachiaria hybrid,14.38,10.21,0.022,0,0.01,0.6,1.1,1.05,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 3,Desmodium,12.24,5.67,0.025,0,0.15,0.4,1.15,0.55,legume,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0

@@ -1,4 +1,4 @@
-crop_code,crop_name,dry_yield,residue_dry_yield,main_n,residue_n,c_factor,kc_initial,kc_midseason,kc_late,category,trees_ha,trees_dhb,trees_growth,trees_removal,trees_ha_dbh25,average_dbh25,increase_dbh25,trees_ha_dbh2550,average_dbh2550,increase_dbh2550,trees_ha_dbh50,average_dbh50,increase_dbh50,time_horizon,diameter_breast
+﻿crop_code,crop_name,dry_yield,residue_dry_yield,main_n,residue_n,c_factor,kc_initial,kc_midseason,kc_late,category,trees_ha,trees_dhb,trees_growth,trees_removal,trees_ha_dbh25,average_dbh25,increase_dbh25,trees_ha_dbh2550,average_dbh2550,increase_dbh2550,trees_ha_dbh50,average_dbh50,increase_dbh50,time_horizon,diameter_breast
 1,Amaranthus caudatus,6.44,0,0.02,0,0.15,0.15,0.95,0.85,legume,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 2,Avena sativa,16,0,0.02,0,0.15,0.15,1.15,0.3,cereal,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 3,Bauhinia purpurea,1.98,0,0.03,0,0.15,0.575,1.125,0.475,legume,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0

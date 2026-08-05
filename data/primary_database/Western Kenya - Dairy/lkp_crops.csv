@@ -1,4 +1,4 @@
-crop_code,crop_name,dry_yield,residue_dry_yield,main_n,residue_n,c_factor,kc_initial,kc_midseason,kc_late,category,trees_ha,trees_dhb,trees_growth,trees_removal,trees_ha_dbh25,average_dbh25,increase_dbh25,trees_ha_dbh2550,average_dbh2550,increase_dbh2550,trees_ha_dbh50,average_dbh50,increase_dbh50,time_horizon,diameter_breast
+﻿crop_code,crop_name,dry_yield,residue_dry_yield,main_n,residue_n,c_factor,kc_initial,kc_midseason,kc_late,category,trees_ha,trees_dhb,trees_growth,trees_removal,trees_ha_dbh25,average_dbh25,increase_dbh25,trees_ha_dbh2550,average_dbh2550,increase_dbh2550,trees_ha_dbh50,average_dbh50,increase_dbh50,time_horizon,diameter_breast
 1,Beans,0.79,2.64,0.041,0.03,0.1,0.35,1.1,0.9,cereal,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 2,Brachiaria hybrid,9.5,0,0.022,0,0.01,0.6,1.1,1.05,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 3,Calliandra,8,2.5,0.035,0.015,0.45,0.3,0.6,0.9,legume,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0

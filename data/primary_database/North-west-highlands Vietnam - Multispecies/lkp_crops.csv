@@ -1,4 +1,4 @@
-crop_code,crop_name,dry_yield,residue_dry_yield,main_n,residue_n,c_factor,kc_initial,kc_midseason,kc_late,category,trees_ha,trees_dhb,trees_growth,trees_removal,trees_ha_dbh25,average_dbh25,increase_dbh25,trees_ha_dbh2550,average_dbh2550,increase_dbh2550,trees_ha_dbh50,average_dbh50,increase_dbh50,time_horizon,diameter_breast
+﻿crop_code,crop_name,dry_yield,residue_dry_yield,main_n,residue_n,c_factor,kc_initial,kc_midseason,kc_late,category,trees_ha,trees_dhb,trees_growth,trees_removal,trees_ha_dbh25,average_dbh25,increase_dbh25,trees_ha_dbh2550,average_dbh2550,increase_dbh2550,trees_ha_dbh50,average_dbh50,increase_dbh50,time_horizon,diameter_breast
 1,Banana,4.71,21.49,0.01,0.01,0.6,0.6,1.1,1.05,tree crop,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 2,cassava,11.27,5.04,0.004,0,0.05,0,0,0,tuber,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 3,Elephant grass,59.5,6.24,0.02,0,0.01,0.6,1.1,1.05,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
