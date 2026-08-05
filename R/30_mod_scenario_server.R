@@ -2666,9 +2666,11 @@ scenario_server <- function(
       
     } else {
       
-      # Use first available default, or first available database
+      # Use app default, first available primary DB, or first available database
       default_available <- intersect(primary_database_names(), available_databases)
-      selected_database <- if (length(default_available) > 0) {
+      selected_database <- if (default_parameters_database %in% available_databases) {
+        default_parameters_database
+      } else if (length(default_available) > 0) {
         sort(default_available)[1]
       } else if (length(available_databases) > 0) {
         sort(available_databases)[1]

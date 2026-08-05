@@ -157,7 +157,13 @@ server <- function(input, output, session) {
     # only used database should update the scenario inputs
     user_dbs <- list.files(file.path(user_folder, "parameters_database"), full.names = FALSE)
     session$userData$parameters_db_name <- reactiveVal(
-      if (length(user_dbs) > 0) sort(user_dbs)[1] else character(0)
+      if (default_parameters_database %in% user_dbs) {
+        default_parameters_database
+      } else if (length(user_dbs) > 0) {
+        sort(user_dbs)[1]
+      } else {
+        character(0)
+      }
     )
     
     # Helps to trigger the update_params_modal from other modules

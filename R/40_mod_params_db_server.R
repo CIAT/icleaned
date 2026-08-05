@@ -185,15 +185,17 @@ params_db_server <- function(
   
   # ----------- Database Management Tab ----------------------------------------
   
-  # Create Database: clone Params DB - Default into user folder
+  # Create Database: clone default parameters database into user folder
   observeEvent(input$create_database, {
     cat(file = stderr(), "40 - Creating a new database...\n")
-    source_path <- file.path("data", "primary_database", "Params DB - Default")
+    source_path <- file.path(
+      "data", "primary_database", default_parameters_database
+    )
     destination_dir <- file.path(session$userData$user_folder, "parameters_database")
     clone_file_path <- versioned_copy(
       source_path = source_path,
       destination_dir = destination_dir,
-      base_name = "Params DB - Default",
+      base_name = new_parameters_database_name,
       versioning = TRUE
     )
     session$userData$databases(
