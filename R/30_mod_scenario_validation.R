@@ -11,7 +11,11 @@
 #'    Field-level validation for Area, Waste, and Manure inputs
 #'    Rules: non-negative, positive, percentage, between 0-1
 #'
-#' 2. LIVESTOCK FEEDING TAB: livestock_feeding_validation_server()
+#' 2. FEED PRODUCTION TAB: validate_feed_item_identity()
+#'    Table-level validation for duplicate feed and crop names
+#'    Rule: feed_item_name and crop_name must be unique across feed rows
+#'
+#' 3. LIVESTOCK FEEDING TAB: livestock_feeding_validation_server()
 #'    Table-level validation for allocation percentages
 #'    Rule: Each livestock column must sum to exactly 100% per season
 
@@ -375,7 +379,132 @@ farm_validation_server <- function(id, input, parent_session) {
   })
 }
 
-# ------ SECTION 2: LIVESTOCK FEEDING TAB VALIDATION -------------------------
+# ------ SECTION 2: FEED PRODUCTION TAB VALIDATION ----------------------------
+
+#' Build duplicate-name messages for one feed table column
+#'
+#' @param feed_table Data frame containing feed rows.
+#' @param name_column Column holding the display name to check for duplicates.
+#' @param code_column Column holding the code shown in the error message.
+#' @param name_label User-facing label for the duplicated name type.
+#' @param code_label User-facing label for the code column.
+#'
+#' @return Character vector of formatted HTML error messages.
+format_duplicate_column_messages <- function(
+  feed_table,
+  name_column,
+  code_column,
+  name_label,
+  code_label
+) {
+  if (!(name_column %in% names(feed_table)) || !(code_column %in% names(feed_table))) {
+    return(character(0))
+  }
+
+  names_vec <- feed_table[[name_column]]
+  codes_vec <- as.character(feed_table[[code_column]])
+  valid_rows <- !is.na(names_vec) & names_vec != ""
+
+  if (!any(valid_rows)) {
+    return(character(0))
+  }
+
+  name_counts <- table(names_vec[valid_rows])
+  duplicate_names <- names(name_counts[name_counts > 1])
+
+  if (length(duplicate_names) == 0) {
+    return(character(0))
+  }
+
+  duplicate_names <- sort(duplicate_names)
+
+  vapply(duplicate_names, function(dup_name) {
+    matching_codes <- unique(codes_vec[valid_rows & names_vec == dup_name])
+    formatted_codes <- paste(
+      sprintf("<strong>%s</strong>", matching_codes),
+      collapse = ", "
+    )
+
+    sprintf(
+      paste0(
+        "<strong>•</strong> Duplicate <strong>%s</strong> ",
+        "<strong>'%s'</strong> — %s: %s."
+      ),
+      name_label,
+      dup_name,
+      code_label,
+      formatted_codes
+    )
+  }, character(1), USE.NAMES = FALSE)
+}
+
+#' Validate unique feed and crop names in the feed production table
+#'
+#' Detects duplicate feed_item_name or crop_name values, which break simulation
+#' when feed_quality() spreads nutrient values by feed_item_name.
+#'
+#' @param feed_table Data frame containing feed rows from feedtype().
+#' @param database_code Optional parameter database name for contextual guidance.
+#'
+#' @return List containing:
+#'   - has_errors: Logical, TRUE if duplicate names were found
+#'   - error_messages: Character vector of formatted error messages
+validate_feed_item_identity <- function(feed_table, database_code = NULL) {
+  validation_result <- list(
+    has_errors = FALSE,
+    error_messages = character(0)
+  )
+
+  if (is.null(feed_table) || nrow(feed_table) == 0) {
+    return(validation_result)
+  }
+
+  duplicate_messages <- c(
+    format_duplicate_column_messages(
+      feed_table = feed_table,
+      name_column = "feed_item_name",
+      code_column = "feed_item_code",
+      name_label = "feed name",
+      code_label = "feed_item_code"
+    ),
+    format_duplicate_column_messages(
+      feed_table = feed_table,
+      name_column = "crop_name",
+      code_column = "crop_code",
+      name_label = "crop name",
+      code_label = "crop_code"
+    )
+  )
+
+  if (length(duplicate_messages) == 0) {
+    return(validation_result)
+  }
+
+  validation_result$has_errors <- TRUE
+
+  intro_message <- paste0(
+    "Duplicate feed or crop names detected. ",
+    "Simulation will fail until resolved."
+  )
+
+  if (!is.null(database_code) && nzchar(database_code)) {
+    intro_message <- paste0(
+      intro_message,
+      sprintf(
+        paste0(
+          " This often means feed/crop codes in this study do not match ",
+          "parameter database <strong>'%s'</strong>."
+        ),
+        database_code
+      )
+    )
+  }
+
+  validation_result$error_messages <- c(intro_message, duplicate_messages)
+  validation_result
+}
+
+# ------ SECTION 3: LIVESTOCK FEEDING TAB VALIDATION -------------------------
 
 # ------ LIVESTOCK FEEDING TABLE VALIDATION ----------------------------------
 

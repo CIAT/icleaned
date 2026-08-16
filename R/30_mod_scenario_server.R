@@ -1732,6 +1732,7 @@ scenario_server <- function(
     # Hide previous warnings before running new validation
     shinyjs::hide("alert_message_Intercropping_fraction_inputs")
     shinyjs::hide("alert_message_residue_fractions_inputs")
+    shinyjs::hide("alert_message_duplicate_feed_identity")
     # Stop if no feed table data is available
     feed_table <- feedtype()
     if (is.null(feed_table) || nrow(feed_table) == 0) return()
@@ -1853,6 +1854,20 @@ scenario_server <- function(
         html = paste(invalid_residue_msgs, collapse = "<br>")
       )
       shinyjs::show("alert_message_residue_fractions_inputs")
+    }
+
+    # --- Validate duplicate feed and crop names --------------------------------
+    feed_identity_validation <- validate_feed_item_identity(
+      feed_table = feed_table,
+      database_code = input$database_code
+    )
+
+    if (feed_identity_validation$has_errors) {
+      shinyjs::html(
+        id = "alert_message_duplicate_feed_identity",
+        html = paste(feed_identity_validation$error_messages, collapse = "<br>")
+      )
+      shinyjs::show("alert_message_duplicate_feed_identity")
     }
     
     # Save updated data so assigned defaults persist in the table
@@ -2504,6 +2519,19 @@ scenario_server <- function(
     req(lkp_region())
     req(session$userData$study_object())
     
+    feed_identity_validation <- validate_feed_item_identity(
+      feed_table = feedtype(),
+      database_code = input$database_code
+    )
+
+    if (feed_identity_validation$has_errors) {
+      cat(
+        file = stderr(),
+        "20 - Skipping JSON save: duplicate feed or crop names detected\n"
+      )
+      return()
+    }
+
     cat(file = stderr(), "20 - Saving data as JSON\n")
     
     study_object <- list()

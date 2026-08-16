@@ -1086,6 +1086,13 @@ scenario_ui <- function(id) {
                         style = "display:none;"
                       )
                     ),
+                    shinyjs::hidden(
+                      div(
+                        id = ns("alert_message_duplicate_feed_identity"),
+                        class = "alert alert-danger",
+                        style = "display:none;"
+                      )
+                    ),
                     div(DTOutput(ns("crop_table")), class = "with_checkbox"),
                     h2("Crop inputs", class = "mb-3 mt-5"),
                     shinyjs::hidden(

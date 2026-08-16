@@ -165,7 +165,7 @@
       "slope_p_factor": 0.13,
       "slope_length": 15,
       "grassman_desc": "Nominally managed",
-      "grassman_change_factor": 0,
+      "grassman_change_factor": 1,
       "main_product_removal": 1,
       "residue_removal": 0,
       "residue_burnt": 0,
@@ -354,7 +354,7 @@
       "slope_p_factor": 0.13,
       "slope_length": 15,
       "grassman_desc": "Nominally managed",
-      "grassman_change_factor": 0,
+      "grassman_change_factor": 1,
       "main_product_removal": 0,
       "residue_removal": 0.7,
       "residue_burnt": 0,
@@ -403,132 +403,6 @@
       "ammonia": 0
     },
     {
-      "crop_code": "6",
-      "feed_item_code": "12",
-      "crop_name": "Brachiaria hybrid",
-      "feed_item_name": "Brachiaria hybrid (forage)",
-      "source_type": "Main",
-      "intercrop": 0,
-      "intercrop_fraction": 0,
-      "cut_carry_fraction": 0,
-      "land_cover_desc": "Dense grass",
-      "landcover_c_factor": 0.01,
-      "slope_desc": "Hilly (5-20%)",
-      "slope_p_factor": 0.13,
-      "slope_length": 15,
-      "grassman_desc": "Improved grassland, tropical",
-      "grassman_change_factor": 1.17,
-      "main_product_removal": 0.9,
-      "residue_removal": 0,
-      "residue_burnt": 0,
-      "dm_content": 94.08,
-      "me_content": 7.24,
-      "cp_content": 9.44,
-      "water_regime": "",
-      "cultivation_period": 0,
-      "ecosystem_type": "",
-      "organic_amendment": "",
-      "dry_yield": 14.38,
-      "residue_dry_yield": 0,
-      "residue_n": 0,
-      "kc_initial": 0.6,
-      "kc_midseason": 1.1,
-      "kc_late": 1.05,
-      "category": "grass",
-      "trees_ha": 0,
-      "trees_dhb": 0,
-      "trees_growth": 0,
-      "trees_removal": 0,
-      "trees_ha_dbh25": 0,
-      "average_dbh25": 0,
-      "increase_dbh25": 0,
-      "trees_ha_dbh2550": 0,
-      "average_dbh2550": 0,
-      "increase_dbh2550": 0,
-      "trees_ha_dbh50": 0,
-      "average_dbh50": 0,
-      "increase_dbh50": 0,
-      "time_horizon": 0,
-      "diameter_breast": 0,
-      "fraction_as_manure": "NULL",
-      "n_fertilizer": "NULL",
-      "main_n": 0.0224,
-      "land_cover": "9",
-      "slope": "2",
-      "grassman": "7",
-      "fraction_as_fertilizer": 0.15,
-      "urea": 0,
-      "npk": 133,
-      "dap": 0,
-      "ammonium_nitrate": 0,
-      "ammonium_sulfate": 0,
-      "n_solutions": 0,
-      "ammonia": 0
-    },
-    {
-      "crop_code": "34",
-      "feed_item_code": "3",
-      "crop_name": "Musa spp.",
-      "feed_item_name": "Banana leaves",
-      "source_type": "Residue",
-      "intercrop": 0,
-      "intercrop_fraction": 0,
-      "cut_carry_fraction": 0,
-      "land_cover_desc": "Dense forest",
-      "landcover_c_factor": 0.001,
-      "slope_desc": "Hilly (5-20%)",
-      "slope_p_factor": 0.13,
-      "slope_length": 15,
-      "grassman_desc": "Nominally managed",
-      "grassman_change_factor": 0,
-      "main_product_removal": 0,
-      "residue_removal": 0.6,
-      "residue_burnt": 0,
-      "dm_content": 9,
-      "me_content": 8.66,
-      "cp_content": 9.5,
-      "water_regime": "",
-      "cultivation_period": 0,
-      "ecosystem_type": "",
-      "organic_amendment": "",
-      "dry_yield": 0,
-      "residue_dry_yield": 23.33,
-      "residue_n": 0.014,
-      "kc_initial": 0.5,
-      "kc_midseason": 1.1,
-      "kc_late": 1,
-      "category": "grass",
-      "trees_ha": 0,
-      "trees_dhb": 0,
-      "trees_growth": 0,
-      "trees_removal": 0,
-      "trees_ha_dbh25": 0,
-      "average_dbh25": 0,
-      "increase_dbh25": 0,
-      "trees_ha_dbh2550": 0,
-      "average_dbh2550": 0,
-      "increase_dbh2550": 0,
-      "trees_ha_dbh50": 0,
-      "average_dbh50": 0,
-      "increase_dbh50": 0,
-      "time_horizon": 0,
-      "diameter_breast": 0,
-      "fraction_as_manure": "NULL",
-      "n_fertilizer": "NULL",
-      "main_n": 0.008,
-      "land_cover": "1",
-      "slope": "2",
-      "grassman": "1",
-      "fraction_as_fertilizer": 0.2,
-      "urea": 0,
-      "npk": 200,
-      "dap": 0,
-      "ammonium_nitrate": 0,
-      "ammonium_sulfate": 0,
-      "n_solutions": 0,
-      "ammonia": 0
-    },
-    {
       "crop_code": "26",
       "feed_item_code": "38",
       "crop_name": "Lablab",
@@ -543,7 +417,7 @@
       "slope_p_factor": 0.13,
       "slope_length": 15,
       "grassman_desc": "Nominally managed",
-      "grassman_change_factor": 0,
+      "grassman_change_factor": 1,
       "main_product_removal": 0.9,
       "residue_removal": 0,
       "residue_burnt": 0,
@@ -660,44 +534,16 @@
           ]
         },
         {
-          "feed_item_code": "12",
-          "crop_code": "6",
-          "livestock": [
-            {
-              "livetype_code": "2",
-              "allocation": 0
-            },
-            {
-              "livetype_code": "6",
-              "allocation": 0
-            }
-          ]
-        },
-        {
-          "feed_item_code": "3",
-          "crop_code": "34",
-          "livestock": [
-            {
-              "livetype_code": "2",
-              "allocation": 30
-            },
-            {
-              "livetype_code": "6",
-              "allocation": 30
-            }
-          ]
-        },
-        {
           "feed_item_code": "38",
           "crop_code": "26",
           "livestock": [
             {
               "livetype_code": "2",
-              "allocation": 0
+              "allocation": 30
             },
             {
               "livetype_code": "6",
-              "allocation": 0
+              "allocation": 30
             }
           ]
         }
@@ -712,11 +558,11 @@
           "livestock": [
             {
               "livetype_code": "2",
-              "allocation": 7
+              "allocation": 15
             },
             {
               "livetype_code": "6",
-              "allocation": 7
+              "allocation": 15
             }
           ]
         },
@@ -726,11 +572,11 @@
           "livestock": [
             {
               "livetype_code": "2",
-              "allocation": 25
+              "allocation": 30
             },
             {
               "livetype_code": "6",
-              "allocation": 25
+              "allocation": 30
             }
           ]
         },
@@ -740,11 +586,11 @@
           "livestock": [
             {
               "livetype_code": "2",
-              "allocation": 10
+              "allocation": 15
             },
             {
               "livetype_code": "6",
-              "allocation": 10
+              "allocation": 15
             }
           ]
         },
@@ -754,39 +600,11 @@
           "livestock": [
             {
               "livetype_code": "2",
-              "allocation": 1
+              "allocation": 5
             },
             {
               "livetype_code": "6",
-              "allocation": 1
-            }
-          ]
-        },
-        {
-          "feed_item_code": "12",
-          "crop_code": "6",
-          "livestock": [
-            {
-              "livetype_code": "2",
-              "allocation": 7
-            },
-            {
-              "livetype_code": "6",
-              "allocation": 7
-            }
-          ]
-        },
-        {
-          "feed_item_code": "3",
-          "crop_code": "34",
-          "livestock": [
-            {
-              "livetype_code": "2",
-              "allocation": 48
-            },
-            {
-              "livetype_code": "6",
-              "allocation": 48
+              "allocation": 5
             }
           ]
         },
@@ -796,11 +614,11 @@
           "livestock": [
             {
               "livetype_code": "2",
-              "allocation": 2
+              "allocation": 35
             },
             {
               "livetype_code": "6",
-              "allocation": 2
+              "allocation": 35
             }
           ]
         }
