@@ -251,6 +251,57 @@ activate_statcounter <- function(sc_project, sc_security, user_id, url_hostname,
   )
 }
 
+#' Sync columns from a parameters-database table into a scenario state table
+#'
+#' Refreshes a scenario reactive (e.g. `feedtype()`, `livestock_data()`) with
+#' the latest values coming from a parameters-database table (e.g.
+#' `lkp_crops()`, `lkp_feeditem()`, `lkp_livetype()`). Rows are matched on
+#' `key`; only the columns listed in `columns` are overwritten. Columns not
+#' listed are preserved, so any user-edited values in the scenario survive.
+#'
+#' Rows of `target` whose key has no match in `source` are left untouched: we
+#' never erase scenario data because a row was deleted from the parameters DB.
+#'
+#' @param target  Data frame to update (scenario state).
+#' @param source  Data frame holding the up-to-date values (parameters DB).
+#' @param key     Name of the column used to match rows between target and
+#'                source.
+#' @param columns Character vector of columns to copy from source to target.
+#'                When `columns` is named, names are the target column names
+#'                and values are the source column names, which allows mapping
+#'                between differently-named columns. Columns missing on either
+#'                side are silently skipped.
+#'
+#' @return The updated target data frame.
+sync_columns_by_key <- function(target, source, key, columns) {
+  if (is.null(target) || is.null(source)) return(target)
+  if (nrow(target) == 0 || nrow(source) == 0) return(target)
+  if (!(key %in% names(target)) || !(key %in% names(source))) return(target)
+
+  # Resolve target/source column pairs (support named vectors for renaming)
+  if (is.null(names(columns))) {
+    target_cols <- columns
+    source_cols <- columns
+  } else {
+    target_cols <- ifelse(names(columns) == "", columns, names(columns))
+    source_cols <- unname(columns)
+  }
+
+  match_idx <- match(target[[key]], source[[key]])
+  matched <- !is.na(match_idx)
+  if (!any(matched)) return(target)
+
+  for (i in seq_along(columns)) {
+    tc <- target_cols[i]
+    sc <- source_cols[i]
+    if (sc %in% names(source) && tc %in% names(target)) {
+      # Use [[ on source so this works the same for data.frame and data.table
+      target[matched, tc] <- source[[sc]][match_idx[matched]]
+    }
+  }
+  target
+}
+
 # Temporarily freeze and unfreeze table scrolling after table editing
 freeze_and_unfreeze_scroll <- function(session, table_id) {
   session$sendCustomMessage("freezeScroll", list(tableId = table_id))

@@ -7,11 +7,17 @@ Shiny.addCustomMessageHandler('freezeScroll', function(message) {
   if (!tableId) return;
   var scrollContainer = $('#' + tableId + ' .dataTables_scrollBody');
   
-  // Save scroll position
-  scrollPositions[tableId] = scrollContainer.scrollLeft();
+  // Save both horizontal and vertical scroll positions
+  scrollPositions[tableId] = {
+    left: scrollContainer.scrollLeft(),
+    top: scrollContainer.scrollTop()
+  };
   
-  // Disable horizontal scrolling by setting overflow to hidden
-  scrollContainer.css('overflow-x', 'hidden');
+  // Disable scrolling by setting overflow to hidden
+  scrollContainer.css({
+    'overflow-x': 'hidden',
+    'overflow-y': 'hidden'
+  });
 });
 
 // Restore scroll position and re-enable scrolling after rerendering
@@ -20,9 +26,15 @@ Shiny.addCustomMessageHandler('unfreezeScroll', function(message) {
   if (!tableId) return;
   var scrollContainer = $('#' + tableId + ' .dataTables_scrollBody');
   
-  // Restore scroll position
-  scrollContainer.scrollLeft(scrollPositions[tableId]);
+  // Restore both horizontal and vertical scroll positions
+  if (scrollPositions[tableId]) {
+    scrollContainer.scrollLeft(scrollPositions[tableId].left);
+    scrollContainer.scrollTop(scrollPositions[tableId].top);
+  }
   
-  // Re-enable horizontal scrolling by setting overflow to auto
-  scrollContainer.css('overflow-x', 'auto');
+  // Re-enable scrolling by setting overflow to auto
+  scrollContainer.css({
+    'overflow-x': 'auto',
+    'overflow-y': 'auto'
+  });
 });

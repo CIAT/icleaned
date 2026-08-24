@@ -7,13 +7,23 @@ params_db_ui <- function(id) {
       class = "container",
       # ------ Last Update -----------------------------------------------------
       p(
-        class = "pt-3 pb-5 text-end text-primary text-small",
+        class = "pt-3 pb-4 text-end text-primary text-small",
         span("Last update: "),
         span(strong(id = ns("last_update_date")))
       ),
     ),
+    div(
+      class = "container mt-2 mb-2",
+      style = "text-align: left",
+      a(
+        class = "editInformationBtn",
+        icon("chevron-left", class = "editInfoIcon"),
+        "Scenario - Enterprise Description",
+        onclick = go_to(target = "scenario")
+      ) 
+    ),
     fixedPage(
-      class = "bg-light px-4 pt-5 pb-5  mt-5 mb-5",
+      class = "bg-light px-4 pt-5 pb-5  mt-4 mb-4",
       style = "margin-top: 20px;",
       h2("Choose a parameters database option:", class = "mb-3"),
       fluidRow(
@@ -89,7 +99,8 @@ params_db_ui <- function(id) {
               shinyWidgets::pickerInput(
                 inputId = ns("database_name"),
                 label = NULL,
-                choices = NULL
+                choices = NULL,
+                options = list(`live-search` = TRUE)
               )
             )
           ),
@@ -155,7 +166,8 @@ params_db_ui <- function(id) {
                 shinyWidgets::pickerInput(
                   inputId = ns("database_shared_folder"),
                   label = NULL,
-                  choices = NULL
+                  choices = NULL,
+                  options = list(`live-search` = TRUE)
                 )
               )
             )
@@ -233,21 +245,10 @@ params_db_ui <- function(id) {
         )
       )
     ),
-    div(
-      class = "container mt-2 mb-2",
-      style = "text-align: left",
-      a(
-        class = "editInformationBtn",
-        icon("chevron-left", class = "editInfoIcon"),
-        "Scenario - Enterprise Description",
-        onclick = go_to(target = "scenario")
-      ) 
-    ),
     fixedPage(
-      style = "margin-top: 50px;",
       fluidRow(
         class = "bg-light",
-        style = "margin-top: 50px;",
+        style = "margin-top: 40px;",
         div(
           class = "custom-tab-width",
           # Use lapply to loop over each tab name and generate the tabPanels
@@ -256,10 +257,16 @@ params_db_ui <- function(id) {
             c(
               id = "tabs",
               lapply(
-                c("lkp_feeditem", "lkp_feedtype", "lkp_livetype"),
+                c("lkp_feeditem", "lkp_crops", "lkp_livetype"),
                 function(tab_name) {
+                  # Custom tab titles mapping
+                  tab_titles <- c(
+                    "lkp_feeditem" = "Feeditems",
+                    "lkp_crops" = "Crops",
+                    "lkp_livetype" = "Livetype"
+                  )
                   tabPanel(
-                    str_to_title(sub("^lkp_", "", tab_name)),
+                    tab_titles[tab_name],
                     div(
                       class = "p-5 bg-light",
                       fluidRow(
@@ -279,6 +286,19 @@ params_db_ui <- function(id) {
                             br(),
                             class = "d-flex align-items-center px-1",
                             actionButton(
+                              inputId = ns(paste0("clone_rows_", tab_name)),
+                              label = "Clone Row",
+                              class = "btn btn-primary filters-btn",
+                              icon = icon("copy")
+                            )
+                          )
+                        ),
+                        column(
+                          width = 3,
+                          div(
+                            br(),
+                            class = "d-flex align-items-center px-1",
+                            actionButton(
                               inputId = ns(paste0("delete_rows_", tab_name)),
                               label = "Delete",
                               class = "btn btn-primary filters-btn",
@@ -287,7 +307,16 @@ params_db_ui <- function(id) {
                           )
                         )
                       ),
+                      # Alert for duplicate code warnings
+                      shinyjs::hidden(
+                        div(
+                          id = ns(paste0("alert_duplicate_code_", tab_name)),
+                          class = "alert alert-danger",
+                          style = "display:none;"
+                        )
+                      ),
                       div(DTOutput(ns(paste0("table_", tab_name))), class = "with_checkbox"),
+                      # Informational message: edits are auto-saved to CSV
                       tags$div(
                         "The data is immediately saved to the corresponding CSV
                       file, no confirmation is required!", 
@@ -296,8 +325,10 @@ params_db_ui <- function(id) {
                       font-weight: 500; text-align: left; color: #005275;
                       font-family: 'serif , Merriweather';"
                       )
+                      
                     )
                   )
+                  
                 }
               )
             )

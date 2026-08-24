@@ -12,13 +12,24 @@ scenario_ui <- function(id) {
       class = "container",
       # ------ Dernière mise à jour ------------------------------------------
       p(
-        class = "pt-3 pb-5 text-end text-primary text-small",
+        class = "pt-3 pb-4 text-end text-primary text-small",
         span("Last update: "),
         span(strong(id = ns("last_update_date")))
       ),
     ),
+    div(
+      class = "container mt-2 mb-2",
+      style = "text-align: right",
+      a(
+        class = "editInformationBtn",
+        icon("edit"),
+        "Edit Parameters",
+        icon("chevron-right", class = "editInfoIcon"),
+        onclick = go_to(target = "params_db")
+      )
+    ),
     fixedPage(
-      class = "bg-light px-4 pt-5 pb-5 mt-5 mb-5",
+      class = "bg-light px-4 pt-5 pb-5 mt-4 mb-4",
       style = "margin-top: 20px;",
       h2("Choose a file option:", class = "mb-3"),
       fluidRow(
@@ -92,7 +103,8 @@ scenario_ui <- function(id) {
               shinyWidgets::pickerInput(
                 inputId = ns("json_file_name"),
                 label = NULL,
-                choices = NULL
+                choices = NULL,
+                options = list(`live-search` = TRUE)
               )
             )
           ),
@@ -158,7 +170,8 @@ scenario_ui <- function(id) {
                 shinyWidgets::pickerInput(
                   inputId = ns("json_shared_folder"),
                   label = NULL,
-                  choices = NULL
+                  choices = NULL,
+                  options = list(`live-search` = TRUE)
                 )
               )
             )
@@ -236,23 +249,30 @@ scenario_ui <- function(id) {
         )
       ),
       fluidRow(
-        h2("Select Parameter Database:", class = "mb-3 mt-5"),
+        class = "mb-3 mt-5",
+        div(
+          style = "display: flex; align-items: center;",
+          h2("Select Parameter Database:", style = "margin: 0; margin-right: 8px;"),
+          span(
+            "?",
+            class = "help",
+            style = "display: inline-block; margin-right: 10px;",
+            span(
+              "Default parameter databases are read-only: you cannot edit their contents. ",
+              "To customize parameters (e.g., add crops, modify livestock types), ",
+              "create a new database or clone an existing one. ",
+              "Cloned databases are saved to your folder and become fully editable."
+            )
+          )
+        )
+      ),
+      fluidRow(
         shinyWidgets::pickerInput(
           inputId = ns("database_code"),
           label = NULL,
-          choices = NULL
+          choices = NULL,
+          options = list(`live-search` = TRUE)
         )
-      )
-    ),
-    div(
-      class = "container mt-2 mb-2",
-      style = "text-align: right",
-      a(
-        class = "editInformationBtn",
-        icon("edit"),
-        "Edit Parameters",
-        icon("chevron-right", class = "editInfoIcon"),
-        onclick = go_to(target = "params_db")
       )
     ),
     shinyjs::hidden(
@@ -284,26 +304,19 @@ scenario_ui <- function(id) {
                             shinyWidgets::pickerInput(
                               inputId = ns("region"),
                               label = NULL,
-                              choices = NULL
+                              choices = NULL,
+                              options = list(`live-search` = TRUE)
                             )
                           ),
                           h2("Climate:", class = "mb-3"),
                           tags$div(
-                            class = "mb-4",
-                            shinyWidgets::pickerInput(
-                              inputId = ns("climate_zone"),
-                              label = NULL,
-                              choices = NULL
-                            ),
-                          ),
-                          h2("Sub-climate:", class = "mb-3"),
-                          tags$div(
-                            class = "mb-4",
+                            class = "mb-4 climate-picker",
                             shinyWidgets::pickerInput(
                               inputId = ns("climate_zone_2"),
                               label = NULL,
-                              choices = NULL
-                            ),
+                              choices = NULL,
+                              options = list(`live-search` = TRUE)
+                            )
                           ),
                           h2("Farm name:", class = "mb-3"),
                           tags$div(
@@ -339,7 +352,7 @@ scenario_ui <- function(id) {
                                 class = "d-flex align-items-center px-1",
                                 actionButton(
                                   inputId = ns("delete_season"),
-                                  label = "Delete",
+                                  label = "Remove",
                                   class = "btn btn-primary filters-btn",
                                   icon = icon("trash")
                                 )
@@ -362,10 +375,16 @@ scenario_ui <- function(id) {
                       div(class = "p-5 bg-light",
                           h2("Manure/Fertilizer bought", class = "tabsH2"),
                           h2("Manure", class = "mb-4"),
+                          shinyjs::hidden(
+                            div(
+                              id = ns("alert_message_manure_inputs"),
+                              class = "alert alert-danger"
+                            )
+                          ),
                           h2("Annual purchase of manure (kg N):", class = "mb-3"),
                           tags$div(
                             class = "mb-4",
-                            textInput(
+                            numericInput(
                               inputId = ns("purchased_manure"),
                               label = NULL,
                               value = 0
@@ -374,7 +393,7 @@ scenario_ui <- function(id) {
                           h2("Annual purchase of compost (kg N):", class = "mb-3"),
                           tags$div(
                             class = "mb-4",
-                            textInput(
+                            numericInput(
                               inputId = ns("purchased_compost"),
                               label = NULL,
                               value = 0
@@ -383,7 +402,7 @@ scenario_ui <- function(id) {
                           h2("Annual purchase of other organic N additions (kg N):", class = "mb-3"),
                           tags$div(
                             class = "mb-4",
-                            textInput(
+                            numericInput(
                               inputId = ns("purchased_organic_n"),
                               label = NULL,
                               value = 0
@@ -392,7 +411,7 @@ scenario_ui <- function(id) {
                           h2("Annual purchase of bedding materials (kg N):", class = "mb-3"),
                           tags$div(
                             class = "mb-5",
-                            textInput(
+                            numericInput(
                               inputId = ns("purchased_bedding"),
                               label = NULL,
                               value = 0
@@ -432,6 +451,12 @@ scenario_ui <- function(id) {
                       class = "carousel-item",
                       div(class = "p-5 bg-light",
                           h2("Waste of milk and meat", class = "tabsH2"),
+                          shinyjs::hidden(
+                            div(
+                              id = ns("alert_message_waste_inputs"),
+                              class = "alert alert-danger"
+                            )
+                          ),
                           fluidRow(
                             column(
                               width = 6,
@@ -580,6 +605,12 @@ scenario_ui <- function(id) {
                       class = "carousel-item",
                       div(class = "p-5 bg-light",
                           h2("Area", class = "tabsH2"),
+                          shinyjs::hidden(
+                            div(
+                              id = ns("alert_message_area_inputs"),
+                              class = "alert alert-danger"
+                            )
+                          ),
                           h2("Annual precipitation (mm/yr)", class = "mb-3"),
                           tags$div(
                             class = "mb-4",
@@ -604,7 +635,8 @@ scenario_ui <- function(id) {
                             shinyWidgets::pickerInput(
                               inputId = ns("soil_description"),
                               label = NULL,
-                              choices = NULL
+                              choices = NULL,
+                              options = list(`live-search` = TRUE)
                             )
                           ),
                           h2("Estimated K Value", class = "mb-3"),
@@ -663,7 +695,7 @@ scenario_ui <- function(id) {
                               value = 0
                             )
                           ),
-                          h2("ETO (mm/year)", class = "mb-3"),
+                          h2("ET₀ (mm/year)", class = "mb-3"),
                           tags$div(
                             class = "mb-5",
                             numericInput(
@@ -682,7 +714,8 @@ scenario_ui <- function(id) {
                                 shinyWidgets::pickerInput(
                                   inputId = ns("cropland_system"),
                                   label = NULL,
-                                  choices = NULL
+                                  choices = NULL,
+                                  options = list(`live-search` = TRUE)
                                 )
                               )
                             ),
@@ -710,7 +743,8 @@ scenario_ui <- function(id) {
                                 shinyWidgets::pickerInput(
                                   inputId = ns("cropland_tillage"),
                                   label = NULL,
-                                  choices = NULL
+                                  choices = NULL,
+                                  options = list(`live-search` = TRUE)
                                 )
                               )
                             ),
@@ -738,7 +772,8 @@ scenario_ui <- function(id) {
                                 shinyWidgets::pickerInput(
                                   inputId = ns("cropland_orgmatter"),
                                   label = NULL,
-                                  choices = NULL
+                                  choices = NULL,
+                                  options = list(`live-search` = TRUE)
                                 )
                               )
                             ),
@@ -767,7 +802,8 @@ scenario_ui <- function(id) {
                                 shinyWidgets::pickerInput(
                                   inputId = ns("grassland_management"),
                                   label = NULL,
-                                  choices = NULL
+                                  choices = NULL,
+                                  options = list(`live-search` = TRUE)
                                 )
                               )
                             ),
@@ -795,7 +831,8 @@ scenario_ui <- function(id) {
                                 shinyWidgets::pickerInput(
                                   inputId = ns("grassland_implevel"),
                                   label = NULL,
-                                  choices = NULL
+                                  choices = NULL,
+                                  options = list(`live-search` = TRUE)
                                 )
                               )
                             ),
@@ -926,6 +963,18 @@ scenario_ui <- function(id) {
                         )
                       )
                     ),
+                    shinyjs::hidden(
+                      div(
+                        id = ns("alert_message_livestock_invalid_values_inputs"),
+                        class = "alert alert-danger",
+                        style = "display:none;"
+                      ),
+                      div(
+                        id = ns("alert_message_livestock_invalid_sum_inputs"),
+                        class = "alert alert-danger",
+                        style = "display:none;"
+                      )
+                    ),
                     div(DTOutput(ns("livestock_table")), class = "with_checkbox")
                 )
               ),
@@ -1023,14 +1072,49 @@ scenario_ui <- function(id) {
                       )
                     ),
                     h2("Crop areas and residue management", class = "mb-3"),
+                    shinyjs::hidden(
+                      div(
+                        id = ns("alert_message_Intercropping_fraction_inputs"),
+                        class = "alert alert-danger",
+                        style = "display:none;"
+                      )
+                    ),
+                    shinyjs::hidden(
+                      div(
+                        id = ns("alert_message_residue_fractions_inputs"),
+                        class = "alert alert-danger",
+                        style = "display:none;"
+                      )
+                    ),
+                    shinyjs::hidden(
+                      div(
+                        id = ns("alert_message_duplicate_feed_identity"),
+                        class = "alert alert-danger",
+                        style = "display:none;"
+                      )
+                    ),
                     div(DTOutput(ns("crop_table")), class = "with_checkbox"),
                     h2("Crop inputs", class = "mb-3 mt-5"),
                     shinyjs::hidden(
                       div(
                         id = ns("alert_message_crop_inputs"),
                         class = "alert alert-danger",
-                        "The total of 'Fraction collected manure used as fertilizer'
-                    across all rows should not exceed 1!"
+                        HTML(
+                          "The total of <strong> 'Fraction collected manure used 
+                          as fertilizer' </strong> across all rows should not exceed 1!"
+                        )
+                      )
+                    ),
+                    # Displays a warning if no fertilizers are selected
+                    # controlled via shinyjs in the server
+                    shinyjs::hidden(
+                      div(
+                        id = ns("alert_no_fertilizers"),
+                        class = "alert alert-danger",
+                        HTML(
+                          "No fertilizers have been selected in the <strong> 'Farm > Fertilizer' </strong> tab. 
+                          Please add at least one fertilizer to enable editing."
+                        )
                       )
                     ),
                     div(DTOutput(ns("crop_inputs_table")), class = "without_checkbox"),
@@ -1042,6 +1126,13 @@ scenario_ui <- function(id) {
                 div(class = "p-5 bg-light",
                     uiOutput(ns("livestock_feeding_ui")),
                     h2("Allocation in percentage of a feed to livestock by season", class = "mb-5"),
+                    shinyjs::hidden(
+                      div(
+                        id = ns("alert_livestock_feeding_global"),
+                        class = "alert alert-danger",
+                        style = "margin-bottom: 20px;"
+                      )
+                    ),
                     uiOutput(ns("livestock_feeding_table"))
                 )
               )

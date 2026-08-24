@@ -1,0 +1,9 @@
+crop_code,crop_name,dry_yield,residue_dry_yield,main_n,residue_n,c_factor,kc_initial,kc_midseason,kc_late,category,trees_ha,trees_dhb,trees_growth,trees_removal,trees_ha_dbh25,average_dbh25,increase_dbh25,trees_ha_dbh2550,average_dbh2550,increase_dbh2550,trees_ha_dbh50,average_dbh50,increase_dbh50,time_horizon,diameter_breast
+1,Cotton,3,5,0.05,0.01,0,0.15,1.15,0.5,tree crop,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2,Natural pasture,2.6,0.11,0.01,0.01,0.03,0.3,0.75,0.75,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+3,Rice,1.6,8.29,0.01,0.01,0,1.05,1.2,0.75,cereal,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+4,Rice (bran),1.6,0,0.01,0.02,0,1.05,1.2,0.75,cereal,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+5,Sorghum bicolor (forage/silage),13.5,0,0.01,0,0,0.1,1.1,0.55,cereal,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+6,Sugarcane,11,0,0,0,0.17,0.15,1.2,0.7,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+7,Triticum,3.48,4.89,0.02,0.01,0,0.1,1.1,0.55,cereal,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+8,Triticum OF,3.48,0.4,0.02,0.02,0.03,0.1,1.1,0.55,cereal,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0

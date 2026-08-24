@@ -65,4 +65,100 @@ $(document).on('click', function() {
   });
 })
 
+// Dynamically constrain Bootstrap-select dropdowns inside modals
+$(function () {
+  const EVENT_NAMESPACE = '.pickerHeight';
+  const MIN_HEIGHT_FALLBACK = 96;  // Guarantees the dropdown never collapses too far
+  const VIEWPORT_MARGIN = 200;     // Leaves room for modal header/footer within the viewport
+  const BODY_CONTENT_BUFFER = 24;  // Ensures dropdown clears spacing inside modal content
+
+  const modalShownEvent = `shown.bs.modal${EVENT_NAMESPACE}`;
+  const modalHiddenEvent = `hidden.bs.modal${EVENT_NAMESPACE}`;
+  const selectLifecycleEvents = [
+    'shown.bs.select',
+    'rendered.bs.select',
+    'refreshed.bs.select',
+    'loaded.bs.select',
+    'updated.bs.select',
+  ]
+    .map((eventName) => `${eventName}${EVENT_NAMESPACE}`)
+    .join(' ');
+
+  // Parse numeric CSS values while providing reliable fallbacks for invalid data
+  const parseCssNumber = (value, fallback = 0) => {
+    const parsed = parseFloat(value);
+    return Number.isFinite(parsed) ? parsed : fallback;
+  };
+
+  // Pull root-level sizing constraints so modal calculations respect global theming
+  const readPickerDimensions = () => {
+    const rootStyles = getComputedStyle(document.documentElement);
+    return {
+      minHeight: parseCssNumber(rootStyles.getPropertyValue('--picker-min-height'), MIN_HEIGHT_FALLBACK),
+      viewportCap: parseCssNumber(rootStyles.getPropertyValue('--picker-viewport-cap'), window.innerHeight * 0.7),
+    };
+  };
+
+  // Determine the tallest allowable dropdown that still fits inside its modal and viewport
+  const computeDropdownHeight = ($modalBody, dimensions) => {
+    const bodyHeight = $modalBody.innerHeight();
+    if (!bodyHeight) return null;
+
+    const paddingTop = parseCssNumber($modalBody.css('padding-top'));
+    const paddingBottom = parseCssNumber($modalBody.css('padding-bottom'));
+    const bodyAvailable = bodyHeight - (paddingTop + paddingBottom + BODY_CONTENT_BUFFER);
+    const viewportAvailable = window.innerHeight - VIEWPORT_MARGIN;
+
+    const effectiveBodyHeight = Math.max(bodyAvailable, dimensions.minHeight);
+    const effectiveViewportHeight = Math.max(viewportAvailable, dimensions.minHeight);
+    const effectiveViewportCap = Math.max(dimensions.viewportCap, dimensions.minHeight);
+
+    const constrainedHeight = Math.min(effectiveBodyHeight, effectiveViewportHeight, effectiveViewportCap);
+    return Number.isFinite(constrainedHeight) ? Math.round(constrainedHeight) : null;
+  };
+
+  // Apply the computed height to the modal so CSS variables drive the dropdown clamp
+  const setModalPickerHeight = ($modal) => {
+    if (!$modal || !$modal.length) return;
+
+    const $modalBody = $modal.find('.modal-body:visible').first();
+    if (!$modalBody.length) return;
+
+    const dimensions = readPickerDimensions();
+    const dropdownHeight = computeDropdownHeight($modalBody, dimensions);
+    if (!dropdownHeight) return;
+
+    $modal.get(0).style.setProperty('--modal-picker-max-height', `${dropdownHeight}px`);
+  };
+
+  // Keep every currently displayed modal aligned with viewport and content changes
+  const refreshOpenModals = () => {
+    $('.modal.show').each((_, modal) => {
+      setModalPickerHeight($(modal));
+    });
+  };
+
+  $(document)
+    .off(`${modalShownEvent} ${modalHiddenEvent}`)
+    .on(modalShownEvent, '.modal', function () {
+      const $modal = $(this);
+      setModalPickerHeight($modal);
+      // Capture layout after Bootstrap animations settle
+      requestAnimationFrame(() => setModalPickerHeight($modal));
+    })
+    .on(modalHiddenEvent, '.modal', function () {
+      this.style.removeProperty('--modal-picker-max-height');
+    })
+    .on(selectLifecycleEvents, function (event) {
+      const $modal = $(event.target).closest('.modal');
+      if ($modal.length) setModalPickerHeight($modal);
+    });
+
+  $(window)
+    .off(`resize${EVENT_NAMESPACE}`)
+    .on(`resize${EVENT_NAMESPACE}`, refreshOpenModals);
+
+  refreshOpenModals();
+});
+
 fetch('https://api.ipify.org?format=json').then(r => r.json()).then(d => Shiny.setInputValue('client_ip_js', d.ip))

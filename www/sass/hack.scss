@@ -28,3 +28,25 @@
         display: block !important;
     }
 }
+
+// Force climate picker to show all available options
+.climate-picker {
+    // Allow dropdown to overflow parent containers
+    overflow: visible !important;
+    
+    .bootstrap-select {
+        .inner.open {
+            max-height: 90px !important;
+            overflow-y: auto !important;
+        }
+        .dropdown-menu {
+            max-height: 90px !important;
+        }
+    }
+}
+
+// Ensure carousel containers don't clip the dropdown
+.carousel-item:has(.climate-picker),
+.carousel-inner:has(.climate-picker) {
+    overflow: visible !important;
+}

@@ -11,9 +11,11 @@ board_simulation_server <- function(
     shinyWidgets::updatePickerInput(
       session = session,
       inputId = "json_file_name",
-      choices = list.files(
-        path = file.path(session$userData$user_folder, "study_objects"), 
-        full.names = FALSE
+      choices = sort(
+        list.files(
+          path = file.path(session$userData$user_folder, "study_objects"), 
+          full.names = FALSE
+        )
       ),
       selected = list.files(
         path = file.path(session$userData$user_folder, "study_objects"), 
@@ -23,9 +25,11 @@ board_simulation_server <- function(
     shinyWidgets::updatePickerInput(
       session = session,
       inputId = "scenario_name",
-      choices = list.files(
-        path = file.path(session$userData$user_folder, "scenarios"), 
-        full.names = FALSE
+      choices = sort(
+        list.files(
+          path = file.path(session$userData$user_folder, "scenarios"), 
+          full.names = FALSE
+        )
       ),
       selected = character(0)
     )
@@ -53,9 +57,11 @@ board_simulation_server <- function(
       shinyWidgets::updatePickerInput(
         session,
         "json_file_name",
-        choices = list.files(
-          path = file.path(session$userData$user_folder, "study_objects"),
-          full.names = FALSE
+        choices = sort(
+          list.files(
+            path = file.path(session$userData$user_folder, "study_objects"),
+            full.names = FALSE
+          )
         ),
         selected = input$json_file_name
       )
@@ -64,9 +70,11 @@ board_simulation_server <- function(
       shinyWidgets::updatePickerInput(
         session,
         "scenario_name",
-        choices = list.files(
-          path = file.path(session$userData$user_folder, "scenarios"),
-          full.names = FALSE
+        choices = sort(
+          list.files(
+            path = file.path(session$userData$user_folder, "scenarios"),
+            full.names = FALSE
+          )
         ),
         selected = character(0)
       )
@@ -78,9 +86,11 @@ board_simulation_server <- function(
     cat(file = stderr(), "10 - Update json_file_name choices\n")
     shinyWidgets::updatePickerInput(
       inputId = "json_file_name",
-      choices = list.files(
-        path = file.path(session$userData$user_folder, "study_objects"),
-        full.names = FALSE
+      choices = sort(
+        list.files(
+          path = file.path(session$userData$user_folder, "study_objects"),
+          full.names = FALSE
+        )
       ),
       selected = list.files(
         path = file.path(session$userData$user_folder, "study_objects"),
@@ -237,7 +247,7 @@ board_simulation_server <- function(
           land_required = land_required,
           nitrogen_balance = nitrogen_balance
         )
-
+        
         # Add dry matter intake checks -----------------------------------------
         # Convert to daily intake
         dmi_per_day <- energy_required$annual_results$dmi_tot / 365 
@@ -329,8 +339,10 @@ board_simulation_server <- function(
     # update choices for scenario_name and scenario_results_comp input
     shinyWidgets::updatePickerInput(
       inputId = "scenario_name",
-      choices = list.files(
-        file.path(session$userData$user_folder, "scenarios"), full.names = FALSE
+      choices = sort(
+        list.files(
+          file.path(session$userData$user_folder, "scenarios"), full.names = FALSE
+        )
       ),
       selected = sub("\\.json$", "", input$json_file_name[1])
     )
@@ -441,15 +453,19 @@ board_simulation_server <- function(
     shinyWidgets::updatePickerInput(
       session = session,
       "scenario_name",
-      choices = list.files(
-        file.path(session$userData$user_folder, "scenarios"), full.names = FALSE
+      choices = sort(
+        list.files(
+          file.path(session$userData$user_folder, "scenarios"), full.names = FALSE
+        )
       ),
       selected = character(0)
     )
     shinyWidgets::updatePickerInput(
       inputId = "scenario_results_comp",
-      choices = list.files(
-        file.path(session$userData$user_folder, "scenarios"), full.names = FALSE
+      choices = sort(
+        list.files(
+          file.path(session$userData$user_folder, "scenarios"), full.names = FALSE
+        )
       ),
       selected = list.files(
         file.path(session$userData$user_folder, "scenarios"), full.names = FALSE

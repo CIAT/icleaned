@@ -28,7 +28,7 @@ feedtype_colnames <- c(
   "Main product dry yield (t DM/ha)",
   "Residue dry yield (t DM/ha)",
   "Main product N content (kg N/kg DM)",
-  "Reside N content (kg N/kg DM)",
+  "Residue N content (kg N/kg DM)",
   "Kc: Initial",
   "Kc: MidSeason",
   "Kc: Late",
@@ -82,11 +82,8 @@ livestock_table_colnames <- c(
   "Lactation length (small ruminants/pigs, days)",
   "Proportion growth piglets covered by milk (%)",
   "LW gain piglets (kg/day)",
-  "Grazing displacement (km/day)",
   "Crude Protein/Lysine requirement maintenance (kg/day)",
-  "Crude Protein requirement grazing (kg/km)",
   "Crude Protein/ Lysine requirement pregnancy (kg)",
-  "Crude Protein/ Lysine requirement lactation (kg/ lactation)",
   "Crude Protein requirement  (kg/kg milk)",
   "Crude Protein/ Lysine requirement growth (kg/kg LWG)",
   "Parturition interval (years)",
@@ -96,7 +93,6 @@ livestock_table_colnames <- c(
   "Energy content meat",
   "Protein content meat (%)",
   "Carcass fraction",
-  "Energy content eggs",
   "Average N content manure",
   "Meat product",
   "Milk product",
@@ -164,24 +160,20 @@ livestock_data_initialization <- data.frame(
   litter_size = numeric(),
   piglets_relying_on_milk = numeric(),
   lactation_length = numeric(),
-  proportion_growth = numeric(),
-  lw_gain = numeric(),
-  grazing_displacement = numeric(),
+  proportion_growth_piglets_milk = numeric(),
+  lw_gain_piglets = numeric(),
   cp_maintenance = numeric(),
-  cp_grazing = numeric(),
-  cp_pregnancy = numeric(),
-  cp_lactation = numeric(),
+  cp_lys_pregnancy = numeric(),
   cp_lactmilk = numeric(),
-  cp_growth = numeric(),
+  cp_lys_growth = numeric(),
   birth_interval = numeric(),
   protein_milkcontent = numeric(),
-  fat_content = numeric(),
+  fat_milkcontent = numeric(),
   energy_milkcontent = numeric(),
   energy_meatcontent = numeric(),
   protein_meatcontent = numeric(),
   carcass_fraction = numeric(),
-  energy_eggcontent = numeric(),
-  n_content = numeric(),
+  n_manure_content = numeric(),
   meat_product = character(),
   milk_product = character(),
   ipcc_ef_category_t1 = character(),
@@ -192,10 +184,10 @@ livestock_data_initialization <- data.frame(
 )
 
 feedtype_initialization <- data.frame(
-  feed_type_code = numeric(),
+  crop_code = numeric(),
   feed_item_code = numeric(),
   feed_item_name = character(),
-  feed_type_name = character(),
+  crop_name = character(),
   source_type = character(),
   intercrop = numeric(),
   intercrop_fraction = numeric(),
@@ -219,7 +211,7 @@ feedtype_initialization <- data.frame(
   slope_p_factor = numeric(),
   dry_yield = numeric(),
   residue_dry_yield = numeric(),
-  n_content = numeric(),
+  main_n = numeric(),
   residue_n = numeric(),
   kc_initial = numeric(),
   kc_midseason = numeric(),
@@ -244,7 +236,6 @@ feedtype_initialization <- data.frame(
   # These ones are available in the json but not in the DT
   fraction_as_manure = character(),
   n_fertilizer = character(),
-  main_n = numeric(),
   land_cover = character(),
   slope = character(),
   grassman = character(),
@@ -264,6 +255,53 @@ crop_inputs_data_initialization <- data.frame(
   n_solutions = numeric(),
   ammonia = numeric(),
   stringsAsFactors = FALSE
+)
+
+# Columns synced from the parameters database into the scenario state ---------
+# When the parameters database changes (or a scenario is loaded), these columns
+# are refreshed from the matching row in the parameters DB (matched by code).
+# User-edited columns that are NOT listed here are preserved as-is.
+
+feedtype_sync_cols_lkp_crops <- c(
+  "crop_name", "dry_yield", "residue_dry_yield", "main_n", "residue_n",
+  "kc_initial", "kc_midseason", "kc_late", "category",
+  "trees_ha", "trees_dhb", "trees_growth", "trees_removal",
+  "trees_ha_dbh25", "average_dbh25", "increase_dbh25",
+  "trees_ha_dbh2550", "average_dbh2550", "increase_dbh2550",
+  "trees_ha_dbh50", "average_dbh50", "increase_dbh50",
+  "time_horizon", "diameter_breast"
+)
+
+feedtype_sync_cols_lkp_feeditem <- c(
+  "feed_item_name", "dm_content", "me_content", "cp_content"
+)
+
+# Named vector: target column name = source column name (enables renaming).
+livestock_sync_cols_lkp_livetype <- c(
+  "livetype_desc"                  = "livetype_desc",
+  "body_weight"                    = "body_weight",
+  "litter_size"                    = "litter_size",
+  "lactation_length"               = "lactation_length",
+  "proportion_growth_piglets_milk" = "proportion_growth_piglets_milk",
+  "lw_gain_piglets"                = "lw_gain_piglets",
+  "cp_maintenance"                 = "cp_maintenance",
+  "cp_lys_pregnancy"               = "cp_lys_pregnancy",
+  "cp_lactmilk"                    = "cp_lactmilk",
+  "cp_lys_growth"                  = "cp_lys_growth",
+  "birth_interval"                 = "birth_interval",
+  "protein_milkcontent"            = "protein_milkcontent",
+  "fat_milkcontent"                = "fat_milkcontent",
+  "energy_milkcontent"             = "energy_milkcontent",
+  "energy_meatcontent"             = "energy_meatcontent",
+  "protein_meatcontent"            = "protein_meatcontent",
+  "carcass_fraction"               = "carcass_fraction",
+  "n_manure_content"               = "n_manure_content",
+  "meat_product"                   = "meat_product",
+  "milk_product"                   = "milk_product",
+  "ipcc_ef_category_t1"            = "ipcc_meth_ef_t1",
+  "ipcc_ef_category_t2"            = "ipcc_meth_ef_t2",
+  "ipcc_meth_man_category"         = "ipcc_meth_man",
+  "ipcc_n_exc_category"            = "ipcc_meth_exc"
 )
 
 # Define the list of inputs for saving & loading -------------------------------
@@ -300,6 +338,20 @@ fertilizer_percentages <- c(
   "Ammonium sulfate" = 21,
   "N solutions" = 32,
   "Ammonia" = 82
+)
+
+# Fertilizer name to column mapping --------------------------------------------
+# Maps fertilizer names from the 'Farm > Fertilizer' tab to their corresponding
+# column names in the 'Crop Inputs' dataframe. Used to dynamically identify
+# and control column editability.
+fertilizer_column_mapping <- c(
+  "Urea" = "urea",
+  "NPK" = "npk",
+  "DAP" = "dap",
+  "Ammonium nitrate" = "ammonium_nitrate",
+  "Ammonium sulfate" = "ammonium_sulfate",
+  "N solutions" = "n_solutions",
+  "Ammonia" = "ammonia"
 )
 
 # Water regime SelectInput options ---------------------------------------------

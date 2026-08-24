@@ -1,0 +1,61 @@
+feed_item_code,crop_code ,feed_item_name,dm_content,me_content,cp_content
+1,11,Barley (forage),34,8.2,8.71
+2,12,Barley (grains) IP,87.1,10.5,11.7
+3,13,Barley (grains) OFC,87.1,10.5,11.7
+4,13,Barley (straw),87,5.88,0.3
+5,27,Berseem clover,11,12.39,26
+6,4,Brachiaria hybrid (forage),26,7.254794521,8.254794521
+7,13,Brewer's grain,20,11,20
+8,13,Brewer's waste,20,11,20
+9,5,Cactus,15,9,7
+10,22,Concentrate (commercial),90,12.1,16
+11,32,Cowpea (Vigna unguiculata) - crop residue,90,9.880848,18.4
+12,32,Cowpea (Vigna unguiculata) - forage,12.28,10.45,20.56
+13,32,Cowpea (Vigna unguiculata) - grain,89.83,13.21,23.88
+14,32,Cowpea (Vigna unguiculata) - meal,90.17,14,22.53
+15,31,Fava bean (grain),86.6,13.3,29
+16,31,Fava bean (straw),89.7,6.4,7.4
+17,7,Feed carrot,15,13,8
+18,14,Italian ryegrass (forage),19,8.7,7
+19,14,Italian ryegrass (hay),85,8.36,6.01
+20,14,Italian ryegrass (silage),33.5,9.07,5.3
+21,15,Lucerne (Medicago sativa) - forage,21,8.7,17.16
+22,15,Lucerne (Medicago sativa) - hay,85,8.36,12.5
+23,15,Lucerne (Medicago sativa) - pellets IP,90,8.6,14
+24,15,Lucerne (Medicago sativa) - pellets OFC,90,8.6,14
+25,15,Lucerne (Medicago sativa) - silage,44.1,9.545904,19.5
+26,34,Maize (Zea mays) - cracked grains IP,89,10.5,9.1
+27,35,Maize (Zea mays) - forage,82,10.215792,8.9
+28,36,Maize (Zea mays) - silage,30,10.79,4.4
+29,33,Maize (Zea mays) - stover,87,9.127224,5.9
+30,33,Maize (Zea mays) - whole grain,90,15,9
+31,18,Naturally occuring pasture - grazing,60,5,6
+32,19,Naturally occuring pasture - grazing OF,60,5,6
+33,1,Oats (Avena sativa) - grain IP,89,12.267324,13.6
+34,2,Oats (Avena sativa) - green fodder,31,7.4,5.85
+35,2,Oats (Avena sativa) - green fodder,44,7.4,5.85
+36,2,Oats (Avena sativa) - hay,85,6.9,3.51
+37,2,Oats (Avena sativa) - hay OF,85,6.9,3.51
+38,1,Oats (Avena sativa) - straw,88,6.47,0
+39,16,Olive pomace,89,8,7
+40,16,Olive twigs,40,5,7
+41,17,Panicum maximum (forage),26,7.543013699,9.882191781
+42,17,Panicum maximum (green fodder),26,7.58,10
+43,20,Pennisetum purpureum - forage,15,9.880848,11
+44,21,Pennisetum purpureum - silage,19.5,7.5,6.5
+45,6,Rapeseed meal,87,10,30
+46,24,Sorghum (Sorghum bicolor) - crop residue,85,7.033824,4.9
+47,23,Sorghum (Sorghum bicolor) - forage,27,8.57,3.7
+48,24,Sorghum (Sorghum bicolor) - grain,90,12.392928,12.6
+49,23,Sorghum (Sorghum bicolor) - silage,30,8.57,3.7
+50,9,Soybean (Glycine max) - meal,89,10.5,59.54
+51,9,Soybean (Glycine max) - whole seed IP,86.4,14.23512,40.3
+52,25,Stipa (grazing) OF,72,5.6,5
+53,3,Sugar beet (pulp) OF,89,11.4,8.9
+54,10,Sulla,12.3,9.7,20.2
+55,8,Tall fescue,21,9.11,8.9
+56,26,Tomato pulp,20,11,20
+57,29,Wheat (bran) IP,87,10,15.47
+58,30,Wheat (bran) OF,87,10,15.47
+59,28,Wheat (straw),88,5.63,4.2
+60,28,Wheat (straw),88,5.63,4.2

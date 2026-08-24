@@ -1,0 +1,13 @@
+crop_code,crop_name,dry_yield,residue_dry_yield,main_n,residue_n,c_factor,kc_initial,kc_midseason,kc_late,category,trees_ha,trees_dhb,trees_growth,trees_removal,trees_ha_dbh25,average_dbh25,increase_dbh25,trees_ha_dbh2550,average_dbh2550,increase_dbh2550,trees_ha_dbh50,average_dbh50,increase_dbh50,time_horizon,diameter_breast
+1,Banana,0.57,3.45,0.02,0.01,0.05,0.15,1.2,0.7,tree crop,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2,Guatemala,19.8,0,0.014,0,0.01,0.6,1.1,1.05,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+3,Leucaena,2.08,0,0.04,0.04,0.05,1.05,1.2,0.75,grass,400,18,0,0,0,0,0,0,0,0,0,0,0,0,0
+4,Local mixed grasses,13,0.25,0.014,0.082,0.1,0.6,1,1.04,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+5,Fodder maize,1.06,0,0.017,0,0.05,0.052,0.082,0.112,grass,,,,,,,,,,,,,,,
+6,Improved pasture,15,0,0.016,0,0.05,0.6,1,1.04,grass,,,,,,,,,,,,,,,
+7,Maize,1.3,3.58,0.013,0.006,0.1,0.15,1.2,0.6,cereal,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+8,Natural occurring pasture - Kilimanjaro region,13.05,0,0.01,0,0.05,0.3,0.75,0.75,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+9,Natural pasture - Tanga region,12.8,0,0.01,0,0.05,0.3,0.75,0.75,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+10,Pennisetum purpureum,30,0,0.013,0,0.01,0.6,1.1,1.05,grass,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+11,Purchased,0,0,0,0,0,0,0,0,cereal,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+12,Rice,1.4,2.22,0.04,0.01,0.15,1.05,1.2,0.75,cereal,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
